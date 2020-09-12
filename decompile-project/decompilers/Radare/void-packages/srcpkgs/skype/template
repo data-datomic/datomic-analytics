@@ -1,0 +1,46 @@
+# Template file for 'skype'
+pkgname=skype
+version=4.3.0.37
+revision=4
+short_desc="P2P software for high-quality voice communication"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.skype.com"
+license="skype"
+distfiles="http://download.skype.com/linux/${pkgname}-${version}.tar.bz2"
+checksum=8c99dc3978a588fb13303df7c8134379fb55b8dd460efefbc79ae594269b892d
+
+only_for_archs="i686"
+repository="nonfree"
+nostrip="yes"
+depends="pulseaudio qt hicolor-icon-theme ca-certificates alsa-plugins-pulseaudio pavucontrol"
+lib32mode="full"
+
+do_install() {
+	# Executable
+	vbin ${FILESDIR}/skype.sh skype
+	vinstall skype 755 usr/lib/skype
+	
+	# Data
+	vmkdir usr/share/skype
+	vcopy avatars usr/share/skype
+	vcopy lang usr/share/skype
+	vcopy sounds usr/share/skype
+	
+	# DBus Service
+	vinstall skype.conf 644 etc/dbus-1/system.d
+	
+	# Icons
+	for _i in 16 32 48; do
+		vmkdir usr/share/icons/hicolor/${_i}x${_i}
+		vcopy icons/SkypeBlue_${_i}x${_i}.png \
+			usr/share/icons/hicolor/${_i}x${_i}/skype.png
+	done
+	vinstall icons/SkypeBlue_48x48.png 644 usr/share/pixmaps skype.png
+	
+	# Desktop file
+	vinstall skype.desktop 644 usr/share/applications
+	      
+	# License
+	vlicense LICENSE
+	vlicense third-party_attributions.txt
+}

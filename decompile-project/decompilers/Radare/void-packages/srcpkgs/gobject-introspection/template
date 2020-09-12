@@ -1,0 +1,43 @@
+# Template file for 'gobject-introspection'
+pkgname=gobject-introspection
+version=1.46.0
+revision=1
+build_style=gnu-configure
+configure_args="--disable-tests --disable-static"
+hostmakedepends="pkg-config flex libtool"
+makedepends="libffi-devel libglib-devel python-devel libxml2-devel cairo-devel"
+depends="libtool python libgirepository-devel"
+pycompile_dirs="usr/lib/${pkgname}/giscanner"
+short_desc="Introspection system for GObject-based libraries"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://live.gnome.org/GObjectInstrospection"
+license="GPL-2, LGPL-2.1"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=6658bd3c2b8813eb3e2511ee153238d09ace9d309e4574af27443d87423e4233
+nocross=yes
+
+gir-freedesktop_package() {
+	short_desc="Introspection data for some FreeDesktop components"
+	pkg_install() {
+		vmove usr/lib/girepository-1.0
+	}
+}
+
+libgirepository_package() {
+	short_desc="Library for handling GObject introspection data (runtime library)"
+	depends="gir-freedesktop-${version}_${revision}"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}
+
+libgirepository-devel_package() {
+	depends="cairo-devel libffi-devel libglib-devel libgirepository>=${version}_${revision}"
+	short_desc="Library for handling GObject introspection data (development files)"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gir-1.0
+	}
+}

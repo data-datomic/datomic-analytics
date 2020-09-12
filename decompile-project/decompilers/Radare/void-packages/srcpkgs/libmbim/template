@@ -1,0 +1,25 @@
+# Template file for 'libmbim'
+pkgname=libmbim
+version=1.12.2
+revision=1
+build_style=gnu-configure
+configure_args="--disable-static"
+hostmakedepends="pkg-config python glib-devel"
+makedepends="libglib-devel libgudev-devel"
+short_desc="MBIM modem protocol helper library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.freedesktop.org/wiki/Software/libmbim/"
+license="GPL-2"
+distfiles="http://www.freedesktop.org/software/$pkgname/$pkgname-$version.tar.xz"
+checksum=949351d3e3d69b81e40a49f1d187944c26149e0647a415f0227ccdc112047b29
+
+libmbim-devel_package() {
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

@@ -1,0 +1,20 @@
+# Template file for 'hunspell-en_US'
+pkgname=hunspell-en_US
+version=2015.08.24
+revision=1
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+homepage="http://wordlist.aspell.net/dicts"
+license="SCOWL"
+noarch=yes
+hostmakedepends="unzip"
+short_desc="American English en_US dictionary for hunspell"
+distfiles="${SOURCEFORGE_SITE}/wordlist/speller/${version}/${pkgname}-${version}.zip"
+checksum=780a17ac492088b7ce45efba1b689139f84e53557347c67ffb9ecc9ac20f71a1
+create_wrksrc=yes
+
+do_install(){
+	sed -i 's/SET UTF8/SET UTF-8/g' en_US.aff
+	vinstall en_US.aff 644 /usr/share/hunspell
+	vinstall en_US.dic 644 /usr/share/hunspell
+	vlicense README_en_US.txt SCOWL
+}

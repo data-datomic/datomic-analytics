@@ -1,0 +1,35 @@
+# Template file for 'atom'
+pkgname=atom
+version=1.3.2
+revision=1
+nocross=yes
+nostrip=yes
+hostmakedepends="git pkg-config python-devel curl"
+makedepends="python-devel GConf-devel libgnome-keyring-devel"
+short_desc="Chrome-based text editor from Github"
+maintainer="Andrea Brancaleoni <miwaxe@gmail.com>"
+license="MIT"
+homepage="https://atom.io"
+distfiles="https://github.com/$pkgname/$pkgname/archive/v$version.tar.gz"
+checksum=2f8eacb8f4e388062d7adeedaabb91299c357d7fe85bfabab9905c0508295cfb
+_NODE_VERSION=0.12.7
+
+pre_build() {
+	local NVM_VERSION=0.26.1
+	curl -o- https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.sh | bash
+	source ~/.nvm/nvm.sh
+	nvm install $_NODE_VERSION
+	nvm use $_NODE_VERSION
+}
+do_build() {
+	script/build
+}
+do_install() {
+	source ~/.nvm/nvm.sh
+	nvm use $_NODE_VERSION
+	script/grunt install --install-dir ${DESTDIR}/usr
+	sed -i "s|${DESTDIR}||g" ${DESTDIR}/usr/share/applications/atom.desktop
+	vlicense LICENSE.md
+	# remove useless static libs
+	find ${DESTDIR} -type f -name \*.a -delete
+}

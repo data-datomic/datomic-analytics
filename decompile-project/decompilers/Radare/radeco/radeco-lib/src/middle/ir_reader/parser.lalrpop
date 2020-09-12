@@ -1,0 +1,164 @@
+use crate::middle::ir_reader::parser_util::*;
+use crate::middle::ir_reader::simple_ast::*;
+use crate::middle::ir;
+
+grammar;
+
+pub Function: Function =
+    <name:FuncHeader>
+    "{"
+    <entry_reg_state:EntryRegState>
+    <basic_blocks:BasicBlock*>
+    <exit_node:ExitNode?>
+    <final_reg_state:FinalRegState>
+    "}"                                                     => Function { <> };
+
+FuncHeader: String =
+    <s:r"define-fun [[:alnum:]_.]+\(unknown\) -> unknown">  => s[11..s.len()-20].to_owned();
+
+EntryRegState: Vec<(NewValue, PhysReg)> =
+    "entry-register-state:" <EntryRegState0*>               => <>;
+
+EntryRegState0: (NewValue, PhysReg) =
+    <NewValue> <PhysReg> ";"                                => (<>);
+
+FinalRegState: Vec<(PhysReg, Operand)> =
+    "final-register-state:" <FinalRegState0*>               => <>;
+
+FinalRegState0: (PhysReg, Operand) =
+    <PhysReg> "=" <Operand> ";"                             => (<>);
+
+BasicBlock: BasicBlock =
+    <addr:BBAddress>
+    <size:BBSize>
+    ":"
+    <ops:Operation*>
+    <term:Terminator>                                       => BasicBlock { <> };
+
+BBAddress: ir::MAddress =
+    "bb_" <MAddress>                                        => <>;
+
+BBSize: u64 =
+    "(" <r"sz 0x[[:xdigit:]]+"> ")"                         => str_to_u64(&<>[5..], 16);
+
+ExitNode: ExitNode =
+    "exit-node:" <ops:Operation*>                           => ExitNode { <> };
+
+Terminator: Terminator = {
+    "RETURN"                                                => Terminator::Return,
+    "JMP" <MAddress>                                        => Terminator::JmpUncond(<>),
+    "JMP" "IF" <Operand> <MAddress> "ELSE" <MAddress>       => Terminator::JmpCond(<>),
+    "JMP" "TO" <Operand>                                    => Terminator::JmpIndirect(<>),
+    "UNREACHABLE"                                           => Terminator::Unreachable,
+};
+
+Operation: Operation =
+    <Operation0> ";"                                        => <>;
+
+Operation0: Operation = {
+    <NewValue> <Phi>                                        => Operation::Phi(<>),
+    <OpAddr?> <NewValue> <Expr>                             => Operation::Assign(<>),
+    <OpAddr?> <CallRets> "CALL" <Operand> <CallArgs>        => Operation::Call(<>),
+    <OpAddr?> <CallRets> "CALL *(" <Operand> ")" <CallArgs> => Operation::Call(<>),
+};
+
+OpAddr: ir::MAddress =
+    "[@" <MAddress> "]"                                     => <>;
+
+CallRets: Vec<CallRet> =
+    "(" <Comma<CallRet>> ")" "="                            => <>;
+
+CallRet: CallRet =
+    <value:NewValue> <reg:PhysReg>                          => CallRet { <> };
+
+CallArgs: Vec<CallArg> =
+    "(" <Comma<CallArg>> ")"                                => <>;
+
+CallArg: CallArg =
+    <formal:PhysReg> "=" <actual:Operand>                   => CallArg { <> };
+
+Phi: Vec<Operand> =
+    "Phi" "(" <Comma<Operand>> ")"                          => <>;
+
+Expr: Expr = {
+    <Operand>                                               => Expr::Value(<>),
+    <Operand> <InfixOp> <Operand>                           => Expr::Infix(<>),
+    <PrefixOp> <Operand>                                    => Expr::Prefix(<>),
+    "Load" "(" <Operand> "," <Operand> ")"                  => Expr::Load(<>),
+    "Store" "(" <Operand> "," <Operand> "," <Operand> ")"   => Expr::Store(<>),
+    <ResizeType> <WidthSpec> "(" <Operand> ")"              => Expr::Resize(<>),
+};
+
+ResizeType: ResizeType = {
+    "Narrow"                                                => ResizeType::Narrow,
+    "SignExt"                                               => ResizeType::SignExt,
+    "ZeroExt"                                               => ResizeType::ZeroExt,
+};
+
+Operand: Operand = {
+    ValueRef                                                => Operand::ValueRef(<>),
+    Const                                                   => Operand::Const(<>),
+};
+
+PrefixOp: PrefixOp = {
+    "!"                                                     => PrefixOp::Not,
+};
+
+InfixOp: InfixOp = {
+    "+"                                                     => InfixOp::Add,
+    "-"                                                     => InfixOp::Sub,
+    "*"                                                     => InfixOp::Mul,
+    "/"                                                     => InfixOp::Div,
+    "%"                                                     => InfixOp::Mod,
+    "&"                                                     => InfixOp::And,
+    "|"                                                     => InfixOp::Or,
+    "^"                                                     => InfixOp::Xor,
+    "=="                                                    => InfixOp::Eq,
+    ">"                                                     => InfixOp::Gt,
+    "<"                                                     => InfixOp::Lt,
+    "<<"                                                    => InfixOp::Lsl,
+    ">>"                                                    => InfixOp::Lsr,
+};
+
+NewValue: NewValue =
+    <ValueRef> ":" <Type> "="                               => NewValue(<>);
+
+Type: Type =
+    "$Unknown" <WidthSpec> <RefSpec>                        => Type(<>);
+
+RefSpec: RefSpec =
+    <RefSpec0?>                                             => <>.unwrap_or(RefSpec::Scalar);
+
+RefSpec0: RefSpec = {
+    "(" "*" ")"                                             => RefSpec::Reference,
+    "(" "*" "?" ")"                                         => RefSpec::Unknown,
+};
+
+WidthSpec: WidthSpec =
+    r"[[:digit:]]+"                                         => WidthSpec(str_to_u16(<>, 10));
+
+Comment: String =
+    <s:r"\{[^}\n]*\}">                                      => s[1..s.len()-1].to_owned();
+
+PhysReg: PhysReg =
+    r"\$[a-z_][a-z0-9_]*"                                   => PhysReg(<>[1..].to_owned());
+
+ValueRef: ValueRef =
+    r"%[[:digit:]]+"                                        => ValueRef(str_to_u64(&<>[1..], 10));
+
+Const: u64 =
+    r"#x[[:xdigit:]]+"                                      => str_to_u64(&<>[2..], 16);
+
+MAddress: ir::MAddress =
+    <s:r"0x([[:xdigit:]]{6,})\.[[:xdigit:]]{4,}">
+        => {
+            let dot_idx = s.find('.').unwrap();
+            ir::MAddress::new(str_to_u64(&s[2..dot_idx], 16),
+                              str_to_u64(&s[dot_idx+1..], 16))
+        };
+
+Comma<E>: Vec<E> =
+    <Comma0<E>?>                                            => <>.unwrap_or(Vec::new());
+
+Comma0<E>: Vec<E> =
+    <v0:(<E> ",")*> <e:E>                                   => { let mut v = v0; v.push(e); v };

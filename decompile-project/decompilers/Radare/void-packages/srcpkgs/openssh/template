@@ -1,0 +1,51 @@
+# Template file for 'openssh'
+pkgname=openssh
+version=7.1p1
+revision=1
+build_style=gnu-configure
+configure_args="--sbindir=/usr/bin --datadir=/usr/share/openssh
+ --sysconfdir=/etc/ssh --without-selinux --with-privsep-user=nobody
+ --with-mantype=doc --without-rpath --with-xauth=/usr/bin/xauth
+ --disable-strip --with-privsep-path=/var/chroot/ssh
+ --with-pid-dir=/run --with-pam --with-pie --without-kerberos5
+ $(vopt_with ldns) $(vopt_if ssl --with-ssl-engine --without-openssl)
+ --without-ssh1 --with-libedit LD=$CC"
+hostmakedepends="automake libtool perl"
+makedepends="zlib-devel pam-devel libedit-devel
+ $(vopt_if ssl libressl-devel) $(vopt_if ldns libldns-devel)"
+short_desc="The OpenSSH implementation of SSH protocol"
+conf_files="/etc/ssh/moduli /etc/ssh/ssh_config /etc/ssh/sshd_config /etc/pam.d/sshd"
+make_dirs="/var/chroot/ssh 0755 root root"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.openssh.org"
+license="BSD"
+distfiles="http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$pkgname-$version.tar.gz"
+checksum=fc0a6d2d1d063d5c66dffd952493d0cda256cad204f681de0f84ef85b2ad8428
+
+# Package build options
+build_options="openssh_identitypersist ldns ssl"
+build_options_default="ldns ssl"
+desc_option_openssh_identitypersist="add key to ssh-agent(1) upon connecting"
+
+pre_configure() {
+	if [ "$build_option_openssh_identitypersist" ]; then
+		patch -sNp0 -i ${FILESDIR}/openssh-6.8p1-identitypersist.patch
+		msg_normal "$pkgver: applied identitypersist patch.\n"
+	fi
+	autoreconf -fi
+}
+post_install() {
+	vinstall contrib/sshd.pam.generic 644 etc/pam.d sshd
+	vbin contrib/ssh-copy-id
+	vman contrib/ssh-copy-id.1
+	vlicense LICENCE
+
+	sed -i \
+		-e 's|^#\(UsePAM\) no|\1 yes|g' \
+		-e 's|^#\(ChallengeResponseAuthentication\) yes|\1 no|g' \
+		-e 's|^#\(PrintMotd\) yes|\1 no|g' \
+		${DESTDIR}/etc/ssh/sshd_config
+
+	vinstall ${FILESDIR}/sshd.pam 644 etc/pam.d sshd
+	vsv sshd
+}

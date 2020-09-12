@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/capstone undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/capstone",
+    "repo": "https://github.com/frida/capstone",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/capstone",
+    "startTime": "2020-09-12T11:01:30.707Z",
+    "endTime": "2020-09-12T11:01:43.655Z",
+    "childProcessPid": 27250,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--capstone--27250"
+}

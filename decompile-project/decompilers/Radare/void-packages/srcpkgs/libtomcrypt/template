@@ -1,0 +1,38 @@
+# Template file for 'libtomcrypt'
+pkgname=libtomcrypt
+version=1.17
+revision=7
+patch_args="-Np1"
+hostmakedepends="libtool"
+short_desc="Fairly comprehensive, modular and portable cryptographic toolkit"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Public domain"
+homepage="http://www.libtom.net/?page=features&newsitems=5&whatfile=crypt"
+distfiles="http://www.libtom.net/files/crypt-${version}.tar.bz2"
+checksum=e33b47d77a495091c8703175a25c8228aff043140b2554c08a3c3cd71f79d116
+
+do_build() {
+	sed -e "s,@@CC@@,$CC,g;s,\$(CC),$CC,g" -i makefile.shared
+	if [ "$CROSS_BUILD" ]; then
+		cp /usr/bin/libtool .
+		sed -e "s,CCLD=.*,CCLD=$CC,g;s,CC=.*,CC=$CC,g" -i libtool
+		sed -e 's,libtool,./libtool,g' -i makefile.shared
+	fi
+	make RANLIB=$RANLIB -f makefile.shared ${makejobs}
+}
+do_install() {
+	make -f makefile.shared GROUP="$(whoami)" USER="$(whoami)" NODOCS=1 DESTDIR=${DESTDIR} install
+	vman ${sourcepkg}.3
+}
+
+libtomcrypt-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share/man/man3
+	}
+}

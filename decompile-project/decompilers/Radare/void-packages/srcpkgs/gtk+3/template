@@ -1,0 +1,79 @@
+# Template build file for 'gtk+3'.
+pkgname=gtk+3
+version=3.18.6
+revision=1
+wrksrc="gtk+-${version}"
+build_style=gnu-configure
+configure_args="--disable-schemas-compile --enable-gtk2-dependency
+ $(vopt_enable broadway broadway-backend) $(vopt_enable colord)
+ $(vopt_enable cups) $(vopt_enable gir introspection)
+ $(vopt_enable wayland wayland-backend) $(vopt_enable x11 x11-backend)"
+short_desc="The GTK+ toolkit (v3)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gtk.org/"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/gtk+/${version%.*}/gtk+-${version}.tar.xz"
+checksum=78cabf0fd5a662f8723f62d5ac633072c76c557c1d700454c9c3deaa37e441ef
+
+hostmakedepends="automake gettext-devel libtool pkg-config
+ glib-devel gtk-doc gobject-introspection gtk-update-icon-cache
+ $(vopt_if wayland wayland-devel)"
+makedepends="libglib-devel atk-devel at-spi2-atk-devel libepoxy-devel
+ libpng-devel fontconfig-devel cairo-devel pango-devel gdk-pixbuf-devel
+ $(vopt_if colord colord-devel) $(vopt_if cups cups-devel)
+ $(vopt_if wayland 'libxkbcommon-devel wayland-devel MesaLib-devel')
+ $(vopt_if x11 'libXcursor-devel libXdamage-devel libXext-devel libXinerama-devel libXi-devel libXrandr-devel libXcomposite-devel')"
+depends="gtk-update-icon-cache shared-mime-info $(vopt_if x11 dbus-x11)"
+triggers="gtk3-immodules"
+conf_files="/etc/gtk-3.0/im-multipress.conf"
+
+# Package build options
+build_options="broadway colord cups gir wayland x11"
+desc_option_broadway="Enable support for the HTML5 Broadway backend"
+
+# Enable all options by default.
+build_options_default="colord cups broadway wayland x11"
+
+# Enable gir only for native builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default+=" gir"
+fi
+
+pre_configure() {
+	sed -i 's,pkg-config,/usr/bin/pkg-config,' autogen.sh
+	NOCONFIGURE=1 ./autogen.sh
+}
+post_install() {
+	rm -f ${DESTDIR}/usr/bin/gtk-update-icon-cache
+	rm -f ${DESTDIR}/usr/share/man/man1/gtk-update-icon-cache.1
+}
+
+gtk+3-devel_package() {
+	depends="${makedepends} gtk+3>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+		vmove usr/share/gtk-doc
+		vmove usr/share/aclocal
+	}
+}
+gtk+3-demo_package() {
+	short_desc+=" - demonstration application"
+	pkg_install() {
+		vmove usr/bin/gtk3-demo
+		vmove usr/bin/gtk3-widget-factory
+		vmove usr/bin/gtk3-demo-application
+		vmove usr/share/man/man1/gtk3-widget-factory.1
+		vmove usr/share/gtk-3.0/gtkbuilder.rng
+		vmove usr/share/glib-2.0/schemas/org.gtk.Demo.gschema.xml
+		vmove usr/share/glib-2.0/schemas/org.gtk.exampleapp.gschema.xml
+		vmove usr/share/applications/gtk3-widget-factory.desktop
+		vmove usr/share/applications/gtk3-demo.desktop
+		vmove usr/share/icons
+	}
+}

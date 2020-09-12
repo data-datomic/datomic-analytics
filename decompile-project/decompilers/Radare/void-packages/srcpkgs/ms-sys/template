@@ -1,0 +1,17 @@
+# Template file for 'ms-sys'
+pkgname=ms-sys
+version=2.5.1
+revision=1
+short_desc="Unix program for writing Microsoft compatible boot records"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://ms-sys.sourceforget.net"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/$pkgname-$version.tar.gz"
+checksum=46ac427ffb520cdb77edbaf77e2b55f3ab8c6b02f3e5d389662c9a85d9f688ef
+
+do_build() {
+	make CC=$CC PREFIX=/usr ${makejobs}
+}
+do_install() {
+	make PREFIX=/usr MANDIR=/usr/share/man DESTDIR=${DESTDIR} install
+}

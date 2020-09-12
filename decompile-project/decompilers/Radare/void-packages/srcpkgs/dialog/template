@@ -1,0 +1,20 @@
+# Template file for 'dialog'
+pkgname=dialog
+_distver=1.2
+_date=20150920
+version=${_distver}.${_date}
+revision=1
+wrksrc=${pkgname}-${_distver}-${_date}
+build_style=gnu-configure
+configure_args="--with-ncursesw --disable-nls"
+makedepends="ncurses-devel"
+short_desc="A tool to display dialog boxes from shell scripts"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://invisible-island.net/dialog/"
+distfiles="ftp://invisible-island.net/${pkgname}/${pkgname}-${_distver}-${_date}.tgz"
+checksum=c4e61ec5768701683dd4b5b2ebd8a31e6289fa6a1f5801e4b481085650698c05
+
+post_install() {
+	rm -r ${DESTDIR}/usr/lib
+}

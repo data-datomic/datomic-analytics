@@ -1,0 +1,33 @@
+# Template file for 'libproxy'
+pkgname=libproxy
+version=0.4.11
+revision=3
+build_style=cmake
+configure_args="-DWITH_GNOME=0 -DWITH_KDE4=0 -DWITH_MOZJS=0 -DWITH_NM=0
+ -DWITH_PERL=0 -DWITH_PYTHON=1 -DWITH_WEBKIT=0"
+hostmakedepends="pkg-config python cmake"
+makedepends="zlib-devel"
+short_desc="A library handling all the details of proxy configuration"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://libproxy.googlecode.com"
+license="LGPL-2.1"
+distfiles="http://libproxy.googlecode.com/files/$pkgname-$version.tar.gz"
+checksum=dc3f33de54163718f82b3e7c496a7de97f8862578414b8ecaad3cbfe4821864b
+
+libproxy-devel_package() {
+	depends="libproxy>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/share
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}
+libproxy-python_package() {
+	depends="libproxy>=${version} python"
+	short_desc+=" - python bindings"
+	pkg_install() {
+		vmove "usr/lib/python*"
+	}
+}

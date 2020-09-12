@@ -1,0 +1,14 @@
+# Template file for 'mosh'
+pkgname=mosh
+version=1.2.5
+revision=2
+build_style=gnu-configure
+hostmakedepends="pkg-config protobuf-devel"
+makedepends="ncurses-devel protobuf-devel libutempter-devel libressl-devel"
+depends="perl-IO-Tty"
+short_desc="MObile SHell"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://mosh.mit.edu/"
+distfiles="http://mosh.mit.edu/mosh-${version}.tar.gz"
+checksum=1af809e5d747c333a852fbf7acdbf4d354dc4bbc2839e3afe5cf798190074be3

@@ -1,0 +1,37 @@
+# Template file for 'libsecret'
+pkgname=libsecret
+version=0.18.3
+revision=1
+build_style=gnu-configure
+configure_args="$(vopt_enable gir introspection) --disable-static --with-libgcrypt-prefix=${XBPS_CROSS_BASE}/usr"
+hostmakedepends="pkg-config intltool gnome-doc-utils glib-devel libxslt $(vopt_if gir gobject-introspection)"
+makedepends="vala-devel libgcrypt-devel"
+short_desc="GObject based library for accessing the Secret Service API"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2, LGPL-2.1"
+homepage="http://www.gnome.org"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-${version}.tar.xz"
+checksum=f2bf1d0c5ab4640664f3e3c7ef6b086c180e50ff415720b5e22f96750dbf84c9
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+libsecret-devel_package() {
+	depends="libglib-devel ${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+			vmove usr/share/vala
+		fi
+	}
+}

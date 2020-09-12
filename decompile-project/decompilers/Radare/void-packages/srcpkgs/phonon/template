@@ -1,0 +1,31 @@
+# Template file for 'phonon'
+pkgname=phonon
+version=4.8.3
+revision=2
+build_style=cmake
+configure_args="-Wno-dev -DPHONON_INSTALL_QT_EXTENSIONS_INTO_SYSTEM_QT=TRUE"
+hostmakedepends="cmake pkg-config automoc4"
+makedepends="glib-devel qt-devel pulseaudio-devel libqzeitgeist-devel"
+short_desc="The multimedia framework for KDE (Qt 4.x)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://phonon.kde.org/"
+distfiles="http://download.kde.org/stable/${pkgname}/${version}/src/${pkgname}-${version}.tar.xz"
+checksum=a1149c961ca1570968d070bbd23671e614aa506f847ca93748960e309f85da16
+
+post_install() {
+	# Create compat symlink for QT phonon.
+	vmkdir usr/lib/qt/plugins
+	ln -s /usr/lib/kde4/plugins/phonon_backend ${DESTDIR}/usr/lib/qt/plugins
+}
+
+phonon-devel_package() {
+	depends="qt-devel ${sourcepkg}-${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/cmake
+		vmove usr/lib/pkgconfig
+		vmove usr/share/phonon
+		vmove usr/share/qt
+	}
+}

@@ -1,0 +1,17 @@
+# Template file for 'gajim'
+pkgname=gajim
+version=0.16.4
+revision=1
+noarch=yes
+build_style=gnu-configure
+configure_args="--enable-site-packages"
+hostmakedepends="intltool python"
+makedepends="python-dbus pygtk-devel python-openssl python-sqlite python-nbxmpp"
+depends="${makedepends/-devel/}"
+pycompile_module="gajim"
+short_desc="Full featured Jabber/XMPP client"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://www.gajim.org"
+license="GPL-3"
+distfiles="https://gajim.org/downloads/${version%.*}/gajim-${version}.tar.bz2"
+checksum=2116ad3a5635c54b575ff53eed72fe4651fc50582f5094bfc6113d1cf0d1ce7f

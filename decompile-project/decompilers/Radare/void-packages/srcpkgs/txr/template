@@ -1,0 +1,20 @@
+# Template file for 'txr'
+pkgname=txr
+version=120
+revision=1
+build_style=configure
+hostmakedepends="bison flex"
+short_desc="Programming language for convenient data munging"
+maintainer="Oliver Kiddle <okiddle@yahoo.co.uk>"
+license="BSD"
+homepage="http://www.nongnu.org/txr/"
+distfiles="http://www.kylheku.com/cgit/txr/snapshot/${pkgname}-${version}.tar.bz2"
+checksum=06a3b1a358a1ca6235b691b1022f0558e870002367df9a20c65e951f52b9fa22
+
+do_configure() {
+	./configure --prefix=/usr "--ccname=${CC}" "--platform-cflags=${CFLAGS}" "--platform-ldflags=${LDFLAGS}"
+}
+
+post_install() {
+	vlicense LICENSE
+}

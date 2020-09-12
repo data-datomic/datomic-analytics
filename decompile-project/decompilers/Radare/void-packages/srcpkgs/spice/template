@@ -1,0 +1,31 @@
+# Template file for 'spice'
+pkgname=spice
+version=0.12.5
+revision=10
+build_style=gnu-configure
+configure_args="--disable-tunnel --disable-opengl --disable-smartcard
+ --with-sasl --disable-static --enable-xinerama --disable-celt051"
+hostmakedepends="pkg-config python-parsing"
+makedepends="spice-protocol libjpeg-turbo-devel pixman-devel
+ libressl-devel opus-devel alsa-lib-devel libXfixes-devel libXrender-devel
+ libXrandr-devel libsasl-devel libXinerama-devel libglib-devel"
+short_desc="Implements the SPICE protocol"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://www.spice-space.org"
+distfiles="http://www.spice-space.org/download/releases/spice-${version}.tar.bz2"
+checksum=4209a20d8f67cb99a8a6ac499cfe79a18d4ca226360457954a223d6795c2f581
+
+post_extract() {
+	sed -i 's/armv6hl/arm/g' configure	# "detects" cpu from triplet.
+}
+
+spice-devel_package() {
+	depends="${makedepends} spice>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

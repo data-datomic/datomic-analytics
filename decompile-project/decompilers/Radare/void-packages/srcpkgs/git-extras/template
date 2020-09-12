@@ -1,0 +1,21 @@
+# Template file for 'git-extras'
+pkgname=git-extras
+version=4.0.0
+revision=1
+noarch=yes
+build_style=gnu-makefile
+depends="bash"
+short_desc="Little git extras"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="MIT"
+homepage="https://github.com/tj/git-extras"
+distfiles="${homepage}/archive/${version}.tar.gz"
+checksum=4adaadc1f22f3240ae9607963ede29a5c010ae14b877b90c27d17d6b0c06f430
+
+pre_build() {
+	sed -i 's|/etc/bash_completion.d|/usr/share/bash-completion/completions|' Makefile
+}
+
+post_install() {
+	vlicense LICENSE
+}

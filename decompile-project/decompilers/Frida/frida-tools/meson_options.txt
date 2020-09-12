@@ -1,0 +1,5 @@
+option('python',
+  type: 'string',
+  value: '',
+  description: 'Python interpreter to build for'
+)

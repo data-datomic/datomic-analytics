@@ -1,0 +1,30 @@
+# Template file for 'ccache'
+pkgname=ccache
+version=3.2.4
+revision=2
+bootstrap=yes
+build_style=gnu-configure
+makedepends="zlib-devel"
+short_desc="A Fast C/C++ Compiler Cache"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://ccache.samba.org"
+license="GPL-2"
+distfiles="http://samba.org/ftp/${pkgname}/${pkgname}-${version}.tar.bz2"
+checksum=ffeb967edb549e67da0bd5f44f729a2022de9fdde65dfd80d2a7204d7f75332e
+
+post_configure() {
+	# Fix wrong dependency on a lib
+	sed -i Makefile \
+		-e "s;\(ccache\$(EXEEXT): \$(ccache_objs)\).*;\1;"
+}
+
+post_install() {
+	vmkdir usr/lib/ccache/bin
+	for f in gcc cc c++ g++; do
+		ln -sfr ${DESTDIR}/usr/bin/ccache ${DESTDIR}/usr/lib/ccache/bin/${f}
+		for x in arm-linux-gnueabi arm-linux-gnueabihf armv7l-linux-gnueabihf \
+			arm-linux-musleabihf armv7l-linux-musleabihf; do
+			ln -sfr ${DESTDIR}/usr/bin/ccache ${DESTDIR}/usr/lib/ccache/bin/${x}-${f}
+		done
+	done
+}

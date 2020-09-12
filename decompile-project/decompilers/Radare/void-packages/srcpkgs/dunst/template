@@ -1,0 +1,23 @@
+# Template file for 'dunst'
+pkgname=dunst
+version=1.1.0
+revision=2
+build_style=gnu-makefile
+hostmakedepends="pkg-config perl"
+makedepends="dbus-devel libXinerama-devel libXft-devel libXScrnSaver-devel
+ libxdg-basedir-devel pango-devel"
+short_desc="Lightweight and customizable notification daemon"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="BSD"
+homepage="http://knopwob.org/dunst"
+distfiles="https://github.com/knopwob/dunst/archive/v${version}.tar.gz"
+checksum=1a075a0aee56aea5aa2007f156f97bd180b3c771b7751729612629a04f712575
+
+pre_build () {
+	sed -e 's/CFLAGS/D_CFLAGS/;s/LDFLAGS/D_LDFLAGS/;s/-Os//;s/-g//' -i config.mk
+	sed -e 's/\(${CFLAGS}\)/\1 ${D_CFLAGS}/;s/\(${LDFLAGS}\)/\1 ${D_LDFLAGS}/' -i Makefile
+}
+
+post_install() {
+	vlicense LICENSE
+}

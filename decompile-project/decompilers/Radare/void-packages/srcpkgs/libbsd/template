@@ -1,0 +1,36 @@
+# Template file for 'libbsd'
+pkgname=libbsd
+version=0.8.1
+revision=1
+build_style=gnu-configure
+makedepends="libressl-devel"
+short_desc="Provides useful functions commonly found on BSD system"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://libbsd.freedesktop.org/"
+license="BSD"
+distfiles="http://libbsd.freedesktop.org/releases/libbsd-${version}.tar.xz"
+checksum=adbc8781ad720bce939b689f38a9f0247732a36792147a7c28027c393c2af9b0
+
+post_extract() {
+	case "$XBPS_TARGET_MACHINE" in
+	*-musl)
+		sed -i '1i#include <fcntl.h>' src/flopen.c src/nlist.c
+		sed -i '/#error/d' src/funopen.c
+		cp -pR ${FILESDIR}/* include/bsd
+		;;
+	esac
+}
+post_install() {
+	vlicense COPYING
+}
+libbsd-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

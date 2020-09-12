@@ -1,0 +1,36 @@
+# Template file for 'geocode-glib'
+pkgname=geocode-glib
+version=3.18.0
+revision=1
+build_style=gnu-configure
+configure_args="--disable-static $(vopt_enable gir introspection)"
+hostmakedepends="pkg-config intltool glib-devel $(vopt_if gir gobject-introspection)"
+makedepends="json-glib-devel libsoup-gnome-devel"
+short_desc="GLib library for geocoding and reverse geocoding"
+homepage="http://www.gnome.org"
+license="LGPL-2.1"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=8fb7f0d569e3e6696aaa1fdf275cb3094527ec5e9fa36fd88dd633dfec63495d
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+geocode-glib-devel_package() {
+	depends="libglib-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}

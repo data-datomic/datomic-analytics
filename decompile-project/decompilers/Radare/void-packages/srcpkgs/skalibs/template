@@ -1,0 +1,40 @@
+# Template file for 'skalibs'
+pkgname=skalibs
+version=2.3.8.3
+revision=1
+nocross=yes
+build_style=gnu-configure
+configure_args="--libdir=/usr/lib --enable-static --enable-shared --enable-clock
+ --enable-monotonic --enable-force-devr --datadir=/usr/share/$pkgname"
+short_desc="General purpose libraries for building software from skarnet.org"
+maintainer="bougyman <bougyman@voidlinux.eu>"
+license="ISC"
+homepage="http://skarnet.org/software/skalibs/"
+distfiles="http://skarnet.org/software/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=3652e268f42ce60959dcc80ca3eba8dc17b6d365309179bfb0e04bc5f1603d7c
+
+CFLAGS="-D_DEFAULT_SOURCE"
+
+post_install() {
+	vlicense COPYING LICENSE
+}
+
+skalibs-doc_package() {
+	noarch=yes
+	short_desc+=" - documentation"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmkdir usr/share/doc/skalibs
+		vcopy "doc/*" usr/share/doc/skalibs
+	}
+}
+skalibs-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/skalibs/sysdeps
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+	}
+}

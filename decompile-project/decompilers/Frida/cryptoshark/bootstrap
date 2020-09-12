@@ -1,0 +1,61 @@
+#!/bin/bash
+
+frida_version=12.11.14
+
+cd "$(dirname $0)"
+
+platform=$(tools/unix/detect-platform)
+arch=$1
+if [ -z "$arch" ]; then
+  if [ -n "$CRYPTOSHARK_ARCH" ]; then
+    arch=$CRYPTOSHARK_ARCH
+  else
+    arch=$(tools/unix/detect-arch)
+  fi
+fi
+if [ -z "$CRYPTOSHARK_ARCH" ]; then
+  . tools/$platform/activate-env || exit $?
+fi
+
+if [ ! -f ext/frida-qml/frida-qml.pri ]; then
+  echo ""
+  echo "***"
+  echo "*** Fetching submodules"
+  echo "***"
+  git submodule init
+  git submodule update || exit $?
+fi
+
+devkit_url="https://github.com/frida/frida/releases/download/$frida_version/frida-core-devkit-$frida_version-$platform-$arch.tar.xz"
+devkit_dir="ext/frida-core/$arch"
+if [ ! -f "$devkit_dir/libfrida-core.a" ]; then
+  echo ""
+  echo "***"
+  echo "*** Fetching frida-core devkit for $platform-$arch"
+  echo "***"
+  rm -rf "$devkit_dir"
+  mkdir -p "$devkit_dir"
+  pushd "$devkit_dir" > /dev/null
+  curl "$devkit_url" -fLo devkit.tar.xz || exit $?
+  tar Jxf devkit.tar.xz || exit $?
+  rm devkit.tar.xz
+  popd > /dev/null
+fi
+
+if [ ! -f ext/radare2/build/priv_install_dir/lib/libr_core.a ]; then
+  echo ""
+  echo "***"
+  echo "*** Building Radare"
+  echo "***"
+  tools/unix/build-radare || exit $?
+fi
+
+if [ ! -f app/agent.js ]; then
+  echo ""
+  echo "***"
+  echo "*** Building Agent"
+  echo "***"
+  pushd app/agent > /dev/null
+  npm install || exit $?
+  popd > /dev/null
+fi

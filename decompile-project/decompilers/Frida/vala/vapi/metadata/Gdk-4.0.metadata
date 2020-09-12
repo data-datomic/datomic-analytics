@@ -1,0 +1,46 @@
+KEY_* name="KEY_(.+)" type="uint" parent="Gdk.Key"
+
+*.ref unowned
+*.unref destroys_instance=false
+
+// Event API
+events_*#function parent="Gdk.Event" name="events_(.+)"
+
+Cursor	abstract=false
+Device
+        .free_history skip=false
+        .get_axis skip=false
+        .get_axis_value skip=false
+        .get_history skip=false
+        .get_state skip=false
+        .get_surface_at_position skip=false
+Event
+        ._get_angle skip
+        ._get_center skip
+        ._get_distance skip
+Paintable
+        .new_empty name="empty"
+Surface abstract=false
+Rectangle struct
+        .x skip
+        .y skip
+        .width skip
+        .height skip
+RGBA struct
+pango_layout_get_clip_region skip=false
+Texture
+        // Factory method
+        .new_* symbol_type="function" name="new_(.+)"
+Surface
+        .destroy destroys_instance
+
+// g-i doesn't support nullable fields and properties (bug #730479)
+Device
+        .associated_device nullable
+        .name nullable
+
+// vapigen actually generates the correctly, but in away that breaks BC
+Rectangle.union return_void
+
+DrawingContext skip
+Geometry skip

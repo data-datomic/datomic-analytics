@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/libunwind undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/libunwind",
+    "repo": "https://github.com/frida/libunwind",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/libunwind",
+    "startTime": "2020-09-12T11:04:07.978Z",
+    "endTime": "2020-09-12T11:04:09.499Z",
+    "childProcessPid": 27801,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--libunwind--27801"
+}

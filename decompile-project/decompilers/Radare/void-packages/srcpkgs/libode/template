@@ -1,0 +1,29 @@
+# Template build file for 'libode'
+pkgname=libode
+version=0.14
+revision=1
+build_style=gnu-configure
+hostmakedepends="automake libtool"
+short_desc="High performance library for simulating rigid body dynamics"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="LGPL-2/BSD"
+homepage="http://www.ode.org"
+distfiles="https://bitbucket.org/odedevs/ode/downloads/ode-$version.tar.gz"
+checksum=1072fc98d9d00262a0d6136e7b9ff7f5d953bbdb23b646f426909d28c0b4f6db
+wrksrc="ode-$version"
+configure_args="--disable-static --enable-shared --enable-double-precision"
+
+pre_configure() {
+	autoreconf -fi
+}
+
+libode-devel_package() {
+	depends="libode>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove "usr/bin"
+	}
+}

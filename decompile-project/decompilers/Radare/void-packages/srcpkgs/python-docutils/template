@@ -1,0 +1,50 @@
+# Template file for 'python-docutils'
+pkgname=python-docutils
+version=0.12
+revision=2
+noarch=yes
+wrksrc="docutils-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python"
+pycompile_module="docutils"
+short_desc="Python2 documentation utilities"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="http://docutils.sourceforge.net"
+license="Public Domain, 2-clause-BSD, GPL-3, PSF"
+distfiles="${PYPI_SITE}/d/docutils/docutils-${version}.tar.gz"
+checksum=c7db717810ab6965f66c8cf0398a98c9d8df982da39b4cd7f162911eb89596fa
+
+pre_build() {
+	# remove shebang from library files
+	find docutils/{utils,writers} -type f -name '*.py' -exec sed -i '/^#!/d' {} +
+}
+post_install() {
+	# fix name conflict and remove .py suffix
+	for f in 2html 2latex 2man 2odt 2odt_prepstyles 2pseudoxml 2s5 2xetex 2xml pep2html; do
+		rm -f ${DESTDIR}/usr/bin/rst${f}.py
+		vbin build-2.7/scripts-2.7/rst${f}{.py,}
+		vbin build-3.4/scripts-3.4/rst${f}{.py,3}
+	done
+
+	# install licenses
+	vlicense COPYING.txt
+	vlicense licenses/BSD-2-Clause.txt
+	vlicense licenses/python-2-1-1.txt
+}
+
+python3.4-docutils_package() {
+	noarch=yes
+	depends="python3.4"
+	pycompile_version="3.4"
+	pycompile_module="docutils"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/bin/*3
+		vmove usr/lib/python3.4
+		vlicense COPYING.txt
+		vlicense licenses/BSD-2-Clause.txt
+		vlicense licenses/python-2-1-1.txt
+	}
+}

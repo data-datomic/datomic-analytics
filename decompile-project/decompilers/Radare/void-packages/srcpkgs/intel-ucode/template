@@ -1,0 +1,24 @@
+# Template file for 'intel-ucode'
+pkgname=intel-ucode
+version=20151106
+revision=1
+noarch=yes
+create_wrksrc=yes
+short_desc="Microcode update files for Intel CPUs"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="INTEL Software License Agreement"
+homepage="http://downloadcenter.intel.com/SearchResult.aspx?lang=eng&keyword=%22microcode%22"
+distfiles="http://downloadmirror.intel.com/25512/eng/microcode-${version}.tgz"
+checksum=096e39489eef67666be652e81fa372a06b74f39ea3d565dc0287242c668717e7
+
+only_for_archs="i686 x86_64 i686-musl x86_64-musl"
+
+do_build() {
+	${CC} -Wall ${CFLAGS} -o intel-microcode2ucode ${FILESDIR}/intel-microcode2ucode.c
+	./intel-microcode2ucode ./microcode.dat
+}
+do_install() {
+	vmkdir usr/lib/firmware/intel-ucode
+	vcopy "intel-ucode/*" usr/lib/firmware/intel-ucode
+	vlicense ${FILESDIR}/LICENSE
+}

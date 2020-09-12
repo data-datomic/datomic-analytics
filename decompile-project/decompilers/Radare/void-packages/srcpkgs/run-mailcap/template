@@ -1,0 +1,30 @@
+# Template file for 'run-mailcap'
+pkgname="run-mailcap"
+version="3.59"
+revision=1
+short_desc="Execute programs via entries in the mailcap file"
+maintainer="Stefan Mühlinghaus <jazzman@alphabreed.com>"
+license="Public Domain"
+homepage="http://packages.ubuntu.com/vivid/mime-support"
+distfiles="${UBUNTU_SITE}/main/m/mime-support/mime-support_${version}ubuntu1.tar.gz"
+checksum="55ee4350da8425fb65e7c9b60518e20de09c5a72d08148e644fcefe7abf9c83d"
+wrksrc="mime-support-${version}ubuntu1"
+noarch=1
+depends="perl"
+
+do_install() {
+	local _aliases="see edit compose print"
+
+	vbin run-mailcap
+	vman run-mailcap.man run-mailcap.1
+	vman mailcap.man mailcap.1
+	cd ${DESTDIR}/usr/bin
+	for a in ${_aliases}; do
+		ln -sf run-mailcap ${a}
+	done
+	cd ${DESTDIR}/usr/share/man/man1
+	for a in ${_aliases}; do
+		ln -sf run-mailcap.1 ${a}.1
+	done
+}
+

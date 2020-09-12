@@ -1,0 +1,501 @@
+# Template file for 'libreoffice-bin-i18n'
+pkgname=libreoffice-bin-i18n
+version=5.0.3
+revision=1
+build_style=meta
+hostmakedepends="rpmextract"
+short_desc="LibreOffice localization files (binary build)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-3"
+homepage="http://www.documentfoundation.org/"
+_url="http://download.documentfoundation.org/libreoffice/stable/${version}/rpm/x86"
+distfiles="
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_am.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ast.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_bg.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_bn-IN.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_bn.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_bo.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_bs.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ca-valencia.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ca.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_cs.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_da.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_de.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_dz.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_el.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_en-GB.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_en-US.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_en-ZA.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_eo.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_es.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_et.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_eu.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_fi.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_fr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_gl.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_gu.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_he.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_hi.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_hr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_hu.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_id.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_is.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_it.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ja.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ka.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_km.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ko.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_mk.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_nb.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ne.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_nl.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_nn.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_om.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_pl.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_pt-BR.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_pt.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ru.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_si.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_sk.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_sl.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_sq.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_sv.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_tg.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_tr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_ug.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_uk.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_vi.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_zh-CN.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_helppack_zh-TW.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_af.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_am.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ar.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_as.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ast.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_be.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_bg.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_bn-IN.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_bn.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_bo.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_br.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_brx.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_bs.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ca.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_cs.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_cy.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_da.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_de.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_dgo.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_dz.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_el.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_en-GB.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_en-ZA.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_eo.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_es.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_et.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_eu.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_fa.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_fi.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_fr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ga.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_gd.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_gl.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_gu.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_he.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_hi.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_hr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_hu.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_id.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_is.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_it.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ja.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ka.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_kk.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_km.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_kn.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ko.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_kok.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ks.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_lb.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_lo.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_lt.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_lv.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_mai.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_mk.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ml.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_mn.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_mni.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_mr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_my.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_nb.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ne.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_nl.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_nn.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_nr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_nso.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_oc.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_om.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_or.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_pa-IN.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_pl.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_pt-BR.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_pt.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ro.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ru.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_rw.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sa-IN.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sat.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sd.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_si.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sid.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sk.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sl.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sq.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ss.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_st.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sv.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_sw-TZ.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ta.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_te.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_tg.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_th.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_tn.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_tr.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ts.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_tt.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ug.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_uk.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_uz.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_ve.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_vi.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_xh.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_zh-CN.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_zh-TW.tar.gz
+ ${_url}/LibreOffice_${version}_Linux_x86_rpm_langpack_zu.tar.gz"
+
+_languages=(
+	'af            "Afrikaans"'
+	'am            "Amharic"'
+	'ar            "Arabic"'
+	'as            "Assamese (India)"'
+	'ast           "Asturianu"'
+	'be            "Belarusian"'
+	'bg            "Bulgarian"'
+	'bn            "Bengali"'
+	'bn-IN         "Bengali (India)"'
+	'bo            "Tibetan"'
+	'br            "Breton"'
+	'brx           "Bodo"'
+	'bs            "Bosnian"'
+	'ca            "Catalan"'
+	'ca-valencia   "Catalan (Valencia)"'
+	'cs            "Czech"'
+	'cy            "Welsh"'
+	'da            "Danish"'
+	'de            "German"'
+	'dgo           "Dogri"'
+	'dz            "Dzongkha"'
+	'el            "Greek"'
+	'en-GB         "English (GB)"'
+	'en-ZA         "English (ZA)"'
+	'eo            "Esperanto"'
+	'es            "Spanish"'
+	'et            "Estonian"'
+	'eu            "Basque"'
+	'fa            "Persian"'
+	'fi            "Finnish"'
+	'fr            "French"'
+	'ga            "Irish"'
+	'gd            "Gaelic (Scottish)"'
+	'gl            "Galician"'
+	'gu            "Gujarati"'
+	'he            "Hebrew"'
+	'hi            "Hindi"'
+	'hr            "Croatian"'
+	'hu            "Hungarian"'
+	'id            "Indonesian"'
+	'is            "Icelandic"'
+	'it            "Italian"'
+	'ja            "Japanese"'
+	'ka            "Georgian"'
+	'kk            "Kazakh"'
+	'km            "Khmer (Cambodia)"'
+	'kn            "Kannada"'
+	'ko            "Korean"'
+	'kok           "Konkani"'
+	'ks            "Kashmiri"'
+	'lb            "Luxembourgish"'
+	'lo            "Lao"'
+	'lt            "Lithuanian"'
+	'lv            "Latvian"'
+	'mai           "Maithili"'
+	'mk            "Macedonian"'
+	'ml            "Malayalam"'
+	'mn            "Mongolian"'
+	'mni           "Manipuri"'
+	'mr            "Marathi"'
+	'my            "Burmese"'
+	'nb            "Norwegian Bokmal"'
+	'ne            "Nepali"'
+	'nl            "Dutch"'
+	'nn            "Norwegian Nynorsk"'
+	'nr            "Ndebele (South)"'
+	'nso           "Northern Sotho"'
+	'oc            "Occitan"'
+	'om            "Oromo"'
+	'or            "Oriya"'
+	'pa-IN         "Punjabi (India)"'
+	'pl            "Polish"'
+	'pt            "Portuguese"'
+	'pt-BR         "Portuguese (Brasil)"'
+	'ro            "Romanian"'
+	'ru            "Russian"'
+	'rw            "Kinyarwanda"'
+	'sa-IN         "Sanskrit (India)"'
+	'sat           "Santali"'
+	'sd            "Sindhi"'
+	'si            "Singhalese"'
+	'sid           "Sidama"'
+	'sk            "Slovak"'
+	'sl            "Slovenian"'
+	'sq            "Albanien"'
+	'sr            "Serbian"'
+	'ss            "Swati"'
+	'st            "Southern Sotho"'
+	'sv            "Swedish"'
+	'sw-TZ         "Swahili (Tanzania)"'
+	'ta            "Tamil"'
+	'te            "Telugu"'
+	'tg            "Tajik"'
+	'th            "Thai"'
+	'tn            "Tswana"'
+	'tr            "Turkish"'
+	'ts            "Tsonga"'
+	'tt            "Tatar"'
+	'ug            "Uighur"'
+	'uk            "Ukrainian"'
+	'uz            "Uzbek"'
+	've            "Venda"'
+	'vi            "Vietnamese"'
+	'xh            "Xhosa"'
+	'zh-CN         "Chinese (simplified)"'
+	'zh-TW         "Chinese (traditional)"'
+	'zu            "Zulu"'
+)
+
+do_build() {
+	for i in $distfiles; do
+		_localver="${version}.2"
+		_tarbname="${i##*/}"
+		_tarbname="${_tarbname%*.tar.gz}"
+		_lang="${_tarbname##*_}"
+		echo "Unpacking ${_tarbname}..."
+		# We create a directory using p_${_lang} (for example p_zh-TW) containing
+		# opt/libreoffice*, with helppack and/or langpack extracted inside it.
+		if [ ! -d "${wrksrc}/p_${_lang}" ]; then
+			mkdir -p ${wrksrc}/p_${_lang}
+		fi
+		cd ${wrksrc}/p_${_lang}
+		if [ -d "${wrksrc}/LibreOffice_${_localver}_Linux_x86_rpm_helppack_${_lang}/RPMS/" ]; then
+			rpmextract ${wrksrc}/LibreOffice_${_localver}_Linux_x86_rpm_helppack_${_lang}/RPMS/*.rpm
+		fi
+		if [ -d "${wrksrc}/LibreOffice_${_localver}_Linux_x86_rpm_langpack_${_lang}/RPMS/" ]; then
+			rpmextract ${wrksrc}/LibreOffice_${_localver}_Linux_x86_rpm_langpack_${_lang}/RPMS/*.rpm
+		fi
+	done
+}
+do_install() {
+	:
+}
+
+noarch=yes
+create_wrksrc=yes
+depends="${subpackages}"
+
+for _lang in "${_languages[@]}"; do
+	_locale=${_lang%% *}
+	_pkgname=libreoffice-bin-i18n-${_locale}
+
+	depends+=" ${_pkgname}>=${version}"
+
+	eval "${_pkgname}_package() {
+		_pkgtmpl ${_lang}
+	}"
+done
+
+_pkgtmpl() {
+	_lang="$1"
+	short_desc="LibreOffice localization files (binary build) - $2 language pack"
+	noarch=yes
+	pkg_install() {
+		vmkdir opt
+		cp -R ${wrksrc}/p_${_lang}/opt/libreoffice*/ ${PKGDESTDIR}/opt/
+	}
+}
+
+checksum="aff82b6662fe8030cee69868a52e1932f42153f077c0842a4e1dedbddf46aa4d
+ 41cf2675f4121351c553f69ca6e9bc9cf572bfd31aa4c135321bda96ceb2e264
+ 41b7e61e6ba09a76a78639d80a7aa30cc3212393f72edd1e0ef0b48db5765ce7
+ 8938df9a64dd16cf0b84429a7b086f73493d06fcb452bdfc94e32bab1c1ed2c8
+ b992b2ee8577cccd18735bd5b64feedd9d253d289e37da76d94f512ddc6f5aed
+ 5ddf7cecd31130cf38af4eda601b9db0980c40edee2814006e1b08db2b17394a
+ 46c003324157c77b7d46bed33ab44397c515cb42a375867d38999b2817719f9c
+ 215cd39f24966e7e1694c0a0807f143a1077a21d1b62e68dbda69e807685ed38
+ 722cbacfc0cbd699ced786fe62bab6dfc0a2f878ba348e8d1fc1541a8fb35262
+ fc1a5af4ea35a9a13780e9adeb9304ab9167fb3cb8f25a03691422a2aeefeb42
+ 26bb58b18605c316da6cbc64b8a8d9020ba7d848eac4f3b2d60b41fe30b9b8bd
+ 4b1c67b80ea16f2027b1a666dec8de7d989b7e0cb7ad9a118163117b1782cb82
+ 00626dca64a6fb601cdb7d0523fbb0d0b3994aee8d11e53cc3342c4b1037a3d6
+ b6752a7edd58ec4e80a30a1bab20e55c34145203c2b1e468b2e069a158ccc11b
+ d7b949a0fde56d74b0a6750f357f1583a6c0735511796a182d7084957149f776
+ c14058cac96a9b096cc3fd5e83f324ba09b7ad7aecf4fefc9f71e69c8689e729
+ 961fec5dd18fa48c48ef313ef6c2e3155f0cb19ac9c5e2ca932b8556fbedcb32
+ 9d26b07813dac0a7262f78fd774361a6c8fa56267740ccc3c33afd8d368c4716
+ 92719f76a0dd3fec863a5377293da565183a138c01c7d96f8a15ee49aefd71ba
+ d7b3ef6746405fa77856fd910bf396255827877f1d892aa35b324dad3a1d9939
+ b15e8434d504af06a5880b8b69fc43939959ebcda0cfe23a77265e81d9b10ecd
+ d96414132bcee4b4b593a0ce1a844f67612f593f422a99e7d92f0d78233012e2
+ cc7d82917a4c4bba0ae27ecedee57536f9a0f0e43c9192368a33bf88c364678b
+ 9341a4ea9977c6f9e0d971d669a2c89ed3337dc98eb0b4a17d4b79bcfe3d1541
+ a2e7dc03f074fe5ace3906d1b9c2b3cc426dd3f84fc9ee2c3906899a17ac2565
+ 697f9dd5c873f0582df86263bc06d2379cd3eeca32d526deba3af7f9fbf3f0c9
+ 7bbbfc4c71acfb89268f94c0ef8f1ba8db5f680539abf03ad367c79bebef4303
+ 116d651b6724cff5d5b1ea9065cd45d2f1cee03fea800e4e07ed92346d239c9d
+ 82eb5cf350efe61197c7e5dbc48e9b4712a604c4934f4c46cf19a493d2be80c5
+ 8ce1a2ce5be81abb035c23fb619870008be7ba45e1978d581e25b80590f1cadc
+ 1a59ace1456573c9a3eb830c7350cbb1af843d62d80b246c5a9fa9e4b2fc016c
+ f4cca7e364761c082aa1c7befef1d2182e6aeec831794b9b6e815b12dd6ab53e
+ b997b32449c04764e4d29ae975ab7d09197bb2f90390ef32d4501d88d9140f5f
+ edbc55d651efbe0d4f2c9ddde0a92eb13a1d81de124a38c6b61acd85eeb929c2
+ e8611aa1fdff5c41ced6816a0ca79a2538e713d82893eef8c1b98b165a4dd2bc
+ 0978165cc70550b8149ee5d21066bba04e3dab8a3aedb2baf651900123c34e75
+ 69846d7ee72ada807cfa84ab30983aea3ad87a8f0f41e26c2956e3eb14e29f96
+ 38d0e534e5b1d7b3ad51afdbeb05274dc9a67a8c802021eea2fc1cc439f8b548
+ 299c67643783ab05e2b4d0020c5c5e0c11b2f47ac957c8d143363f2965abdca5
+ 52e51ad41a65222e2d94db06ba18efc1b3da3814d469bb16dc5467d83d87805a
+ 334eaef6321ce1a81251176f1106daf1595df19e962fae308375621f857cb007
+ 0eb9fda423824d0877285c78b3862872f31424820121cd43ce6e6b94d00cdb16
+ f48de07bccdbcddc9796ff03c2c832a2b3965424455e5a0b8c17be885abf40bd
+ 92ba146a1903edb9dc716bffa25f1f544129eff7088bcd6559ecc03f30f9985d
+ 39c093198a65e32223b728a2283c5c236e9ba57ec013c4e9fc5eec7ad8abcbb8
+ e7ce29363a869b3ad91a2c2aca724e5eb10bf95e07f2340b8bfa6ce116aa1793
+ e6373cb7fccb91c1de41469321b546ac9158dc81c31e33215cde174674371472
+ f1073e8b6de614591e5c7dac9a9946e721b0f8e49e5087140a0d269ca4f66964
+ fa9bad151c4923a9f73837519c5fdd66fe180d211ab88060a062ed428fb53e3c
+ b739712b6a425fd16da29705fddda678f46739aa687c5dfe1d521d4f2b4c51ba
+ 0e382246c30df9463ee646cd4d0f94b50426c9b87d55201a3b357973627a2601
+ 98c76560c46fdf6bac8ac8714bf7e65a040e28d6737c171c4543d7b4190a23eb
+ 38fed66d248d6a2b3860f7d091e714216655096325b811f5055018ade8b07af7
+ c56d17c01367c3e36455ce86f0295d5bfc16b1ff0df2b8d6c74fd708f52d6215
+ 844091b0d14d6ddc865572917f701b11a9a89f953a35d821fab244f6c448d0fc
+ 3afda4499f023988ba43c37d27b3dca1b0d25700700c27e8034db6602a70f531
+ 99a5258d6fb3a253f47943f7ef1f6c16992d13795f170a518318171037e8ae44
+ b55655a1d3fc9597ed01b0ef6a2cee381b178e0acef22cc330045f2762bf592c
+ 328f4f1546e3a2ded11244cda6ef02fb2729cd638ab7802c1e592ba3931520ee
+ 42364d80a43930f93d8948b85e8344280d9a77de72b051ee93968a6c73b14c67
+ d087b983527d0ec3c87ee0c49017721da90a9b94324155fec9256c8276ec37d0
+ 7c2d424bbb6bd82fd9bff1422b13161c3e884d4b60257daf29c8bce6eb80932b
+ 3a2fa0fb5fdb980ac5ac19d1830705794a43c921defee6fbcc5ed88d89ed11d5
+ 75f952a9f8a7e0478f3c444ca90ec8ccd09c2e1bcc711305b156e08f1000cffe
+ 4f55c70161bcf161e0183c3129cf5d2f2148161af6e27550a7e2bde1c4dd268a
+ c3bc8ea622ba23db32198cdc9ba64ecfbecf8d03cfdab749a5c2fb2ad49a927a
+ 74c7188ee4606e3ba4a52d3eb48feb5e291b19b95f016ec5358d89806964bfb9
+ 83ce9fb07e897a34ac317e8289155ac5442f58bb125e6e5ac7012b4a00a9cbbe
+ aefe95f7850ed8566f2833e649f73f257e7a762e7c687555ab89cfe6a3033ef7
+ d13613e7acf8cbd29bd3ec0451b94f8bd54dfbc7aed0d8a3416d178f69e880c6
+ 1f9aad4cbc25dff4bd0c3f440bf14a0f74275be6047672452c03dd9db20a5276
+ b2146881fee688e729b533276889741154fb5aa8a177ce740348651ea804f807
+ 88fd16945ed2f47342c6b5c7eb2d55ffdc9676921a285f7034ece172c615093b
+ c694e519ca3a88b0f31f9ff3de7641408ce666e070d15221c84fc1a24c9413d2
+ 1d1a269461e96cdc8ffa137b881e2dc037ff9e8ff324f202a7cf0e344b9cd27e
+ e0b6a11f9c26ffcedba08cce4f5f932e37dddc29128c5cb08b885552fbd46068
+ 48462fa313c128ca6060ee2d831928a1e953e5bdcab2fe77701ad0322088428e
+ 5e9aaf223b95f5437d22af7bf98273def4ef7c688902df9cdfc8f2cee8f6135d
+ 3576d0b368ea5012f77ac6c6433272482b5dda6b357914a30c173fa7f480afbd
+ f31fda1b4df5d3cfe89a1764050f1271b6be39ce6faa311510a48f37830a544f
+ 005053adf58752f7d39c70646be05fa32157009d66d1d74c4e4af3163dbfd2ef
+ f547e473bc268567590ec0e5c5717539806c55e31a133e5803c17d9dbe31e473
+ 8b0a2e816c2b82c1b927c0b9f99787e6c03463bafa29c1618bfbcf51e9b7ae2f
+ f63e728c15b225d9beffd22a21a03fff70ad5ebeabd59fe185d29093d0b7c8d2
+ 50c19c3539ef2dd2db58821749923a0ac6f87535003c9152956309cd8534bfce
+ 60877cfe080784108f70b8fabb35462b2c02559549ed69173926e9941cf2ad91
+ 00d445e3b8ef01085ffb03999e6ba37cae5a600347a9dcaa8f5112d11a2a2337
+ cee84082794c108af533ae6e26060114c515918ca7a738000682df7676a30923
+ b5074e8109faedd7d259ea35ecf186ae0ad84014334180c745e8391f00d65bbc
+ 6ad4f4b69af1a083053661150669662948ecc4b27f1553517002e376385c67b8
+ 0544835157357dab78da32b1dc1e4edaacbe9f0046b686791824acacd723e04e
+ 8bd7d3c63246c8775cd79d1a26cf1619c3204d13dae9c7db4d04b8f27ba89d7f
+ 78fb2c0cee7d99de21b44a6ca4548a9e698e88f214862cbbf2175156f43694b8
+ fd4d939699fad6b68589d496186ddd5522ef30a9b396dcda8218d97803e71f5c
+ 314324d8dd057a7e21df284dbe48cb10e7e62c11d011b32263de94e2137e63d6
+ a44516cf071e8bbeabee309ae7719becb5ef2dbafb3b2aefaacc20df5d9ab90d
+ eba952bd35ecd863add69913516108dc20ad1b8f39912714cd79a8de5930f824
+ 817f0fa77954d55936fc7ffeb8e6f0ca8dc9e6bb016d20f980041b18e4e11291
+ 97764d128108176f72811e0222421dd675d70a3cd78f7071784bdbaceef3e622
+ 4c3d726ace6bda575fa605ccaf141a8bda454ab5c7e4f04c228b48901359d443
+ 9de292cfa3666c67afbd60b40c55d03de36a19075089118e8e94ad9a4e5f6a62
+ 9ca7ffc252aac9e8fdac3c0abd45b187611f9df98a37bbbf0c0c39e5a9472747
+ 51eeb68bb45d0fcd4fe78f8dda19245e64d6e29a544fc50ed93c6535d26d5d1d
+ 68bfa276bdb8de16954ca61d63e21c4db0e0ba935277d2258c6aec70a1d37891
+ a14fab66cee88a20ce4637541c5926059ef1758bd795b9340399d266fb7596d3
+ 04f8e5e3a39709576d0bc5d4b81c8546a90e275535583813e7d8e5aa44383992
+ f36dfe468f3a39122bceefe3cf00f3dae70420195fa03f03c1442f1d57bd7ae7
+ 56bcc354d81f0f36e637746a16fa7030a87278220bd8c5969bb149a5dbef08e9
+ 77ef2e4cc2a30683ba81f449885f5c92acda433927506b6806f1f34a3f7be6b1
+ 0a778d1dcd77e271e84bea761153074d06e25aa7c760fc2f18c3c16b29cb11d0
+ 44de637785df499b6777c84a00a24b0ac73c7b7499c592942175466c9d20eeb8
+ 48ee82e6fe095fed75dba73b237860ff322ab5336c26c4f9e3e1274b3f0b87f2
+ a7e82236551e18eab6cf70173ffc8c78e49784cf6018663326bfbdc2708639ac
+ 5419551ecbb503c8d1b785e1d26560a9135e7042b1585e3625d93e6c88fabdca
+ 352932d7de9bdcb288cb35ddf1a14ff6e86a0c7a5fd61164c617f76fe51cf6d7
+ 953350f810731ab69e36fd2b597cc3a1746d5cba09bcded2525733cc39edd264
+ e16f866ac7695df6e5407a95d9de69306e43be67a6ad750a77fc23c948467701
+ 123bb954249caa0ec97263e2cb7f59493db73da9ab0a9c165a3b01df6eab41ad
+ e0fc3286c83f04d4688858643f535d4065f8d122c3863a0be1eee8f3fe9e259e
+ ec4d96fc8b94cd982d3c1dc08081d62a01cd754ee241d381b70323f89b09b2a9
+ 5dd3ac73816ed6db2a881d2ea1e7a90413b492c8ec68bd316382ff2e1803ec1f
+ 0326451b746f42062fcfd76c8f82041145b1e66a6ff1ddad14642a3ee8078070
+ de9e0f468e3e489d8b1296d60f721bd310b859eea9d486c389ba59798b34b47b
+ 339b9aba85fa76d2f409e51a271100c38a0fa64bc33ce2fd9f519d68a034be84
+ c3b86ffaef9006f981e1d5762a5bb42b748f06b0ab850b93180bb9bbf112e831
+ fbd723e0619e65d816c1ff5f8ac6d90aaf2f20b51ddb6f9988f6adf8ee55baa7
+ a259aee2e3270ac84781b21c7facbd77dc112c81c1a366a0e908b9e02c73992b
+ 9bbb867467c7683f7b77aeb2b0f515065a153c99f433fa3d479a98bf082a909a
+ 4ce68bfe84206d2b1dc42e00ac704796a475b07a43650941a8a51de6844f47a7
+ 5f69c5a60cf854890350a333599c91e80abce8038975ac4120e23465fcb55f0f
+ 22449db1d46a9cc818201dbd899c2af98b52f13e1f30ca23d8dd1e7db03fd194
+ f278b6103b2243e406c004e9cddc97fa4f139f409e4e3c472e7fb9f093d88ec3
+ 714042397b095220c6c90370ef20b34ba3295f5132e1ae97a1055ab9159a7407
+ 2d531e6477022b27152c1b2b43aee7ce03d0bb93ee4aed10d72fedf4546fbafd
+ fa69bf2328b90a617aa436133881ca044af38219d68d86b87b2f29cb59d8ce99
+ ce51ea2167743dc95644af251287d7a3c638222eec6ac2836ab1962249efeecd
+ be2edf68a6d583294e252ba6c9e1e1452beb171c05f33d2543657906e308044d
+ a36e8784dd7ee49159d3a4a23637d5b8abb839d3545b761b9eb0387ff61b8839
+ 6a214f994b0c647a5787fae4516f929332516f426f49821559f3fc31621a4df1
+ 45240e3e926b2124dfd228a373c02d397c21ad38eaad059c5ee96e1000ee8ff9
+ af0133bf89ad9935b4227a3cb4fbd277b21b70a6b48aad1bb26e91f7106d7e12
+ 142bb5cf9cde40dd6263a3e00de49fdd8447ff9037985d6d4ffe0c443646e156
+ 52ae3b5c60676f1dea6a1c4924967f7bcd257d0757351b14064305b94705dff6
+ b2f0dde3617731a27f06898047f5093d3e3df359abdde47b0a42e0a29a17cd07
+ 6486628cd51f904c0ba4e6b64967ad47129e7417d41ddc9f78af8ea470fe4fd0
+ 49a45483b60e0d826178e54d1c29dc9bca787f3e875912b7b483214fabbacfa2
+ 6d5c74b172e810d62c5955fced012b9c78197681ca4f76b218b3b4c3051ccd76
+ 86eba26bee1dc7d09071de99b874e2c6d7d8168a905285651ea90cdd68ced214
+ 2fd85c073f65c318b3689d5159310356b1f009a1b507097d67b82883c2c89793
+ a987b8361beb016d4d2b3451bf191a1b548f45c8301881d44a8a93f6561e2a80
+ 0608ec2c639557ebcad0873984ddd2902dcbefee78e1664c0f80f3fbdbabd056
+ 5316b23d86a07d1ccaa30100f816619a3d9d6a95b9013f7cf5f979ca8d9768be
+ fe39b86fb56005b81235df861d39f2448bad8da680e2667c8b31e0cb23714237
+ 3f3be1eaa746db59ddbee0fc55dc327a79959c32d30fed3811898c06e1b615e0
+ 6b297e9781f58df99131aac03485fd7f432e91254a221dcf993e40d529b14d0b
+ f6f6838dd3c02de249ab681958413b8624c7d31bc486c7eb1296bb10fb57594b
+ 9d8340430c9dcb6b6d576fa7a4c67398b63dd137b1ca416faa8759cc16d38801
+ 240f77186e6c773ccd14c2bfdedebc76109188dbe54f612432d9fa58ab7fec1c
+ c040ba6ea39315fafce4ddadb955a9143a39107a16885b80dffa096a08cbcbff
+ 2a2e63ab4083b0995e10bbfdab538ac1c9467ce2cc125bd05095443cfa67d594
+ dd3a23ae0122a7757f0daac83425432a4e0aff1ab98d387db7547b62804c0ed3
+ 7cba01645dd6c8f8caac196ed11b57ce2e96170131233ff49eef85ef3f6758df
+ 4a3df5838145dc076882b34acb4ca498fbc337fbc092ca1ac25ddfda414fc545
+ 37520bc730ef06985c154b2076b8898cbfba2049210177957e4bf5906392a88e"

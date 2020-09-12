@@ -1,0 +1,113 @@
+# Template file for 'ghostscript'
+pkgname=ghostscript
+version=9.18
+revision=2
+short_desc="An interpreter for the PostScript language"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.ghostscript.com/"
+license="AGPL-3, CPL-1.0"
+distfiles="http://downloads.ghostscript.com/public/$pkgname-$version.tar.bz2"
+checksum=83daf5bbbb5afbc32cab944a1afa7ceca046dbf0c3712cd5f2bd21a13e484da1
+
+hostmakedepends="automake libtool pkg-config"
+makedepends="
+ zlib-devel dbus-devel libXext-devel libXt-devel libpng-devel
+ fontconfig-devel jasper-devel tiff-devel lcms2-devel jbig2dec-devel
+ cups-devel libpaper-devel"
+depends="gsfonts"
+
+pre_configure() {
+	# force it to use system libs.
+	rm -rf jpeg{,xr} libpng jasper expat tiff lcms{,2} freetype cups/libs jbig2dec
+	cd ijs
+	autoreconf -fi
+}
+
+do_configure() {
+	case "${XBPS_TARGET_MACHINE}" in
+		mips) configure_args+=" --enable-big-endian";;
+		*) configure_args+=" --enable-little-endian";;
+	esac
+
+	cd ${wrksrc}
+	# configure ghostscript
+	./configure ${configure_args} --enable-dynamic --with-ijs \
+		--with-jbig2dec --with-omni --with-x --with-drivers=ALL \
+		--with-fontpath=/usr/share/fonts/Type1:/usr/share/fonts \
+		--enable-fontconfig --enable-freetype --without-luratech \
+		--without-omni --with-system-libtiff --disable-compile-inits
+
+	# configure libijs
+	cd ijs
+	./configure ${configure_args} --enable-shared --disable-static
+}
+
+do_build() {
+	if [ "$CROSS_BUILD" ]; then
+		# Build host utils.
+		cp -f Makefile Makefile.orig
+		sed "/GCFLAGS/s,${CFLAGS},,g" -i Makefile
+		make CC=cc CCLD=cc base/genarch base/genconf base/echogs
+		mv -f Makefile.orig Makefile
+		mkdir -p obj/aux soobj/aux
+		cp base/{echogs,genarch,genconf} obj/aux
+		cp base/{echogs,genarch,genconf} soobj/aux
+	fi
+	# build ghostscript
+	make ${makejobs}
+	make ${makejobs} so
+	# build libijs
+	cd ijs
+	make ${makejobs}
+}
+
+do_install() {
+	# install ghostscript
+	make DESTDIR=${DESTDIR} cups_serverroot=${DESTDIR}/etc/cups \
+		cups_serverbin=${DESTDIR}/usr/lib/cups install install-so
+	# install missing doc files # http://bugs.archlinux.org/task/18023
+	install -m644 doc/{Ps2ps2.htm,gs-vms.hlp,gsdoc.el,pscet_status.txt} \
+		${DESTDIR}/usr/share/ghostscript/$version/doc/
+	# install license
+	vinstall LICENSE 644 usr/share/licenses/${pkgname}
+
+	# remove unwanted localized man-pages
+	rm -rf ${DESTDIR}/usr/share/man/[^man1]*
+
+	# install libijs
+	cd ijs
+	make DESTDIR=${DESTDIR} install
+
+	# Remove conflicting files with cups-filters.
+	rm -f ${DESTDIR}/usr/lib/cups/filter/{gstopxl,gstoraster}
+
+	cd ..
+	# Install missing file
+	vinstall base/gserrors.h 644 usr/include/ghostscript
+}
+
+
+libgs_package() {
+	short_desc+=" - runtime shared library"
+	pkg_install() {
+		vmove "usr/lib/libgs.so*"
+	}
+}
+
+libijs_package() {
+	short_desc+=" - IJS runtime shared library"
+	pkg_install() {
+		vmove "usr/lib/libijs*"
+	}
+}
+
+ghostscript-devel_package() {
+	depends="libijs>=${version}_${revision} libgs>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/bin/ijs-config
+		vmove usr/share/man/man1/ijs-config.1
+	}
+}

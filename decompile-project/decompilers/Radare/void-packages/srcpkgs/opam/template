@@ -1,0 +1,16 @@
+# Template file for 'opam'
+pkgname=opam
+version=1.2.2
+revision=3
+build_style=gnu-configure
+disable_parallel_build=yes
+make_build_args="lib-ext all"
+makedepends="ncurses-devel ocaml curl"
+depends="curl patch"
+short_desc="OCaml package manager"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="LGPL-3"
+homepage="http://opam.ocamlpro.com"
+distfiles="https://github.com/ocaml/${pkgname}/archive/${version}.tar.gz"
+checksum=3e4a05df6ff8deecba019d885ebe902eb933acb6e2fc7784ffee1ee14871e36a
+nocross=yes

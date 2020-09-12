@@ -1,0 +1,17 @@
+# Template file for 'profile-cleaner'
+pkgname=profile-cleaner
+version=2.35
+revision=1
+noarch="yes"
+build_style=gnu-makefile
+short_desc="Reduces profile size by cleaning their sqlite databases"
+depends="sqlite bc parallel findutils"
+maintainer="Philipp Hirsch <itself@hanspolo.net>"
+license="MIT"
+homepage="https://github.com/graysky2/profile-cleaner"
+distfiles="http://repo-ck.com/source/$pkgname/$pkgname-$version.tar.xz"
+checksum=d02f31fb0c5a7a07da33c8e9f1ccc3d814f2ddefa427d4b3422889b54fcdb92f
+
+post_install() {
+	vlicense LICENSE
+}

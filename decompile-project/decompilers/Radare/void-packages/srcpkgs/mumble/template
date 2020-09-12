@@ -1,0 +1,54 @@
+# Template file for 'mumble'
+pkgname=mumble
+version=1.2.10
+revision=2
+hostmakedepends="pkg-config"
+makedepends="
+ libcap-devel Ice-devel protobuf-devel libXi-devel qt-devel libressl-devel
+ speex-devel libsndfile-devel libX11-devel alsa-lib-devel pulseaudio-devel
+ avahi-compat-libs-devel MesaLib-devel opus-devel libogg-devel boost-devel"
+depends="qt-plugin-sqlite desktop-file-utils hicolor-icon-theme"
+short_desc="Open source, low-latency, high quality voice chat for gaming"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://mumble.sourceforge.net/"
+license="BSD"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=c6367a63ef54aac8e6d556066297e536a8c288495d53490219a113e43aa85b04
+
+do_configure() {
+	# Needs bundled celt for some reason
+	qmake -recursive main.pro \
+		CONFIG+="bundled-celt no-bundled-opus no-speechd no-bundled-speex no-g15 \
+			no-xevie pulseaudio no-embed-qt-translations no-update-packaged" \
+		DEFINES+="PLUGIN_PATH=/usr/lib/mumble" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
+}
+do_build() {
+	make release
+}
+do_install() {
+	vmkdir usr/lib/mumble
+	vmkdir usr/share/applications
+	vmkdir usr/share/icons/hicolor/scalable/apps
+
+	vbin ${wrksrc}/release/murmurd
+	vman ${wrksrc}/man/murmurd.1
+	vman ${wrksrc}/man/murmur-user-wrapper.1
+
+	vbin ${wrksrc}/release/mumble
+	vman ${wrksrc}/man/mumble.1
+	cp ${wrksrc}/release/*.so* ${DESTDIR}/usr/lib/mumble
+	cp ${wrksrc}/release/plugins/* ${DESTDIR}/usr/lib/mumble
+
+	cp ${wrksrc}/scripts/mumble.desktop ${DESTDIR}/usr/share/applications
+	cp ${wrksrc}/icons/mumble.svg ${DESTDIR}/usr/share/icons/hicolor/scalable/apps
+
+}
+
+murmur_package() {
+	depends="mumble-${version}_${revision}"
+	short_desc+=" - The murmur server (for mumble)"
+	pkg_install() {
+		vmove usr/bin/murmurd
+		vmove "usr/share/man/man1/murmurd*"
+	}
+}

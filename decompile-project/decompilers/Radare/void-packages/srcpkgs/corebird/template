@@ -1,0 +1,20 @@
+# Template build for 'corebird'.
+pkgname=corebird
+version=1.1
+revision=1
+short_desc="Native Gtk+ Twitter Client"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="GPL-3"
+homepage="http://corebird.baedert.org/"
+distfiles="https://github.com/baedert/corebird/archive/${version}.tar.gz"
+checksum=f6109cc2bdc7ee5893c28861a73df4eeaec4b76b99222a90aec381b03b19c8a7
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool vala glib-devel libgee08-devel
+ automake libtool intltool gettext-devel"
+makedepends="gtk+3-devel rest-devel libgee08-devel sqlite-devel
+ libsoup-devel json-glib-devel gettext-devel gst-plugins-base1-devel"
+
+pre_configure() {
+	autoreconf -fi
+	intltoolize -f
+}

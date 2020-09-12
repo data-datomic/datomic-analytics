@@ -1,0 +1,149 @@
+define-fun main(unknown) -> unknown {
+    entry-register-state:
+        %1: $Unknown64(*?) = $r15;
+        %2: $Unknown64(*?) = $r14;
+        %3: $Unknown64(*?) = $r13;
+        %4: $Unknown64(*?) = $r12;
+        %5: $Unknown64(*?) = $rbp;
+        %6: $Unknown64(*?) = $rbx;
+        %7: $Unknown64(*?) = $r9;
+        %8: $Unknown64(*?) = $r8;
+        %9: $Unknown64(*?) = $rsp;
+        %10: $Unknown0 = $mem;
+    bb_0x40059D.0000(sz 0x2c):
+        [@0x40059D.0001] %11: $Unknown64(*?) = %9 - #x8;
+        [@0x40059D.0006] %12: $Unknown0 = Store(%10, %11, %5);
+        [@0x4005A5.0000] %13: $Unknown64(*?) = %11 - #x4;
+        [@0x4005A9.0000] %14: $Unknown64(*?) = %11 - #x8;
+        [@0x4005AD.0000] %15: $Unknown64(*?) = %11 - #xc;
+        [@0x4005BE.0018] (%16: $Unknown64(*?) = $r9, %17: $Unknown64(*?) = $r8, %18: $Unknown64(*?) = $rcx, %19: $Unknown64(*?) = $rdx, %20: $Unknown64(*?) = $rsi, %21: $Unknown0 = $mem) = CALL #x4004a0($r9=%7, $r8=%8, $rcx=%13, $rdx=%14, $rsi=%15, $rdi=#x4006b4, $mem=%12);
+        [@0x4005C3.0002] %22: $Unknown32(*?) = Load(%21, %15);
+        [@0x4005C3.0004] %23: $Unknown64(*?) = ZeroExt64(%22);
+        [@0x4005C6.0000] %24: $Unknown64 = %23 - #x3;
+        [@0x4005C6.0004] %25: $Unknown64(*?) = %24 ^ #x1;
+        [@0x4005C6.0006] %26: $Unknown1(*?) = Narrow1(%25);
+        JMP IF %26 0x4005DB.0000 ELSE 0x4005CB.0000
+    bb_0x4005CB.0000(sz 0x6):
+        [@0x4005CB.0001] %27: $Unknown64(*?) = %11 - #x8;
+        [@0x4005CB.0004] %28: $Unknown32(*?) = Load(%21, %27);
+        [@0x4005CB.0007] %29: $Unknown64(*?) = ZeroExt64(%28);
+        [@0x4005CE.0000] %30: $Unknown64 = %29 - #x4;
+        [@0x4005CE.0004] %31: $Unknown64(*?) = %30 ^ #x1;
+        [@0x4005CE.0007] %32: $Unknown1(*?) = Narrow1(%31);
+        JMP IF %32 0x4005DB.0000 ELSE 0x4005D3.0000
+    bb_0x4005D3.0000(sz 0x6):
+        [@0x4005D3.0001] %33: $Unknown64(*?) = %11 - #x4;
+        [@0x4005D3.0004] %34: $Unknown32(*?) = Load(%21, %33);
+        [@0x4005D3.0007] %35: $Unknown64(*?) = ZeroExt64(%34);
+        [@0x4005D6.0000] %36: $Unknown64 = %35 - #x4;
+        [@0x4005D6.0004] %37: $Unknown64(*?) = %36 ^ #x1;
+        [@0x4005D6.0007] %38: $Unknown1(*?) = Narrow1(%37);
+        [@0x4005D9.0000] %39: $Unknown1(*?) = !%38;
+        JMP IF %39 0x4005EC.0000 ELSE 0x4005DB.0000
+    bb_0x4005DB.0000(sz 0xf):
+        [@0x4005E0.0024] (%40: $Unknown64(*?) = $r11, %41: $Unknown64(*?) = $r10, %42: $Unknown64(*?) = $r9, %43: $Unknown64(*?) = $r8, %44: $Unknown64(*?) = $rcx, %45: $Unknown64(*?) = $rdx, %46: $Unknown64(*?) = $rsi, %47: $Unknown64(*?) = $rdi, %48: $Unknown64(*?) = $rip, %49: $Unknown64(*?) = $cs, %50: $Unknown1(*?) = $cf, %51: $Unknown1(*?) = $pf, %52: $Unknown1(*?) = $af, %53: $Unknown1(*?) = $zf, %54: $Unknown1(*?) = $sf, %55: $Unknown1(*?) = $tf, %56: $Unknown1(*?) = $if, %57: $Unknown1(*?) = $df, %58: $Unknown1(*?) = $of, %59: $Unknown64(*?) = $ss, %60: $Unknown64(*?) = $fs_base, %61: $Unknown64(*?) = $gs_base, %62: $Unknown64(*?) = $ds, %63: $Unknown64(*?) = $es, %64: $Unknown64(*?) = $fs, %65: $Unknown64(*?) = $gs, %66: $Unknown0 = $mem) = CALL #x400470($r9=%16, $r8=%17, $rcx=%18, $rdx=%19, $rsi=%20, $rdi=#x4006bd, $mem=%21);
+        JMP 0x40062E.0000
+    bb_0x4005EC.0000(sz 0x20):
+        [@0x4005EC.0001] %67: $Unknown64(*?) = %11 - #xc;
+        [@0x4005EC.0004] %68: $Unknown32(*?) = Load(%21, %67);
+        [@0x4005EC.0007] %69: $Unknown64(*?) = ZeroExt64(%68);
+        [@0x4005F2.0000] %70: $Unknown64 = %69 * %69;
+        [@0x4005F5.0000] %71: $Unknown64(*?) = %11 - #x8;
+        [@0x4005F5.0002] %72: $Unknown32(*?) = Load(%21, %71);
+        [@0x4005F5.0005] %73: $Unknown64(*?) = ZeroExt64(%72);
+        [@0x4005FB.0000] %74: $Unknown64 = %73 * %73;
+        [@0x4005FE.0000] %75: $Unknown64(*?) = %74 + %70;
+        [@0x4005FE.0003] %76: $Unknown64(*?) = %73 & #xffffffff00000000;
+        [@0x4005FE.0004] %77: $Unknown64(*?) = %76 | %75;
+        [@0x400601.0000] %78: $Unknown64(*?) = %11 - #x4;
+        [@0x400601.0002] %79: $Unknown32(*?) = Load(%21, %78);
+        [@0x400601.0004] %80: $Unknown64(*?) = ZeroExt64(%79);
+        [@0x400607.0000] %81: $Unknown64 = %80 * %80;
+        [@0x40060A.0000] %82: $Unknown64 = %77 - %81;
+        [@0x40060A.0004] %83: $Unknown64(*?) = %82 ^ #x1;
+        [@0x40060A.0007] %84: $Unknown1(*?) = Narrow1(%83);
+        [@0x40060C.0000] %85: $Unknown1(*?) = !%84;
+        JMP IF %85 0x40061F.0000 ELSE 0x40060E.0000
+    bb_0x40060E.0000(sz 0xf):
+        [@0x400613.0024] (%86: $Unknown64(*?) = $r11, %87: $Unknown64(*?) = $r10, %88: $Unknown64(*?) = $r9, %89: $Unknown64(*?) = $r8, %90: $Unknown64(*?) = $rcx, %91: $Unknown64(*?) = $rdx, %92: $Unknown64(*?) = $rsi, %93: $Unknown64(*?) = $rdi, %94: $Unknown64(*?) = $rip, %95: $Unknown64(*?) = $cs, %96: $Unknown1(*?) = $cf, %97: $Unknown1(*?) = $pf, %98: $Unknown1(*?) = $af, %99: $Unknown1(*?) = $zf, %100: $Unknown1(*?) = $sf, %101: $Unknown1(*?) = $tf, %102: $Unknown1(*?) = $if, %103: $Unknown1(*?) = $df, %104: $Unknown1(*?) = $of, %105: $Unknown64(*?) = $ss, %106: $Unknown64(*?) = $fs_base, %107: $Unknown64(*?) = $gs_base, %108: $Unknown64(*?) = $ds, %109: $Unknown64(*?) = $es, %110: $Unknown64(*?) = $fs, %111: $Unknown64(*?) = $gs, %112: $Unknown0 = $mem) = CALL #x400470($r9=%16, $r8=%17, $rcx=%77, $rdx=%80, $rsi=%20, $rdi=#x4006c3, $mem=%21);
+        JMP 0x40062E.0000
+    bb_0x40061F.0000(sz 0xa):
+        [@0x400624.0024] (%113: $Unknown64(*?) = $r11, %114: $Unknown64(*?) = $r10, %115: $Unknown64(*?) = $r9, %116: $Unknown64(*?) = $r8, %117: $Unknown64(*?) = $rcx, %118: $Unknown64(*?) = $rdx, %119: $Unknown64(*?) = $rsi, %120: $Unknown64(*?) = $rdi, %121: $Unknown64(*?) = $rip, %122: $Unknown64(*?) = $cs, %123: $Unknown1(*?) = $cf, %124: $Unknown1(*?) = $pf, %125: $Unknown1(*?) = $af, %126: $Unknown1(*?) = $zf, %127: $Unknown1(*?) = $sf, %128: $Unknown1(*?) = $tf, %129: $Unknown1(*?) = $if, %130: $Unknown1(*?) = $df, %131: $Unknown1(*?) = $of, %132: $Unknown64(*?) = $ss, %133: $Unknown64(*?) = $fs_base, %134: $Unknown64(*?) = $gs_base, %135: $Unknown64(*?) = $ds, %136: $Unknown64(*?) = $es, %137: $Unknown64(*?) = $fs, %138: $Unknown64(*?) = $gs, %139: $Unknown0 = $mem) = CALL #x400470($r9=%16, $r8=%17, $rcx=%77, $rdx=%80, $rsi=%20, $rdi=#x4006cb, $mem=%21);
+        JMP 0x40062E.0000
+    bb_0x40062E.0000(sz 0x0):
+        %140: $Unknown64(*?) = Phi(%43, %89, %116);
+        %141: $Unknown1(*?) = Phi(%50, %96, %123);
+        %142: $Unknown64(*?) = Phi(%4);
+        %143: $Unknown1(*?) = Phi(%52, %98, %125);
+        %144: $Unknown64(*?) = Phi(%6);
+        %145: $Unknown64(*?) = Phi(%62, %108, %135);
+        %146: $Unknown64(*?) = Phi(%48, %94, %121);
+        %147: $Unknown1(*?) = Phi(%54, %100, %127);
+        %148: $Unknown64(*?) = Phi(%59, %105, %132);
+        %149: $Unknown64(*?) = Phi(%44, %90, %117);
+        %150: $Unknown64(*?) = Phi(%61, %107, %134);
+        %151: $Unknown1(*?) = Phi(%55, %101, %128);
+        %152: $Unknown64(*?) = Phi(%60, %106, %133);
+        %153: $Unknown1(*?) = Phi(%53, %99, %126);
+        %154: $Unknown64(*?) = Phi(%41, %87, %114);
+        %155: $Unknown64(*?) = Phi(%47, %93, %120);
+        %156: $Unknown64(*?) = Phi(%64, %110, %137);
+        %157: $Unknown1(*?) = Phi(%58, %104, %131);
+        %158: $Unknown1(*?) = Phi(%51, %97, %124);
+        %159: $Unknown64(*?) = Phi(%45, %91, %118);
+        %160: $Unknown64(*?) = Phi(%46, %92, %119);
+        %161: $Unknown64(*?) = Phi(%3);
+        %162: $Unknown1(*?) = Phi(%56, %102, %129);
+        %163: $Unknown64(*?) = Phi(%63, %109, %136);
+        %164: $Unknown64(*?) = Phi(%42, %88, %115);
+        %165: $Unknown64(*?) = Phi(%2);
+        %166: $Unknown1(*?) = Phi(%57, %103, %130);
+        %167: $Unknown64(*?) = Phi(%40, %86, %113);
+        %168: $Unknown64(*?) = Phi(%49, %95, %122);
+        %169: $Unknown64(*?) = Phi(%1);
+        %170: $Unknown64(*?) = Phi(%65, %111, %138);
+        %171: $Unknown64(*?) = Phi(%11);
+        %172: $Unknown0 = Phi(%66, %112, %139);
+        [@0x40062E.0004] %173: $Unknown64(*?) = Load(%172, %171);
+        [@0x40062E.0007] %174: $Unknown64(*?) = #x8 + %171;
+        [@0x40062F.0000] %175: $Unknown64(*?) = Load(%172, %174);
+        [@0x40062F.0004] %176: $Unknown64(*?) = #x8 + %174;
+        JMP TO %175
+    exit-node:
+    final-register-state:
+        $r15 = %169;
+        $r14 = %165;
+        $r13 = %161;
+        $r12 = %142;
+        $rbp = %173;
+        $rbx = %144;
+        $r11 = %167;
+        $r10 = %154;
+        $r9 = %164;
+        $r8 = %140;
+        $rax = #x0;
+        $rcx = %149;
+        $rdx = %159;
+        $rsi = %160;
+        $rdi = %155;
+        $rip = %146;
+        $cs = %168;
+        $cf = %141;
+        $pf = %158;
+        $af = %143;
+        $zf = %153;
+        $sf = %147;
+        $tf = %151;
+        $if = %162;
+        $df = %166;
+        $of = %157;
+        $rsp = %176;
+        $ss = %148;
+        $fs_base = %152;
+        $gs_base = %150;
+        $ds = %145;
+        $es = %163;
+        $fs = %156;
+        $gs = %170;
+        $mem = %172;
+}

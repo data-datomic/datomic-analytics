@@ -1,0 +1,19 @@
+# Template file for 'flow'
+pkgname=flow
+version=0.20.0
+revision=1
+only_for_archs="i686 x86_64"
+build_style=gnu-makefile
+makedepends="ocaml elfutils-devel"
+short_desc="Static type checker for JavaScript"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="BSD"
+homepage="http://flowtype.org/"
+distfiles="https://github.com/facebook/${pkgname}/archive/v${version}.tar.gz"
+checksum=53c73d6642e1daa0779a5dcd7970a7446b625e1b32f86035e80f0e7cefd93291
+
+do_install() {
+	vbin bin/flow
+	vlicense LICENSE
+	vlicense PATENTS
+}

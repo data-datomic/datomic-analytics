@@ -1,0 +1,52 @@
+# Template file for 'libcec'
+pkgname=libcec
+version=3.0.1
+revision=3
+wrksrc="${pkgname}-${pkgname}-${version}"
+build_style=cmake
+hostmakedepends="cmake pkg-config libtool swig"
+makedepends="libudev-devel lockdev-devel platform-devel platform-devel libXrandr-devel
+ lockdev-devel python-devel"
+short_desc="USB CEC Adapter communication Library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://github.com/Pulse-Eight/libcec"
+license="GPL-2"
+distfiles="https://github.com/Pulse-Eight/libcec/archive/libcec-${version}.tar.gz"
+checksum=7e3670c8949a1964d6e5481f56dfff838857da10bdc60b506f6e9b7f117e253e
+
+build_options="rpi"
+case "$XBPS_TARGET_MACHINE" in
+	armv[67]*) build_options_default="rpi";;
+esac
+
+if [ "$build_option_rpi" ]; then
+	configure_args+=" -DRPI_INCLUDE_DIR=${XBPS_CROSS_BASE}/opt/vc/include"
+	configure_args+=" -DRPI_LIB_DIR=${XBPS_CROSS_BASE}/opt/vc/lib"
+	makedepends+=" rpi-userland-devel"
+fi
+
+post_install() {
+	vmkdir usr/lib
+	if [ -d $DESTDIR/usr/lib64 ]; then
+		mv $DESTDIR/usr/lib64/* $DESTDIR/usr/lib
+	fi
+	sed -i "s#$wrksrc/build/##" $DESTDIR/usr/lib/pkgconfig/libcec.pc
+	mv $DESTDIR/$wrksrc/build/lib*/* $DESTDIR/usr/lib
+}
+
+cec-client_package() {
+	depends="libcec>=${version}"
+	short_desc+=" - client tool"
+	pkg_install() {
+		vmove usr/bin
+	}
+}
+libcec-devel_package() {
+	short_desc+=" - development files"
+	depends="libudev-devel platform-devel libcec>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+	}
+}

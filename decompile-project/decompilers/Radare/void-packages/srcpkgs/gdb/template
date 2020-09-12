@@ -1,0 +1,41 @@
+# Template file for 'gdb'
+pkgname=gdb
+version=7.10.1
+revision=1
+patch_args="-Np1"
+build_style=gnu-configure
+configure_args="--disable-werror --disable-nls --with-system-readline
+ --with-system-gdbinit=/etc/gdb/gdbinit $(vopt_enable gdbserver)
+ $(vopt_if static 'CFLAGS=-static') $(vopt_with python)"
+hostmakedepends="perl $(vopt_if python python-devel)"
+makedepends="ncurses-devel zlib-devel readline-devel expat-devel $(vopt_if python python-devel)"
+short_desc="The GNU Debugger"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnu.org/software/gdb/"
+license="GPL-3"
+distfiles="${GNU_SITE}/$pkgname/$pkgname-$version.tar.xz"
+checksum=25c72f3d41c7c8554d61cacbeacd5f40993276d2ccdec43279ac546e3993d6d5
+# Else build on musl breaks...
+# http://build.voidlinux.eu/builders/x86_64-musl_builder/builds/5766
+disable_parallel_build=yes
+
+if [ "${CROSS_BUILD}" ]; then
+	# Make python2.7 detection work in cross builds
+	CFLAGS+=" -I${XBPS_CROSS_BASE}/usr/include/python2.7"
+fi
+# Package build options
+build_options="gdbserver static python"
+desc_option_gdbserver="Enable support for building GDB server"
+# Enable gdbserver if !static.
+build_options_default="gdbserver python"
+# Both options cannot be enabled at the same time
+vopt_conflict gdbserver static
+
+post_install() {
+	# resolve conflicts with binutils
+	rm -rf ${DESTDIR}/usr/include ${DESTDIR}/usr/lib
+	[ -d ${DESTDIR}/usr/lib64 ] && rm -rf ${DESTDIR}/usr/lib64
+	for f in bfd configure standards; do
+		rm -f ${DESTDIR}/usr/share/info/${f}.info*
+	done
+}

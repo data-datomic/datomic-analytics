@@ -1,0 +1,23 @@
+# Template file for 'libHX'
+pkgname=libHX
+version=3.22
+revision=1
+build_style=gnu-configure
+configure_args="--enable-static"
+short_desc="C library providing data structures and common functions"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://libhx.sourceforge.net/"
+license="LGPL-2.1"
+distfiles="${SOURCEFORGE_SITE}/libhx/${pkgname}-${version}.tar.xz"
+checksum=cc2087a964a82d2e50e8161cf458481ededebb7021e4660410cf53248a4c83a3
+
+libHX-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove usr/lib/libHX.so
+	}
+}

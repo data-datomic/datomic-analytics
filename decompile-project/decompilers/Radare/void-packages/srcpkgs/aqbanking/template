@@ -1,0 +1,27 @@
+# Template file for 'aqbanking'
+pkgname=aqbanking
+version=5.5.1
+_dnrel=118
+revision=1
+hostmakedepends="pkg-config"
+makedepends="gwenhywfar-devel xmlsec1-devel ktoblzcheck-devel gmp-devel"
+build_style="gnu-configure"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="LGPL"
+homepage="http://www.aquamaniac.de/aqbanking"
+short_desc="A library for online banking and financial applications"
+distfiles="http://www2.aquamaniac.de/sites/download/download.php?package=03&release=${_dnrel}&file=01&dummy=aqbanking-$version.tar.gz"
+checksum=238f17d27d86e0cef239479c4be152cb98f5be9d6b87fca38741d32e762faddf
+disable_parallel_build=yes
+
+aqbanking-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin/aqbanking-config
+		vmove usr/include
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/share/aclocal
+	}
+}

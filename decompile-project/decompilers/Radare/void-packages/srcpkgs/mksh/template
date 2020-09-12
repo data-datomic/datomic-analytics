@@ -1,0 +1,34 @@
+# Template file for 'mksh'
+pkgname=mksh
+version=R52
+revision=1
+wrksrc=mksh
+register_shell="/bin/mksh"
+short_desc="The MirBSD Korn Shell"
+maintainer='Juan RP <xtraeme@voidlinux.eu>'
+homepage="https://www.mirbsd.org/mksh.htm"
+license="MirOS"
+#distfiles="https://www.mirbsd.org/MirOS/dist/mir/${pkgname}/${pkgname}-${version}.tgz"
+distfiles="http://sources.voidlinux.eu/sources/mksh-${version}/mksh-${version}.tgz"
+checksum=45c2f5cdd2c63a6a831ffae65cea0afd021eabb983537aa21ff893ee38b3768f
+
+alternatives="
+ sh:sh:/usr/bin/mksh
+ sh:sh.1:/usr/share/man/man1/mksh.1"
+
+build_options="static"
+
+do_build() {
+	if [ "$build_option_static" ]; then
+		CFLAGS+=" -static"
+		LDFLAGS+=" -static"
+	fi
+	sh ./Build.sh -r -c lto
+}
+
+do_install() {
+	vbin mksh
+	vman mksh.1
+	vinstall dot.mkshrc 644 etc/skel .mkshrc
+	vlicense ${FILESDIR}/TaC-mksh.txt
+}

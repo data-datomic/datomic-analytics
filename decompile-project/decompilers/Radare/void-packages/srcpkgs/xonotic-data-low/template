@@ -1,0 +1,21 @@
+# Template file for 'xonotic-data-low'
+pkgname=xonotic-data-low
+version=0.8.1
+revision=1
+wrksrc="Xonotic"
+homepage="http://xonotic.org"
+license="GPL-2, GPL-3"
+distfiles="http://dl.xonotic.org/xonotic-${version}-low.zip"
+hostmakedepends="unzip"
+noarch="yes"
+replaces="xonotic-data>=0"
+provides="xonotic-data-${version}_${revision}"
+short_desc="A free, fast-paced crossplatform FPS (Lower Quality data files)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+checksum=500c2705bf3e4bb04b9b708a9c47b831cc2b9c4c957d6c1ff238bc1008273bbd
+
+do_install() {
+	vmkdir usr/share/xonotic
+	cp -a data ${DESTDIR}/usr/share/xonotic
+	vinstall key_0.d0pk 644 usr/share/xonotic
+}

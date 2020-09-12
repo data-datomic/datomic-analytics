@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/node-libclang undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/node-libclang",
+    "repo": "https://github.com/frida/node-libclang",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/node-libclang",
+    "startTime": "2020-09-12T11:04:27.273Z",
+    "endTime": "2020-09-12T11:04:27.793Z",
+    "childProcessPid": 27828,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--node-libclang--27828"
+}

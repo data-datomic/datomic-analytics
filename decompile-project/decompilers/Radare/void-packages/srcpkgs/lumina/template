@@ -1,0 +1,33 @@
+# Template file for 'lumina
+pkgname=lumina
+version=0.8.7
+revision=1
+wrksrc=lumina-qt5-${version}
+build_style=qmake
+hostmakedepends="qt5-qmake qt5-tools"
+makedepends="qt5-devel qt5-x11extras-devel qt5-multimedia-devel qt5-svg-devel
+ qt5-declarative-devel libXrender-devel libXcomposite-devel libXdamage-devel
+ xcb-util-devel xcb-util-wm-devel xcb-util-image-devel"
+depends="fluxbox numlockx xbacklight alsa-utils acpi xscreensaver oxygen-icons"
+short_desc="Lumina Desktop Environment"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="BSD"
+homepage="https://github.com/pcbsd/lumina"
+distfiles="https://github.com/pcbsd/lumina/archive/qt5/${version}.tar.gz"
+checksum=c4825049e146d6b6aa29f7a6c7df3f760c36882c5a2d22202816214226dd0ddd
+disable_parallel_build=yes
+replaces="lumina-git>=0"
+configure_args="QT5LIBDIR=/usr/lib/qt5"
+
+post_install() {
+	vlicense LICENSE
+}
+
+lumina-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" -- development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+	}
+}

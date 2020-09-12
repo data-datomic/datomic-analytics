@@ -1,0 +1,36 @@
+# Template build file for 'libcss'.
+pkgname=libcss
+version=0.5.0
+revision=1
+hostmakedepends="pkg-config perl netsurf-buildsystem"
+makedepends="libparserutils-devel libwapcaplet-devel"
+short_desc="CSS parser and selection engine, written in C"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="MIT"
+homepage="http://www.netsurf-browser.org"
+distfiles="http://download.netsurf-browser.org/libs/releases/${pkgname}-${version}-src.tar.gz"
+checksum=ecaa09b07d4ecfd4644163bc0f0332b81aaaffbb9a373465e15e44e06666faf1
+CFLAGS="-Wno-error"
+
+do_build() {
+	make ${makejobs} HOST_CC=cc COMPONENT_TYPE=lib-shared PREFIX=/usr
+	make ${makejobs} HOST_CC=cc COMPONENT_TYPE=lib-static PREFIX=/usr
+}
+
+do_install() {
+	make COMPONENT_TYPE=lib-shared PREFIX=/usr DESTDIR=${DESTDIR} install
+	make COMPONENT_TYPE=lib-static PREFIX=/usr DESTDIR=${DESTDIR} install
+
+	vinstall COPYING 0644 usr/share/licenses/${pkgname}
+}
+
+libcss-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

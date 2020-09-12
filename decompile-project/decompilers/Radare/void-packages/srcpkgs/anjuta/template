@@ -1,0 +1,43 @@
+# Template file for 'anjuta'
+pkgname=anjuta
+version=3.18.2
+revision=1
+build_style=gnu-configure
+build_options="gir"
+configure_args="$(vopt_enable gir introspection)"
+short_desc="GNOME Integrated Development Environment"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="https://projects.gnome.org/anjuta"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=be864f2f1807e1b870697f646294e997d221d5984a135245543b719e501cef8e
+
+hostmakedepends="pkg-config intltool flex itstool python autogen glib-devel
+ $(vopt_if gir gobject-introspection)"
+makedepends="
+ gtksourceview-devel libxml2-devel vte3-devel gjs-devel
+ libxslt-devel glade3-devel graphviz-devel vala-devel
+ libgda-devel devhelp-devel sqlite-devel apr-util-devel
+ neon-devel subversion-devel python-devel gdl-devel"
+depends="autogen"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+anjuta-devel_package() {
+	replaces="anjuta-docs>=0"
+	short_desc+=" - development files"
+	depends="anjuta>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+		vmove "usr/lib/*.so"
+		vmove usr/share/doc
+		vmove usr/share/gtk-doc
+	}
+}

@@ -1,0 +1,22 @@
+# Template file for 'beignet'
+pkgname=beignet
+version=1.1.0
+revision=1
+wrksrc="Beignet-${version}-Source"
+only_for_archs="i686 i686-musl x86_64 x86_64-musl"
+build_style=cmake
+hostmakedepends="cmake llvm pkg-config clang"
+makedepends="zlib-devel libffi-devel libedit-devel ncurses-devel libXext-devel
+ libXfixes-devel libdrm-devel MesaLib-devel ocl-icd-devel"
+short_desc="The Beignet GPGPU System for Intel GPUs"
+depends="ocl-icd"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://www.freedesktop.org/wiki/Software/Beignet/"
+distfiles="https://01.org/sites/default/files/${pkgname}-${version}-source.tar.gz"
+checksum=4afe09ea13cd7f8475b9f6534e97cb4dcd307c602095c6968b0ed22290753386
+
+post_install() {
+	# remove CL headers, we do use opencl-headers instead.
+	rm -r ${DESTDIR}/usr/include
+}

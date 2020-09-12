@@ -1,0 +1,16 @@
+# Template file for 'perl-MIME-Types'
+pkgname=perl-MIME-Types
+version=2.12
+revision=1
+noarch=yes
+wrksrc="${pkgname/perl-/}-${version}"
+build_style=perl-module
+hostmakedepends="perl"
+makedepends="${hostmakedepends}"
+depends="${makedepends}"
+short_desc="Perl extension for determining MIME types"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="http://search.cpan.org/dist/MIME-Types/"
+license="Artistic, GPL-1"
+distfiles="${CPAN_SITE}/MIME/${pkgname/perl-/}-${version}.tar.gz"
+checksum=065886901cff18cbb10df13551d48214c880e45564220ab77d4772abf065969f

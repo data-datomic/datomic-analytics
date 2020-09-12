@@ -1,0 +1,23 @@
+# Template file for 'gradle'
+pkgname=gradle
+version=2.10
+revision=1
+noarch=yes
+hostmakedepends="unzip"
+depends="virtual?java-environment"
+short_desc="Build system for Java/C/C++ software"
+maintainer="Adrian Siekierka <kontakt@asie.pl>"
+license="Apache-2.0"
+homepage="http://gradle.org/"
+distfiles="https://services.gradle.org/distributions/gradle-${version}-bin.zip"
+checksum=66406247f745fc6f05ab382d3f8d3e120c339f34ef54b86f6dc5f6efc18fbb13
+
+do_install() {
+	vmkdir "usr/lib/gradle"
+	vmkdir "usr/share/doc/gradle"
+	sed ${FILESDIR}/gradle -e "s;@VERSION@;${version};" > gradle
+	vbin gradle
+
+	cp -v getting-started.html changelog.txt ${DESTDIR}/usr/share/doc/gradle
+	mv lib ${DESTDIR}/usr/lib/gradle/
+}

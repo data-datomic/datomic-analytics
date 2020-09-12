@@ -1,0 +1,29 @@
+# Template build file for 'libdrm'.
+pkgname=libdrm
+version=2.4.66
+revision=1
+build_style=gnu-configure
+configure_args="--enable-udev --disable-valgrind"
+hostmakedepends="libtool automake pkg-config xorg-util-macros"
+makedepends="libudev-devel libpciaccess-devel"
+short_desc="Userspace interface to kernel DRM services"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://dri.freedesktop.org/"
+license="MIT"
+distfiles="http://dri.freedesktop.org/libdrm/$pkgname-$version.tar.bz2"
+checksum=79cb8e988749794edfb2d777b298d5292eff353bbbb71ed813589e61d2bc2d76
+
+pre_configure() {
+	sed -e '/pthread-stubs/d' -i configure.ac
+	autoreconf -fi
+}
+
+libdrm-devel_package() {
+	depends="${makedepends} ${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

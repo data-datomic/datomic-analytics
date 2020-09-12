@@ -1,0 +1,37 @@
+# Template file for 'libraw'
+pkgname=libraw
+version=0.17.1
+revision=1
+wrksrc=LibRaw-${version}
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="lcms2-devel jasper-devel"
+short_desc="Raw image decoder library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2, CDDL, ${pkgname}"
+homepage="http://www.libraw.org"
+distfiles="http://www.libraw.org/data/LibRaw-${version}.tar.gz"
+checksum=e599651a4cc37e00cfc2d2b56be87c3a4e4dae2c360b680fe9ab3f93d07cdea1
+
+post_install() {
+	vmkdir usr/share/licenses
+	rm -f ${DESTDIR}/usr/share/doc/libraw/Changelog.txt
+	mv ${DESTDIR}/usr/share/doc/libraw ${DESTDIR}/usr/share/licenses
+}
+
+libraw-devel_package() {
+	depends="${makedepends} libraw>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}
+libraw-progs_package() {
+	short_desc+=" - applications"
+	pkg_install() {
+		vmove usr/bin
+	}
+}

@@ -1,0 +1,28 @@
+# Template build file for 'zlib'
+pkgname=zlib
+version=1.2.8
+revision=6
+bootstrap=yes
+build_style=configure
+short_desc="A compression/decompression Library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="zlib"
+homepage="http://www.zlib.net"
+distfiles="$homepage/$pkgname-$version.tar.gz"
+checksum=36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d
+
+do_configure() {
+	LDFLAGS= LDSHAREDLIBC= ./configure --prefix=/usr --shared
+}
+
+zlib-devel_package() {
+	depends="zlib>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

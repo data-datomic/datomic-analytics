@@ -1,0 +1,17 @@
+# Template file for 'lxqt-panel'
+pkgname=lxqt-panel
+version=0.10.0
+revision=2
+build_style=cmake
+configure_args="-DLIB_SUFFIX="
+hostmakedepends="cmake pkg-config"
+makedepends="libxkbcommon-devel liblxqt-devel ksolid-devel kguiaddons-devel
+ lxqt-globalkeys-devel alsa-lib-devel pulseaudio-devel libstatgrab-devel
+ menu-cache-devel libsensors-devel libXcomposite-devel lxde-libsysstat-devel
+ libdbusmenu-qt5-devel"
+short_desc="LXQt panel"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://lxqt.org/"
+distfiles="http://downloads.lxqt.org/lxqt/${version}/${pkgname}-${version}.tar.xz"
+checksum=df83db7789daecd358f074db2100d7b251c00e48aa3aa62957d5a657a4309d5e

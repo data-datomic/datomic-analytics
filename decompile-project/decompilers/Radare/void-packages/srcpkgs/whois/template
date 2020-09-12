@@ -1,0 +1,25 @@
+# Template file for 'whois'
+pkgname=whois
+version=5.2.11
+revision=1
+hostmakedepends="perl"
+makedepends="libidn-devel"
+short_desc="An improved whois client"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.linux.it/~md/software"
+license="GPL-2"
+distfiles="${DEBIAN_SITE}/main/w/${pkgname}/${pkgname}_${version}.tar.xz"
+checksum=32f7d6be853aa6a6a8ac6dd672bd60ae4f10bc0bedcaa944363ffbef6e57cef7
+
+alternatives="
+ whois:whois:/usr/bin/gwhois
+ whois:whois.1:/usr/share/man/man1/gwhois.1"
+
+do_build() {
+	make CC=$CC prefix=/usr HAVE_LIBIDN=1
+}
+do_install() {
+	make prefix=/usr BASEDIR=${DESTDIR} install-whois
+	mv ${DESTDIR}/usr/bin/{whois,gwhois}
+	mv ${DESTDIR}/usr/share/man/man1/{whois,gwhois}.1
+}

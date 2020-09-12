@@ -1,0 +1,18 @@
+# Template file for 'gnome-session'
+pkgname=gnome-session
+version=3.18.1.2
+revision=2
+build_style=gnu-configure
+configure_args="--disable-schemas-compile --enable-consolekit"
+hostmakedepends="pkg-config intltool libxslt docbook-xsl glib-devel"
+makedepends="upower0-devel json-glib-devel gtk+3-devel libSM-devel
+ startup-notification-devel libXtst-devel dbus-glib-devel
+ gsettings-desktop-schemas-devel gnome-desktop-devel"
+depends="gsettings-desktop-schemas>=3.14 dconf>=0.20 alsa-plugins-pulseaudio
+ hicolor-icon-theme desktop-file-utils"
+short_desc="GNOME session management utilities"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2, LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*.*}/$pkgname-$version.tar.xz"
+checksum=b37d823d57ff2e3057401a426279954699cfe1e44e59a4cbdd941687ff928a45

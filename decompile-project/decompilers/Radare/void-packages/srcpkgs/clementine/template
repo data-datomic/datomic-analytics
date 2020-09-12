@@ -1,0 +1,19 @@
+# Template file for 'clementine'
+pkgname=clementine
+version=1.2.3
+revision=5
+build_style=cmake
+hostmakedepends="git cmake sparsehash pkg-config"
+makedepends="chromaprint-devel boost-devel gst-plugins-base-devel liblastfm-devel
+ qt-devel glew-devel qjson-devel sqlite-devel protobuf-devel libplist-devel
+ libusbmuxd-devel libmtp-devel libcdio-devel qca-devel pulseaudio-devel glu-devel
+ taglib-devel"
+depends="desktop-file-utils"
+short_desc="A modern music player and library organizer"
+maintainer="Andrea Brancaleoni <miwaxe@gmail.com>"
+license="GPL-3"
+homepage="https://www.clementine-player.org/"
+wrksrc="Clementine-$version"
+distfiles="https://github.com/clementine-player/Clementine/archive/$version.tar.gz"
+checksum=7df5650445a005c09f5f0e1a1b0d077037c37ecbe4ee77baf9d45f121308a1bf
+patch_args="-p1"

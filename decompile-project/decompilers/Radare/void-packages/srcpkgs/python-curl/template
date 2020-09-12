@@ -1,0 +1,31 @@
+# Template file for 'python-curl'
+pkgname=python-curl
+version=7.19.5.3
+revision=1
+wrksrc="pycurl-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-devel python3.4-devel"
+makedepends="libressl-devel libcurl-devel ${hostmakedepends}"
+pycompile_module="curl"
+short_desc="Python2 interface to cURL library"
+homepage="http://pycurl.sourceforge.net/"
+license="LGPL-2.1, MIT"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="${PYPI_SITE}/p/pycurl/pycurl-${version}.tar.gz"
+checksum=24f6c4016b1dd2a5e29d1b025ac2ad61f80c17adfdcf8a7f47aefab63ace78d7
+
+CFLAGS="-fno-strict-aliasing"
+
+pre_build() {
+	sed -i "/setup_args\['data_files'\] = /d" setup.py
+}
+
+python3.4-curl_package() {
+	pycompile_version="3.4"
+	pycompile_module="curl"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

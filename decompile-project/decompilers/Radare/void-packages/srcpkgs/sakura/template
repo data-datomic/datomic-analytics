@@ -1,0 +1,14 @@
+# Template file for 'sakura'
+pkgname=sakura
+version=3.3.3
+revision=1
+build_style=cmake
+short_desc="Simple but powerful libvte based terminal emulator"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+hostmakedepends="cmake perl pkg-config"
+makedepends="gtk+3-devel vte3-devel"
+depends="desktop-file-utils"
+homepage="https://launchpad.net/sakura"
+distfiles="https://launchpad.net/sakura/trunk/${version}/+download/sakura-${version}.tar.bz2"
+checksum=a6bd310c1d344ee73378f2deefaa767c20c2266a18d7f0f40cc0a7defec2f020

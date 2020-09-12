@@ -1,0 +1,49 @@
+# Template file for 'rygel'
+pkgname=rygel
+version=0.28.1
+revision=1
+build_style=gnu-configure
+configure_args="--enable-gst-launch-plugin"
+hostmakedepends="automake libtool pkg-config intltool gettext-devel
+ glib-devel vala-devel gobject-introspection"
+makedepends="sqlite-devel gtk+3-devel
+ libsoup-devel libgee08-devel gupnp-av-devel
+ gupnp-dlna-devel tracker-devel libmediaart2-devel"
+depends="hicolor-icon-theme desktop-file-utils"
+conf_files="/etc/rygel.conf"
+short_desc="GNOME home media solution"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=d9a145cf1ecb10654d63741cd8c7d37fbaf413d4d3c35f89a8b08e39512bf174
+
+build_options="gir"
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	autoreconf -fi
+}
+
+rygel-devel_package() {
+	depends="libgee08-devel gupnp-av-devel libuuid-devel
+		libglib-devel librygel>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		if [ -n "$build_option_gir" ]; then
+			vmove usr/share/vala
+		fi
+		vmove usr/share/gtk-doc
+	}
+}
+librygel_package() {
+	short_desc+=" - runtime libraries"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}

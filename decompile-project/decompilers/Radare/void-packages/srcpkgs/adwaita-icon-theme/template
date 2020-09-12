@@ -1,0 +1,15 @@
+# Template build file for 'adwaita-icon-theme'.
+pkgname=adwaita-icon-theme
+version=3.18.0
+revision=1
+noarch=yes
+build_style=gnu-configure
+configure_args="--enable-icon-mapping"
+hostmakedepends="pkg-config intltool librsvg icon-naming-utils gtk-update-icon-cache"
+depends="librsvg"
+short_desc="Theme consisting of a set of icons for GTK+"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=5e9ce726001fdd8ee93c394fdc3cdb9e1603bbed5b7c62df453ccf521ec50e58

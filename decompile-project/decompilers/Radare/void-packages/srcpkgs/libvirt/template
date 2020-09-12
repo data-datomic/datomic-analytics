@@ -1,0 +1,100 @@
+# Template file for 'libvirt'
+pkgname=libvirt
+version=1.2.21
+revision=2
+build_style=gnu-configure
+configure_args="--without-hal --with-storage-lvm --with-qemu-user=libvirt
+ --with-qemu-group=libvirt --without-netcf --with-interface --disable-static"
+short_desc="The virtualization API for controlling virtualization engines"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://libvirt.org"
+license="LGPL-2.1"
+distfiles="http://libvirt.org/sources/$pkgname-$version.tar.gz"
+checksum=8d406582f5fe88d739d1d83e0ba7ac7f91f5a8da4be82162ab85631744d8925b
+
+# FIX https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=701649
+system_accounts="libvirt"
+libvirt_groups="disk,kvm"
+
+hostmakedepends="automake libtool perl pkg-config lvm2 parted gettext-devel
+ iptables libxslt docbook-xsl dnsmasq"
+makedepends="readline-devel libcap-ng-devel libnl3-devel attr-devel
+ gnutls-devel libsasl-devel libcurl-devel libpcap-devel libxml2-devel
+ libparted-devel device-mapper-devel dbus-devel libudev-devel libblkid-devel
+ libpciaccess-devel avahi-libs-devel polkit-devel yajl-devel
+ python-devel libssh2-devel libcap-ng-devel fuse-devel"
+depends="ebtables dnsmasq"
+
+case "$XBPS_TARGET_MACHINE" in
+	i686) configure_args+=" --without-xen"; makedepends+=" libnuma-devel";;
+	x86_64) configure_args+=" --with-xen"; makedepends+=" libnuma-devel xen-devel";;
+	*-musl) configure_args+=" --without-xen"; makedepends+=" portablexdr-devel";;
+	*) configure_args+=" --without-xen";;
+esac
+
+conf_files="
+ /etc/libvirt/libvirt.conf
+ /etc/libvirt/libvirtd.conf
+ /etc/libvirt/lxc.conf
+ /etc/libvirt/nwfilter/allow-arp.xml
+ /etc/libvirt/nwfilter/allow-dhcp-server.xml
+ /etc/libvirt/nwfilter/allow-dhcp.xml
+ /etc/libvirt/nwfilter/allow-incoming-ipv4.xml
+ /etc/libvirt/nwfilter/allow-ipv4.xml
+ /etc/libvirt/nwfilter/clean-traffic.xml
+ /etc/libvirt/nwfilter/no-arp-ip-spoofing.xml
+ /etc/libvirt/nwfilter/no-arp-mac-spoofing.xml
+ /etc/libvirt/nwfilter/no-arp-spoofing.xml
+ /etc/libvirt/nwfilter/no-ip-multicast.xml
+ /etc/libvirt/nwfilter/no-ip-spoofing.xml
+ /etc/libvirt/nwfilter/no-mac-broadcast.xml
+ /etc/libvirt/nwfilter/no-mac-spoofing.xml
+ /etc/libvirt/nwfilter/no-other-l2-traffic.xml
+ /etc/libvirt/nwfilter/no-other-rarp-traffic.xml
+ /etc/libvirt/nwfilter/qemu-announce-self-rarp.xml
+ /etc/libvirt/nwfilter/qemu-announce-self.xml
+ /etc/libvirt/qemu-lockd.conf
+ /etc/libvirt/qemu.conf
+ /etc/libvirt/qemu/networks/autostart/default.xml
+ /etc/libvirt/qemu/networks/default.xml
+ /etc/libvirt/virt-login-shell.conf
+ /etc/libvirt/virtlockd.conf"
+make_dirs="
+ /var/lib/libvirt/uml 0755 root root
+ /var/lib/libvirt/qemu/nvram 0755 root root
+ /var/lib/libvirt/qemu/channel/target 0755 root root
+ /var/lib/libvirt/network 0755 root root
+ /var/lib/libvirt/lxc 0755 root root
+ /var/lib/libvirt/lockd/files 0755 root root
+ /var/lib/libvirt/libxl 0755 root root
+ /var/lib/libvirt/images 0755 root root
+ /var/lib/libvirt/filesystems 0755 root root
+ /var/lib/libvirt/dnsmasq 0755 root root
+ /var/libvirt/boot 0755 root root
+ /var/cache/libvirt/qemu 0755 root root"
+
+system_groups="libvirt"
+
+pre_configure() {
+	autoreconf -fi
+}
+post_install() {
+	# runit services
+	vsv libvirtd
+	vsv virtlockd
+
+	rm -rf ${DESTDIR}/etc/sysconfig
+	# Remove unused stuff.
+	rm -rf ${DESTDIR}/var/log
+}
+
+libvirt-devel_package() {
+	depends="libvirt>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+	}
+}

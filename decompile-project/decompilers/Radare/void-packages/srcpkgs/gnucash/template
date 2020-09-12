@@ -1,0 +1,42 @@
+# Template file for 'gnucash'
+pkgname=gnucash
+version=2.6.9
+revision=1
+conf_files="
+	/etc/gnucash/config
+	/etc/gnucash/environment"
+hostmakedepends="pkg-config intltool guile"
+makedepends="
+ gmp-devel gtk+-devel libxml2-devel libxslt-devel libgnomecanvas-devel libltdl-devel
+ goffice0.8-devel libgsf-devel GConf-devel webkitgtk2-devel gc-devel guile-devel
+ aqbanking-devel aqbanking libofx-devel gwenhywfar-devel gwenhywfar-gtk python-devel"
+depends="guile dconf"
+build_style="gnu-configure"
+configure_args="--disable-dbi --enable-aqbanking --enable-python"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.gnucash.org/"
+short_desc="Financial-accounting software"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.bz2"
+checksum=cdaa61b393133e03bccce3d2740bb358d6bf590de16dd19c790c983d032d8247
+
+nocross=yes
+
+libgnucash_package() {
+	shlib_provides="libgncmod-gnome-utils.so libgncmod-app-utils.so libgncmod-engine.so"
+	short_desc+=" - library files"
+	pkg_install() {
+		# gnucash depends on the *.so symlinks to compile guile
+		# modules on demand.
+		vmove usr/lib/*.so
+		vmove usr/lib/*.so.*
+		vmove usr/lib/gnucash
+	}
+}
+libgnucash-devel_package() {
+	short_desc+=" - development files"
+	depends="libgnucash>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+	}
+}

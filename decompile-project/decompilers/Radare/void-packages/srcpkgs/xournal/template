@@ -1,0 +1,16 @@
+# Template file for 'xournal'
+pkgname=xournal
+version=0.4.8
+revision=2
+build_style=gnu-configure
+make_install_args="desktop-install"
+hostmakedepends="autoconf automake pkg-config"
+makedepends="gtk+-devel libgnomecanvas-devel poppler-glib-devel zlib-devel ghostscript-devel"
+makedepends+=" hicolor-icon-theme desktop-file-utils"
+depends="hicolor-icon-theme desktop-file-utils ghostscript"
+short_desc="GPL Notetaking, sketching, and journal-keeping"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://xournal.sourceforge.net/"
+license="GPL-2"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/$pkgname-$version.tar.gz"
+checksum=233887a38136452dcb4652c35d08366fc7355f57ed46753db83e3e0f3193ef30

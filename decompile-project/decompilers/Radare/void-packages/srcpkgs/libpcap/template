@@ -1,0 +1,43 @@
+# Template file for 'libpcap'
+pkgname=libpcap
+version=1.7.4
+revision=1
+build_style=gnu-configure
+configure_args="--enable-ipv6 --with-libnl --with-pcap=linux
+ $(vopt_enable bluetooth) $(vopt_enable dbus) $(vopt_enable usb canusb)"
+hostmakedepends="pkg-config flex"
+makedepends="libnl3-devel
+ $(vopt_if bluetooth libbluetooth-devel)
+ $(vopt_if dbus dbus-devel)
+ $(vopt_if usb libusb-devel)"
+short_desc="System-independent interface for user-level packet capture"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.tcpdump.org/"
+license="BSD"
+distfiles="http://www.tcpdump.org/release/$pkgname-$version.tar.gz"
+checksum=7ad3112187e88328b85e46dce7a9b949632af18ee74d97ffc3f2b41fe7f448b0
+
+build_options="bluetooth dbus usb"
+build_options_default="usb"
+
+# for libnl
+CFLAGS="-I${XBPS_CROSS_BASE}/usr/include/libnl3"
+
+post_install() {
+	vlicense LICENSE
+	for f in ${DESTDIR}/usr/share/man/man3/*.3pcap; do
+		mv ${f} ${f%pcap}
+	done
+}
+
+libpcap-devel_package() {
+	depends="libnl3-devel libpcap>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/bin
+		vmove usr/share/man
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

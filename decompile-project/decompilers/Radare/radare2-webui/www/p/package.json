@@ -1,0 +1,35 @@
+{
+  "author": {
+    "name": "pwntester",
+    "email": "alvaro@pwntester"
+  },
+  "bugs": {
+    "url": "https://github.com/radare/radare2-webui"
+  },
+  "dependencies": {},
+  "description": "Panel UI for radare2",
+  "homepage": "https://radare.org",
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "pancake",
+      "email": "pancake@nopcode.org"
+    }
+  ],
+  "name": "radare2-webui-enyo",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/radare/radare2-webui.git"
+  },
+  "scripts": {},
+  "version": "0.10.2",
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "gulp": "^3.9.1",
+    "gulp-bower": "0.0.13",
+    "gulp-clean-css": "^3.9.0",
+    "merge-stream": "^1.0.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify": "^3.0.0"
+  }
+}

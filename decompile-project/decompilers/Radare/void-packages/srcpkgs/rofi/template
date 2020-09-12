@@ -1,0 +1,17 @@
+# Template file for 'rofi'
+pkgname=rofi
+version=0.15.12
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="i3-devel pango-devel libXinerama-devel libXft-devel startup-notification-devel"
+short_desc="A window switcher, run dialog and dmenu replacement"
+maintainer="Dave Davenport <qball@gmpclient.org>"
+license="MIT"
+homepage="https://davedavenport.github.io/rofi/"
+distfiles="https://github.com/DaveDavenport/rofi/releases/download/${version}/rofi-${version}.tar.xz"
+checksum=e942d865add1bf70423c536583945fcefa9fc45b17c3f222bc3cb56c692ddeed
+
+post_install() {
+	vlicense COPYING LICENSE
+}

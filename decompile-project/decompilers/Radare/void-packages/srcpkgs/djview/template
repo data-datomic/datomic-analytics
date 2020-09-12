@@ -1,0 +1,13 @@
+# Template file for 'djview'
+pkgname=djview
+version=4.10.3
+revision=1
+build_style=gnu-configure
+hostmakedepends="qt5-qmake qt5-tools pkg-config"
+makedepends="qt5-devel djvulibre-devel libxkbcommon-devel libSM-devel libXt-devel"
+short_desc="Portable DjVu viewer and browser plugin"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="GPL-2"
+homepage="http://djvu.sourceforge.net/djview4.html"
+distfiles="${SOURCEFORGE_SITE}/djvu/${pkgname}-${version}.tar.gz"
+checksum=50b80ecddc5aec03c49882c91b3af2f42abfe8454d5ddc01fb313e3481e6ab25

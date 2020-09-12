@@ -1,0 +1,21 @@
+# Template file for 'nethogs'
+pkgname=nethogs
+version=0.8.0
+revision=4
+makedepends="libpcap-devel ncurses-devel"
+short_desc="Small net top tool grouping bandwidth by process"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-1"
+homepage="http://nethogs.sourceforge.net"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/$pkgname-$version.tar.gz"
+checksum=b09cb3c2690a522f8b1314221095d5abb1958d50b56de6d36b11a8e6f28961d0
+wrksrc=$pkgname
+
+do_build() {
+	sed -i 's|DESTDIR := /usr/local|#DESTDIR := /usr/local|' Makefile
+	make CC=$CC CXX=$CXX CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" ${makejobs}
+}
+do_install() {
+	vbin nethogs
+	vman nethogs.8
+}

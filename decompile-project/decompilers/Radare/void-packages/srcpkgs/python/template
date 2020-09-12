@@ -1,0 +1,102 @@
+# Template build file for 'python'.
+#
+# THIS PKG MUST BE SYNCHRONIZED WITH "srcpkgs/python-tkinter".
+#
+pkgname=python
+version=2.7.11
+revision=4
+wrksrc="Python-${version}"
+hostmakedepends="pkg-config"
+makedepends="
+ libffi-devel readline-devel gdbm-devel libressl-devel expat-devel
+ sqlite-devel bzip2-devel zlib-devel"
+pycompile_dirs="usr/lib/python2.7"
+short_desc="Interpreted, interactive, object-oriented programming language"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.python.org"
+license="PSF"
+distfiles="http://www.python.org/ftp/python/$version/Python-$version.tar.xz"
+checksum=962b4c45af50124ea61f11a30deb4342fc0bc21126790fa1d7f6c79809413f46
+
+pre_configure() {
+	# Ensure that internal copies of expat, libffi and zlib are not used.
+	rm -r Modules/expat
+	rm -r Modules/_ctypes/libffi*
+	rm -r Modules/zlib
+}
+
+do_configure() {
+	local _args
+	unset GCC CC CXX CPP LD AR AS RANLIB
+	if [ "$CROSS_BUILD" ]; then
+		mkdir -p host-build
+		cd host-build
+		env -i PATH=$PATH ../configure
+		env -i PATH=$PATH make ${makejobs} python
+		mkdir -p ../hostpython
+		mv python ../hostpython
+		cd ..
+		patch -Np0 -i ${FILESDIR}/Python-2.7.6-xcompile.patch
+		_args="--build=${XBPS_MACHINE%%-musl}"
+	fi
+	./configure ${configure_args} ${_args} \
+		--with-threads --enable-ipv6 --with-signal-module \
+		--with-system-ffi --enable-unicode=ucs4 --with-system-expat \
+		--with-wctype-functions --enable-shared
+}
+
+do_build() {
+	# Avoid invoking pgen for cross-compiles.
+	touch Include/graminit.h Python/graminit.c
+	export PATH="$PATH:$wrksrc/hostpython"
+	make ${makejobs}
+}
+
+do_install() {
+	export PATH="$PATH:$wrksrc/hostpython"
+	make DESTDIR=${DESTDIR} altinstall
+	ln -sf python2.7 ${DESTDIR}/usr/bin/python2
+	ln -sf python2.7 ${DESTDIR}/usr/bin/python
+	ln -sf python2.7-config ${DESTDIR}/usr/bin/python-config
+}
+
+post_install() {
+	chmod 755 ${DESTDIR}/usr/lib/libpython*.so*
+	install -Dm644 LICENSE ${DESTDIR}/usr/share/licenses/python/LICENSE
+	rm -f ${DESTDIR}/usr/bin/smtpd.py
+	# Remove files that belong to python-tkinter and idle-python
+	rm ${DESTDIR}/usr/bin/idle
+	rm -r ${DESTDIR}/usr/lib/python2.7/idlelib
+	rm -r ${DESTDIR}/usr/lib/python2.7/lib-tk
+	# Remove test module and tests that fail to be byte-compiled.
+	rm -r ${DESTDIR}/usr/lib/python2.7/test
+	rm -r ${DESTDIR}/usr/lib/python2.7/lib2to3/tests
+	# Remove references to hardening -specs.
+	sed -e 's|\(-specs=.*hardened-ld\)||g' -e 's|\(-specs=.*hardened-cc1\)||g' -i \
+		${DESTDIR}/usr/lib/python${version%.*}/_sysconfigdata.py \
+		${DESTDIR}/usr/lib/python${version%.*}/config/Makefile
+	# Remove references to the install(1) wrapper.
+	sed -e "s,${XBPS_WRAPPERDIR},/usr/bin,g" -i \
+		${DESTDIR}/usr/lib/python${version%.*}/_sysconfigdata.py \
+		${DESTDIR}/usr/lib/python${version%.*}/config/Makefile
+	if [ "$CROSS_BUILD" ]; then
+		# Remove references to cross toolchain.
+		sed -i "s/$XBPS_CROSS_TRIPLET-//g" \
+			${DESTDIR}/usr/lib/python${version%.*}/_sysconfigdata.py \
+			${DESTDIR}/usr/lib/python${version%.*}/config/Makefile
+	fi
+}
+
+python-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/lib/python2.7/config/libpython2.7.a
+		vmove "usr/bin/python*-config"
+		vmove usr/lib/pkgconfig
+		vmove usr/include
+		mkdir -p ${DESTDIR}/usr/include/python2.7
+		mv ${PKGDESTDIR}/usr/include/python2.7/pyconfig.h \
+			${DESTDIR}/usr/include/python2.7
+	}
+}

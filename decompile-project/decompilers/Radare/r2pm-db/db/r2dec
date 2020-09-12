@@ -1,0 +1,11 @@
+name: r2dec
+type: git
+repo: https://github.com/radareorg/r2dec-js
+desc: "[r2-native] converts asm to pseudo-C code."
+
+install: 
+  - make -C p
+
+uninstall:
+  - make -C p uninstall
+

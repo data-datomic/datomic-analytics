@@ -1,0 +1,52 @@
+# Template file for 'mpd'
+pkgname=mpd
+version=0.19.12
+revision=1
+build_style=gnu-configure
+configure_args="--enable-opus --enable-mikmod --enable-neighbor-plugins
+ --enable-soundcloud --enable-pipe-output --disable-twolame-encoder
+ --disable-sidplay --enable-bzip2 --enable-zzip $(vopt_enable jack)
+ $(vopt_enable lame lame-encoder) $(vopt_enable mpcdec mpc)
+ $(vopt_enable pulseaudio pulse) $(vopt_enable wavpack)
+ $(vopt_enable libao) --disable-systemd-daemon"
+hostmakedepends="pkg-config"
+makedepends="
+ ffmpeg-devel libmodplug-devel libmad-devel libcurl-devel faad2-devel
+ sqlite-devel libmms-devel avahi-glib-libs-devel libid3tag-devel boost-devel
+ yajl-devel libogg-devel libflac-devel libsoup-devel bzip2-devel icu-devel
+ libmikmod-devel libsndfile-devel alsa-lib-devel mpg123-devel libsamplerate-devel
+ libcdio-paranoia-devel zziplib-devel libmpdclient-devel opus-devel samba-devel libnfs-devel
+ libupnp-devel $(vopt_if jack jack-devel) $(vopt_if lame lame-devel)
+ $(vopt_if mpcdec libmpcdec-devel) $(vopt_if pulseaudio pulseaudio-devel)
+ $(vopt_if wavpack wavpack-devel) $(vopt_if libao libao-devel)"
+conf_files="/etc/mpd.conf"
+system_accounts="mpd"
+mpd_homedir="/var/lib/mpd"
+make_dirs="/var/lib/mpd/playlists 0755 mpd mpd"
+short_desc="Flexible, powerful, server-side application for playing music"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://www.musicpd.org/"
+distfiles="http://www.musicpd.org/download/mpd/${version%.*}/mpd-${version}.tar.xz"
+checksum=7b6fe6c7ce72f5f80a276d680072b524ecb395e546e252b8f3a0756377e1e875
+
+# Package build options
+build_options="jack lame mpcdec pulseaudio libao wavpack"
+build_options_default="pulseaudio libao"
+
+pre_configure() {
+	sed -i '/^doc_DATA =/s,doc/mpdconf.example,,' Makefile.in
+}
+post_install() {
+	vconf doc/mpdconf.example mpd.conf
+	vsconf doc/mpdconf.example
+	sed \
+		-e '/^#playlist_directory/c playlist_directory "/var/lib/mpd/playlists"' \
+		-e '/^#db_file/c db_file "/var/lib/mpd/mpd.db"' \
+		-e '/^#pid_file/c pid_file "/run/mpd/mpd.pid"' \
+		-e '/^#state_file/c state_file "/var/lib/mpd/mpdstate"' \
+		-e '/^#user/c user "mpd"' \
+		-i ${DESTDIR}/etc/mpd.conf
+
+	vsv mpd
+}

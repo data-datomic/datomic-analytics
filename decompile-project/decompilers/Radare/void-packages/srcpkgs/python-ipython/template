@@ -1,0 +1,50 @@
+# Template file for 'python-ipython'
+pkgname=python-ipython
+version=4.0.1
+revision=1
+noarch=yes
+wrksrc="ipython-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python-decorator python-pexpect python-pickleshare python-parsing
+ python-simplegeneric python-traitlets"
+pycompile_module="IPython"
+short_desc="Enhanced interactive Python2 shell"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="http://ipython.org/"
+license="3-clause-BSD"
+distfiles="${PYPI_SITE}/i/ipython/ipython-${version}.tar.gz"
+checksum=3bd3b78abc4f43b9ea7fa5353a2a9ba01af8ac4aec5d11e78fa5cbcec105432e
+replaces="python-ipython-notebook<4.0.6 python-ipython-qtconsole<4.1.1"
+
+post_install() {
+	# use decorators of numpy
+	rm -f ${DESTDIR}/usr/lib/python*/site-packages/IPython/external/decorators/_decorators.py
+	# remove iptest
+	rm -f ${DESTDIR}/usr/bin/iptest*
+	# drop '2' suffix from ipython bin script
+	rm -f ${DESTDIR}/usr/bin/ipython
+	mv ${DESTDIR}/usr/bin/ipython{2,}
+	# create versioned ipython3 bin script and man page
+	mv ${DESTDIR}/usr/bin/ipython3{,.4}
+	vman docs/man/ipython.1 ipython3.4.1
+	# install license
+	vlicense COPYING.rst LICENSE
+}
+
+python3.4-ipython_package() {
+	noarch=yes
+	replaces="python3.4-ipython-notebook<4.0.6 python3.4-ipython-qtconsole<4.1.1"
+	depends="python3.4-decorator python3.4-pexpect python3.4-pickleshare
+	 python3.4-parsing python3.4-simplegeneric python3.4-traitlets"
+	pycompile_version="3.4"
+	pycompile_module="IPython"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/bin/ipython3.4
+		vmove usr/lib/python3.4
+		vmove usr/share/man/man1/ipython3.4.1
+		vlicense COPYING.rst LICENSE
+	}
+}

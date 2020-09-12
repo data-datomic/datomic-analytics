@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+    <head>
+        {% include head.html %}
+    </head>
+
+    <body>
+        {% include navigation.html %}
+        {% include jumbotron.html %}
+
+        {{ content }}
+        
+     <div style="clear:both;">
+         <br>
+          <p class="text-center">
+            <br />
+            <a target="_blank" href="{{ site.git_edit_address }}/{{ page.path }}" class="btn btn-default githubEditButton" role="button">
+              <i class="glyphicon glyphicon-pencil"></i> Improve this page
+            </a>
+          </p>
+      </div>
+        
+        {% include footer.html %}
+    </body>
+</html>

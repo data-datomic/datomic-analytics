@@ -1,0 +1,34 @@
+#!/bin/bash
+
+cd "$(dirname $0)"
+
+platform=$(tools/unix/detect-platform)
+arch=$1
+if [ -n "$CRYPTOSHARK_ARCH" ]; then
+  if [ -n "$arch" ]; then
+    echo "Architecture cannot be specified when run inside environment." > /dev/stderr
+    exit 1
+  fi
+else
+  if [ -n "$arch" ]; then
+    export CRYPTOSHARK_ARCH="$arch"
+  fi
+  . tools/$platform/activate-env || exit $?
+fi
+
+if ! command -v qmake > /dev/null; then
+  echo "Qt not found. Please ensure its bin directory is on your PATH." > /dev/stderr
+  exit 1
+fi
+
+"./bootstrap" "$CRYPTOSHARK_ARCH" || exit $?
+
+cd "$CRYPTOSHARK_PARENTDIR"
+mkdir -p "build-cryptoshark-$CRYPTOSHARK_ARCH" || exit $?
+cd "build-cryptoshark-$CRYPTOSHARK_ARCH"
+
+if [ ! -f Makefile ]; then
+  qmake CONFIG+=silent "$CRYPTOSHARK_SRCDIR" || exit $?
+fi
+
+make -j$CRYPTOSHARK_MAKEJ

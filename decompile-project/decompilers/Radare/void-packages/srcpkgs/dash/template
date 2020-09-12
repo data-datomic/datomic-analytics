@@ -1,0 +1,17 @@
+# Template file for 'dash'
+pkgname=dash
+version=0.5.8
+revision=6
+build_style=gnu-configure
+hostmakedepends="bison"
+register_shell="/bin/sh"
+short_desc="POSIX-compliant Unix shell, much smaller than GNU bash"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://gondor.apana.org.au/~herbert/dash/"
+license="BSD"
+distfiles="http://gondor.apana.org.au/~herbert/dash/files/$pkgname-$version.tar.gz"
+checksum=c6db3a237747b02d20382a761397563d813b306c020ae28ce25a1c3915fac60f
+
+alternatives="
+ sh:sh:/usr/bin/dash
+ sh:sh.1:/usr/share/man/man1/dash.1"

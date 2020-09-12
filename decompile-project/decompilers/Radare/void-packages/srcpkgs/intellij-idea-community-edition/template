@@ -1,0 +1,40 @@
+# Template file for 'intellij-idea-community-edition'
+pkgname=intellij-idea-community-edition
+version=14.1.4
+revision=2
+depends="virtual?java-environment giflib libXtst"
+short_desc="Java integrated development environment"
+maintainer="Adrian Siekierka <kontakt@asie.pl>"
+license="Apache-2.0"
+homepage="http://www.jetbrains.org/"
+distfiles="http://download.jetbrains.com/idea/ideaIC-${version}.tar.gz"
+checksum=bd13fdd487ff37fb8b1d6aa713a6ff2c642b8b2ed74d292a8b624ab55c1ba9fb
+only_for_archs="i686 x86_64"
+
+post_extract() {
+	mv $XBPS_BUILDDIR/idea-IC-* ${wrksrc}
+}
+
+do_install() {
+	vmkdir usr/bin
+	vmkdir usr/share/intellij-idea
+
+	mv bin lib plugins ${DESTDIR}/usr/share/intellij-idea
+	rm -rf ${DESTDIR}/usr/share/intellij-idea/lib/libpty/macosx
+	rm -rf ${DESTDIR}/usr/share/intellij-idea/lib/libpty/win/x86_64
+	rm ${DESTDIR}/usr/share/intellij-idea/plugins/gradle/lib/native-platform-freebsd-amd64-0.10.jar
+	rm ${DESTDIR}/usr/share/intellij-idea/plugins/gradle/lib/native-platform-osx-amd64-0.10.jar
+	rm ${DESTDIR}/usr/share/intellij-idea/plugins/gradle/lib/native-platform-windows-amd64-0.10.jar
+	if [ "$XBPS_TARGET_MACHINE" = "x86_64" ]; then
+		rm ${DESTDIR}/usr/share/intellij-idea/bin/libbreakgen.so
+		rm ${DESTDIR}/usr/share/intellij-idea/bin/fsnotifier
+		rm ${DESTDIR}/usr/share/intellij-idea/lib/libpty/linux/x86/libpty.so
+	else
+		rm ${DESTDIR}/usr/share/intellij-idea/bin/libbreakgen64.so
+		rm ${DESTDIR}/usr/share/intellij-idea/bin/fsnotifier64
+		rm ${DESTDIR}/usr/share/intellij-idea/lib/libpty/linux/x86_64/libpty.so
+		rm ${DESTDIR}/usr/share/intellij-idea/plugins/gradle/lib/native-platform-linux-amd64-0.10.jar
+	fi
+
+	ln -sf /usr/share/intellij-idea/bin/idea.sh ${DESTDIR}/usr/bin/idea
+}

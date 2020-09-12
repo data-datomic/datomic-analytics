@@ -1,0 +1,10 @@
+node_modules/
+vendors/
+www/m/vendors
+dev/
+dist/
+.config
+*.log
+npm-debug.log*
+*~
+dist.tar.gz

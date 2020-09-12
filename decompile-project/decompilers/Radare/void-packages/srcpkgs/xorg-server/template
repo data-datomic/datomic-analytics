@@ -1,0 +1,119 @@
+# Template build file for 'xorg-server'.
+pkgname=xorg-server
+version=1.18.0
+revision=6
+build_style=gnu-configure
+configure_args="--enable-ipv6 --enable-record --enable-xorg
+ --enable-xnest --enable-xephyr --enable-composite --enable-xvfb
+ --disable-static --disable-config-hal --disable-xfbdev --disable-xfake
+ --enable-config-udev --enable-config-udev-kms
+ --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb
+ --with-fontrootdir=/usr/share/fonts/X11 --with-sha1=libcrypto
+ --disable-dmx --disable-xfree86-utils --enable-kdrive-mouse
+ --enable-kdrive --enable-kdrive-evdev --enable-kdrive-kbd
+ --disable-linux-acpi --disable-linux-apm --enable-xwayland
+ --enable-suid-wrapper --with-shared-memory-dir=/dev/shm
+ --without-systemd-daemon"
+short_desc="The X11 server from X.org"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://xorg.freedesktop.org"
+license="MIT, BSD"
+distfiles="${XORG_SITE}/xserver/${pkgname}-${version}.tar.bz2"
+checksum=195670819695d9cedd8dde95fbe069be0d0f488a77797a2d409f9f702daf312e
+
+lib32disabled=yes
+
+hostmakedepends="pkg-config perl flex"
+makedepends="
+ damageproto inputproto glproto xproto presentproto
+ dri2proto dri3proto xf86driproto randrproto videoproto compositeproto scrnsaverproto
+ resourceproto xineramaproto xcmiscproto bigreqsproto xcb-util-devel
+ xcb-util-image-devel xcb-util-keysyms-devel xcb-util-wm-devel libudev-devel
+ libressl-devel libX11-devel libXext-devel libdmx-devel libpciaccess-devel
+ libXfont-devel libXmu-devel libXrender-devel libXfixes-devel libXi-devel
+ libXaw-devel libdrm-devel libXtst-devel libXres-devel libxkbui-devel
+ libxkbfile-devel libXxf86dga-devel libXv-devel pixman-devel libxshmfence-devel
+ wayland-devel libepoxy-devel xcb-util-renderutil-devel"
+# See hw/xfree86/common/xf86Module.h. Only care for the major version.
+depends="xkeyboard-config"
+provides="xserver-abi-extension-9_1 xserver-abi-input-22_1 xserver-abi-video-20_1 xf86-video-modesetting-1_1"
+replaces="xf86-video-modesetting>=0"
+
+case "$XBPS_TARGET_MACHINE" in
+i686*|x86_64*)
+	# Enable glamor/dri/opengl by default on x86.
+	configure_args+=" --enable-glamor --enable-dri2 --enable-dri3 --enable-glx"
+	makedepends+=" MesaLib-devel"
+	replaces+=" glamor-egl>=0"
+	;;
+*)
+	# Enable dri2 on !x86 via libdri.
+	configure_args+=" --disable-glx --disable-dri --enable-dri2 --enable-dri3"
+	makedepends+=" dri2proto libdri2-devel-git"
+	;;
+esac
+
+conf_files="/etc/X11/Xwrapper.config"
+
+# Symbols must be resolved lazily for modules to work.
+# See https://bugs.freedesktop.org/show_bug.cgi?id=41208#c5
+LDFLAGS="-Wl,-z,lazy"
+
+pre_configure() {
+	case "$XBPS_TARGET_MACHINE" in
+	*-musl)
+		export CFLAGS+=" -D__uid_t=uid_t -D__gid_t=gid_t"
+		sed -i -e 's/termio.h/termios.h/' hw/xfree86/os-support/xf86_OSlib.h
+		;;
+	esac
+}
+post_install() {
+	case "$XBPS_TARGET_MACHINE" in
+		*-musl) vinstall ${FILESDIR}/20-modules.conf 644 usr/share/X11/xorg.conf.d;;
+	esac
+
+	vinstall ${FILESDIR}/30-nvidia-drm-outputclass.conf 644 usr/share/X11/xorg.conf.d
+	vinstall ${FILESDIR}/Xwrapper.config 644 etc/X11
+
+	vlicense COPYING
+
+	chmod 4755 ${DESTDIR}/usr/libexec/Xorg.wrap
+
+	if [ -e ${DESTDIR}/usr/lib/xorg/modules/extensions/libglx.so ]; then
+		# Support nvidia and amd binary blobs to provide their own
+		# implementation.
+		mv ${DESTDIR}/usr/lib/xorg/modules/extensions/{libglx.so,libglx-xorg.so}
+	fi
+}
+
+xorg-server-xnest_package() {
+	short_desc="A nested X server that runs as an X application"
+	pkg_install() {
+		vmove usr/bin/Xnest
+		vmove usr/share/man/man1/Xnest.1
+	}
+}
+xorg-server-xephyr_package() {
+	short_desc="X server outputting to a window on a pre-existing X display"
+	pkg_install() {
+		vmove usr/bin/Xephyr
+		vmove usr/share/man/man1/Xephyr.1
+	}
+}
+xorg-server-xvfb_package() {
+	short_desc="Virtual framebuffer X server"
+	depends="xkeyboard-config"
+	pkg_install() {
+		vmove usr/bin/Xvfb
+		vmove usr/share/man/man1/Xvfb.1
+	}
+}
+xorg-server-devel_package() {
+	depends="${makedepends}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/share/aclocal
+	}
+}

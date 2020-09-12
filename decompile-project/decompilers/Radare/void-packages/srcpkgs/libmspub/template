@@ -1,0 +1,30 @@
+# Template file for 'libmspub'
+pkgname=libmspub
+version=0.1.2
+revision=3
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="icu-devel boost-devel librevenge-devel zlib-devel"
+short_desc="Library for parsing the mspub file structure"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="GPL-3"
+homepage="http://cgit.freedesktop.org/libreoffice/libmspub/commit/"
+distfiles="http://dev-www.libreoffice.org/src/${pkgname}-${version}.tar.bz2"
+checksum=26d488527ffbb0b41686d4bab756e3e6aaeb99f88adeb169d0c16d2cde96859a
+
+libmspub-devel_package() {
+	depends="libmspub>=${version}_${revision} $makedepends"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}
+
+libmspub-tools_package() {
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin
+	}
+}

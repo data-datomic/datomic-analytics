@@ -1,0 +1,36 @@
+# Template file for 'vamp-plugin-sdk'
+pkgname=vamp-plugin-sdk
+version=2.2
+revision=7
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="libsndfile-devel"
+short_desc="The Vamp audio analysis plugin system"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+homepage="http://www.vamp-plugins.org/"
+distfiles="${SOURCEFORGE_SITE}/vamp/${pkgname}-${version}.tar.gz"
+checksum=601d9d9f859b3232afda63ca099e51d81202556bbb0ee275a9aab14bf3d6c766
+nocross=yes
+
+post_install() {
+	vlicense COPYING LICENSE
+}
+
+libvamp-plugin-sdk_package() {
+	short_desc+=" - Runtime libraries"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}
+
+vamp-plugin-sdk-devel_package() {
+	depends="libsndfile-devel libvamp-plugin-sdk>=${version}_${revision}"
+	short_desc+=" - Development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+	}
+}

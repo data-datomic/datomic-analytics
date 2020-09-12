@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/cryptoshark undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/cryptoshark",
+    "repo": "https://github.com/frida/cryptoshark",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/cryptoshark",
+    "startTime": "2020-09-12T11:01:44.274Z",
+    "endTime": "2020-09-12T11:01:47.093Z",
+    "childProcessPid": 27291,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--cryptoshark--27291"
+}

@@ -1,0 +1,29 @@
+# Template file for 'mutagen'
+pkgname=mutagen
+version=1.31
+revision=1
+noarch=yes
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-devel python3.4-devel"
+makedepends="${hostmakedepends}"
+depends="python"
+pycompile_module="mutagen"
+short_desc="Python2 multimedia tagging library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://bitbucket.org/lazka/mutagen"
+license="GPL-2"
+distfiles="${PYPI_SITE}/m/mutagen/mutagen-${version}.tar.gz"
+checksum=0aa011707785fe30935d8655380052a20ba8b972aa738d4f144c457b35b4d699
+
+python3.4-mutagen_package() {
+	noarch=yes
+	wrksrc=${pkgname#*-}-${version}
+	depends="python3.4"
+	pycompile_version="3.4"
+	pycompile_module="mutagen"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

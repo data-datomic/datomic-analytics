@@ -1,0 +1,33 @@
+# Template file for 'python-webassets'
+pkgname=python-webassets
+version=0.11.1
+revision=1
+noarch=yes
+wrksrc="${pkgname#*-}-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+pycompile_module="webassets"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python"
+short_desc="Media asset management for Python2"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="BSD"
+homepage="https://github.com/miracle2k/webassets/"
+distfiles="${PYPI_SITE}/w/webassets/webassets-${version}.tar.gz"
+checksum=9f964ce47e99d15cf9228b07417233b6f865d71ab053cf6e446825bcd8f5385c
+
+post_install() {
+	vlicense LICENSE
+}
+
+python3.4-webassets_package() {
+	noarch=yes
+	depends="python3.4"
+	pycompile_version="3.4"
+	pycompile_module="webassets"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+		vlicense LICENSE
+	}
+}

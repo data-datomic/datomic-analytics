@@ -1,0 +1,47 @@
+# Template build file for 'curl'.
+pkgname=curl
+version=7.46.0
+revision=1
+build_style=gnu-configure
+configure_args="ac_cv_sizeof_off_t=8 --without-gssapi
+ --enable-threaded-resolver --enable-ipv6 $(vopt_with rtmp)
+ $(vopt_with ldap '--enable-ldap --enable-ldaps' '--disable-ldap --disable-ldaps')
+ $(vopt_with ssh ssh2) $(vopt_with ssl) $(vopt_with gnutls)
+ --with-ca-bundle=/etc/ssl/certs/ca-certificates.crt"
+hostmakedepends="pkg-config perl groff"
+makedepends="zlib-devel libidn-devel nghttp2-devel
+ $(vopt_if rtmp librtmp-devel)
+ $(vopt_if ldap libldap-devel) $(vopt_if ssh libssh2-devel)
+ $(vopt_if ssl libressl-devel) $(vopt_if gnutls gnutls-devel)"
+depends="ca-certificates"
+short_desc="Client that groks URLs"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="MIT"
+homepage="http://curl.haxx.se"
+distfiles="$homepage/download/$pkgname-$version.tar.bz2"
+checksum=b7d726cdd8ed4b6db0fa1b474a3c59ebbbe4dcd4c61ac5e7ade0e0270d3195ad
+
+build_options="gnutls ldap rtmp ssh ssl"
+build_options_default="ssh ssl"
+vopt_conflict ssl gnutls
+
+libcurl_package() {
+	short_desc="The multiprotocol file transfer library"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}
+libcurl-devel_package() {
+	depends="${makedepends} libcurl>=${version}_${revision}"
+	short_desc="The multiprotocol file transfer library - development files"
+	pkg_install() {
+		vmove usr/bin/curl-config
+		vmove "usr/share/man/man1/curl-config*"
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/share/man/man3
+		vmove usr/share/aclocal
+	}
+}

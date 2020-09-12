@@ -1,0 +1,47 @@
+# Template file for 'bluez'
+pkgname=bluez
+version=5.37
+revision=1
+build_style=gnu-configure
+configure_args="--with-udevdir=/usr/lib/udev --disable-systemd
+ --enable-pie --enable-threads --enable-library"
+hostmakedepends="automake libtool pkg-config flex"
+makedepends="libglib-devel libudev-devel dbus-devel
+ cups-devel libical-devel readline-devel"
+conf_files="/etc/bluetooth/main.conf"
+short_desc="Bluetooth tools and daemons"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.bluez.org/"
+license="GPL-2"
+distfiles="${KERNEL_SITE}/bluetooth/$pkgname-$version.tar.xz"
+checksum=c14ba9ddcb0055522073477b8fd8bf1ddf5d219e75fdfd4699b7e0ce5350d6b0
+
+pre_configure() {
+	autoreconf -fi
+}
+post_install() {
+	vinstall ${wrksrc}/src/main.conf 644 etc/bluetooth
+	vsv bluetoothd
+}
+
+libbluetooth_package() {
+	short_desc="Library to use the Bluez Linux Bluetooth Stack"
+	pkg_install() {
+		vmove "usr/lib/libbluetooth.so.*"
+	}
+}
+libbluetooth-devel_package() {
+	depends="libbluetooth>=${version}_${revision}"
+	short_desc="Development files to use the BlueZ Linux Bluetooth library"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}
+bluez-cups_package() {
+	short_desc="CUPS printer backend for Bluetooth printers"
+	pkg_install() {
+		vmove usr/lib/cups/backend/bluetooth
+	}
+}

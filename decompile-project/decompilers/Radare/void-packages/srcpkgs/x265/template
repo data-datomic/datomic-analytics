@@ -1,0 +1,26 @@
+# Template file for 'x265'
+pkgname=x265
+version=1.8
+revision=1
+build_style=cmake
+build_wrksrc="source"
+wrksrc="multicoreware-x265-e27327f5da35"
+hostmakedepends="yasm cmake"
+short_desc="Open Source H265/HEVC video encoder"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://bitbucket.org/multicoreware/x265"
+license="GPL-2"
+distfiles="https://bitbucket.org/multicoreware/x265/get/${version}.tar.bz2"
+checksum=3d36472d9b41cdf04ae92eede1f1da2198432d0ebc2c29ec2da36d8bddaafb7e
+nocross=yes
+only_for_archs="i686 i686-musl x86_64 x86_64-musl"  # CMakeList is utterly broken.
+
+x265-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.a
+	}
+}

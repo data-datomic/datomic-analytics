@@ -1,0 +1,33 @@
+# Template build file for 'xf86-video-intel'.
+pkgname=xf86-video-intel
+version=2.99.917.24
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+hostmakedepends="git automake libtool pkg-config xorg-util-macros"
+makedepends="libudev-devel libdrm-devel libpciaccess-devel libXext-devel
+ libXfixes-devel libXv-devel libXvMC-devel xcb-util-devel MesaLib-devel
+ xorg-server-devel"
+depends="virtual?xserver-abi-video-20_1 mesa-intel-dri"
+only_for_archs="i686 i686-musl x86_64 x86_64-musl"
+short_desc="Xorg DDX Intel video driver"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://xorg.freedesktop.org/"
+license="MIT"
+#distfiles="${XORG_SITE}/driver/$pkgname-$version.tar.bz2"
+#checksum=00b781eea055582820a123c47b62411bdf6aabf4f03dc0568faec55faf9667c9
+
+LDFLAGS="-Wl,-z,lazy"
+
+do_fetch() {
+	git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-intel ${wrksrc}
+	cd ${wrksrc}
+	# Latest commit as of 20151217
+	git reset --hard 82293901da23d
+}
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+post_install() {
+	vlicense COPYING
+}

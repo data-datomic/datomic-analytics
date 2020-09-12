@@ -1,0 +1,72 @@
+# Template file for 'rsyslog'
+pkgname=rsyslog
+version=8.15.0
+revision=1
+build_style=gnu-configure
+configure_args="--sbindir=/usr/bin
+ --enable-gnutls --enable-mysql --enable-pgsql
+ --enable-imdiag --enable-imfile --enable-mail --enable-gssapi-krb5
+ --enable-imptcp --enable-mmsnmptrapd
+ --enable-impstats --enable-omprog --enable-omstdout
+ --enable-pmlastmsg --enable-pmcisconames --enable-pmaixforwardedfrom
+ --enable-pmsnare --enable-omuxsock --disable-generate-man-pages"
+short_desc="An Enhanced multi-threaded syslog daemon"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.rsyslog.com"
+distfiles="${homepage}/files/download/rsyslog/$pkgname-$version.tar.gz"
+checksum=9ed6615a8503964290471e98ed363f3975b964a34c2d4610fb815a432aadaf59
+
+lib32disabled=yes
+disable_parallel_build=yes
+hostmakedepends="pkg-config postgresql-libs-devel"
+makedepends="json-c-devel gnutls-devel postgresql-libs-devel libee-devel
+ liblogging-devel libmysqlclient-devel mit-krb5-devel"
+conf_files="/etc/rsyslog.conf"
+provides="syslog-daemon-0_1"
+replaces="syslog-daemon>=0"
+make_dirs="/etc/rsyslog.d 0755 root root"
+
+pre_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		sed -e "s,\`\$PG_CONFIG --libdir\`,\"$XBPS_CROSS_BASE/usr/lib\",g" -i configure
+		sed -e "s,\`\$PG_CONFIG --includedir\`,\"$XBPS_CROSS_BASE/usr/include\",g" -i configure
+	fi
+}
+post_install() {
+	vsv rsyslogd
+	vconf ${FILESDIR}/rsyslog.conf
+}
+
+rsyslog-gssapi_package() {
+	lib32disabled=yes
+	depends="rsyslog"
+	short_desc+=" - Kerberos5 GSSAPI add-on"
+	pkg_install() {
+		vmove "usr/lib/rsyslog/*gss*.so"
+	}
+}
+rsyslog-gnutls_package() {
+	lib32disabled=yes
+	depends="rsyslog"
+	short_desc+=" - GnuTLS add-on"
+	pkg_install() {
+		vmove "usr/lib/rsyslog/*gtls*"
+	}
+}
+rsyslog-mysql_package() {
+	lib32disabled=yes
+	depends="rsyslog"
+	short_desc+=" - MySQL add-on"
+	pkg_install() {
+		vmove usr/lib/rsyslog/ommysql.so
+	}
+}
+rsyslog-postgresql_package() {
+	lib32disabled=yes
+	depends="rsyslog"
+	short_desc+=" - PostgreSQL add-on"
+	pkg_install() {
+		vmove usr/lib/rsyslog/ompgsql.so
+	}
+}

@@ -1,0 +1,34 @@
+# Template file for 'claws-mail'
+pkgname=claws-mail
+version=3.13.1
+revision=2
+build_style=gnu-configure
+configure_args="--disable-static --disable-python-plugin --disable-perl-plugin"
+hostmakedepends="pkg-config python-devel"
+makedepends="poppler-glib-devel libarchive-devel libSM-devel
+ libnotify-devel libcanberra-devel gpgme-devel gnutls-devel
+ enchant-devel dbus-devel libetpan-devel libldap-devel
+ libsoup-gnome-devel startup-notification-devel"
+short_desc="An extensible and secure e-mail client / newsreader with classic GUI"
+maintainer="Jakub Skrzypnik <jot.skrzyp@gmail.com>"
+license="GPL-3"
+homepage="http://claws-mail.org"
+distfiles="http://www.claws-mail.org/download.php?file=releases/claws-mail-${version}.tar.gz"
+checksum=1b2b2b0287ac10b5aa9a0cc96d9642633f9063bd8decf27fb8a93f14c693cf97
+nocross=yes
+
+# TODO(dominikh): claws-mail is a mess. If we don't have python
+# installed at all, the build process will fail, even if we don't want
+# the python plugin. If we do have python installed, cross-compilation
+# fails. It's probably possible to fix the configure script to
+# cross-compile properly, but it's not worth the trouble. To me,
+# anyway.
+
+claws-mail-devel_package() {
+	depends="${makedepends}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+	}
+}

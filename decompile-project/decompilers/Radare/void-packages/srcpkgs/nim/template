@@ -1,0 +1,57 @@
+# Template file for 'nim'
+pkgname=nim
+version=0.12.0
+revision=1
+_csources_commit=c2c13f5a60dc635d1a9746e630cfb127348430cb
+depends="gcc"
+hostmakedepends="ed"
+short_desc="The Nim programming language"
+maintainer="allan <mail@may.mooo.com>"
+license="MIT"
+homepage="http://nim-lang.org/"
+distfiles="https://github.com/nim-lang/Nim/archive/v${version}.tar.gz
+ http://github.com/nim-lang/csources/archive/$_csources_commit.tar.gz"
+checksum="52e57ad9221e6223e53f612a93046ef9287d92619411ac57a7237dadbf7172bd
+ 876d730d2a7c034b82626d892c65e1b26caa30bc4471c40067a56dc4404a2cfd"
+wrksrc=Nim-$version
+
+post_extract() {
+	cd $wrksrc
+	test -d csources || cp -r ../csources-$_csources_commit csources
+}
+
+do_build() {
+	cd csources
+	sh build.sh
+	cd ..
+
+	bin/nim c koch
+	./koch boot -d:release
+
+	case "$XBPS_TARGET_MACHINE" in
+		arm*)
+			ed config/nim.cfg <<-EDIT
+				,s/^arm.linux.gcc.exe .*/arm.linux.gcc.exe = "$CC"/
+				,s/^arm.linux.gcc.linkerexe .*/arm.linux.gcc.linkerexe = "$CC"/
+				w
+				q
+			EDIT
+			bin/nim c -d:release --os:linux --cpu:arm compiler/nim;;
+	esac
+}
+
+do_install() {
+	./koch install ${DESTDIR}/usr/lib
+
+	if [ "$CROSS_BUILD" ]; then
+		mv compiler/nim ${DESTDIR}/usr/lib/nim/bin/nim
+	fi
+
+	vmkdir usr/bin
+	vmkdir usr/share/nim
+	ln -sf /usr/lib/nim/bin/nim ${DESTDIR}/usr/bin/nim
+	cp -r doc examples ${DESTDIR}/usr/lib/nim
+	ln -sf /usr/lib/nim/doc ${DESTDIR}/usr/share/nim/doc
+	ln -sf /usr/lib/nim/examples ${DESTDIR}/usr/share/nim/examples
+	vlicense copying.txt
+}

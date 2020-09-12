@@ -1,0 +1,34 @@
+# Template file for 'ReText'
+pkgname=ReText
+version=5.2.1
+revision=1
+noarch=yes
+build_style="python-module"
+python_versions="3.4"
+pycompile_version="3.4"
+pycompile_module="ReText"
+makedepends="python3.4 qt5-tools ImageMagick"
+depends="python3.4-PyQt5-webkit python3.4-Markups python3.4-Markdown
+ desktop-file-utils shared-mime-info"
+short_desc="Simple editor for Markdown and reStructuredText"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="GPL-3"
+homepage="http://retext.sourceforge.net"
+distfiles="${SOURCEFORGE_SITE}/retext/ReText-${version%.*}/ReText-${version}.tar.gz"
+checksum=02164ae2bba6f47a2ec5e11aa06aefbcd96bea1b84a96c5673dbe18d8ccb2a69
+
+post_install() {
+	lrelease locale/*.ts
+	local icondir=usr/share/icons/hicolor
+
+	for size in 16 22 24 32 48 128; do
+		vmkdir $icondir/${size}x${size}/apps
+			convert -resize $size icons/retext.png $DESTDIR/$icondir/${size}x${size}/apps/retext.png;
+	done
+	vmkdir $icondir/scalable/apps
+	vinstall icons/retext.svg 644 $icondir/scalable/apps
+
+	vinstall $FILESDIR/$pkgname.desktop 644 usr/share/applications
+	vmkdir usr/share/mime/packages
+	vcopy $FILESDIR/x-retext-*.xml usr/share/mime/packages
+}

@@ -1,0 +1,14 @@
+# Template file for 'rdesktop'
+pkgname=rdesktop
+version=1.8.3
+revision=6
+build_style=gnu-configure
+configure_args="--with-ipv6 --with-sound=alsa --with-openssl=${XBPS_CROSS_BASE}/usr"
+hostmakedepends="pkg-config"
+makedepends="libressl-devel alsa-lib-devel libsamplerate-devel libXrandr-devel pcsclite-devel libgssglue-devel"
+short_desc="An open source client for Windows Remote Desktop Services"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.rdesktop.org/"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=88b20156b34eff5f1b453f7c724e0a3ff9370a599e69c01dc2bf0b5e650eece4

@@ -1,0 +1,82 @@
+--- tools/profiler/gecko/local_debug_info_symbolizer.cc
++++ tools/profiler/gecko/local_debug_info_symbolizer.cc
+@@ -3,6 +3,7 @@
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
++#include <sys/types.h>
+ #include "PlatformMacros.h"
+ #include "nsAutoPtr.h"
+ 
+--- tools/profiler/core/platform.h
++++ tools/profiler/core/platform.h
+@@ -29,6 +29,8 @@
+ #ifndef TOOLS_PLATFORM_H_
+ #define TOOLS_PLATFORM_H_
+ 
++#include <sys/types.h>
++
+ #ifdef ANDROID
+ #include <android/log.h>
+ #else
+--- tools/profiler/lul/LulElf.cpp
++++ tools/profiler/lul/LulElf.cpp
+@@ -579,10 +579,10 @@
+ // Return the non-directory portion of FILENAME: the portion after the
+ // last slash, or the whole filename if there are no slashes.
+ string BaseFileName(const string &filename) {
+-  // Lots of copies!  basename's behavior is less than ideal.
+-  char *c_filename = strdup(filename.c_str());
+-  string base = basename(c_filename);
+-  free(c_filename);
++  // basename's behavior is less than ideal so avoid it
++  const char *c_filename = filename.c_str();
++  const char *p = strrchr(c_filename, '/');
++  string base = p ? p+1 : c_filename;
+   return base;
+ }
+ 
+--- tools/profiler/core/platform-linux.cc.orig	2015-06-11 18:39:35.689739054 +0200
++++ tools/profiler/core/platform-linux.cc	2015-06-11 18:40:04.479706749 +0200
+@@ -651,11 +651,13 @@ void OS::Startup() {
+ void TickSample::PopulateContext(void* aContext)
+ {
+   MOZ_ASSERT(aContext);
++#if defined(__GLIBC__)
+   ucontext_t* pContext = reinterpret_cast<ucontext_t*>(aContext);
+   if (!getcontext(pContext)) {
+     context = pContext;
+     SetSampleContext(this, aContext);
+   }
++#endif
+ }
+ 
+ void OS::SleepMicro(int microseconds)
+--- tools/profiler/core/platform.h.orig	2015-11-04 18:27:58.170732586 +0100
++++ tools/profiler/core/platform.h	2015-11-04 18:29:11.898478051 +0100
+@@ -60,9 +60,9 @@
+ #include "v8-support.h"
+ #include <vector>
+ 
+-// We need a definition of gettid(), but glibc doesn't provide a
++// We need a definition of gettid(), but glibc nor musl don't provide a
+ // wrapper for it.
+-#if defined(__GLIBC__)
++#if defined(__linux__)
+ #include <unistd.h>
+ #include <sys/syscall.h>
+ static inline pid_t gettid()
+--- media/libav/config_unix.h.orig	2015-11-04 18:38:46.660289503 +0100
++++ media/libav/config_unix.h	2015-11-04 18:39:38.620814879 +0100
+@@ -223,7 +223,11 @@
+ #define HAVE_STRERROR_R 1
+ #define HAVE_STRPTIME 1
+ #define HAVE_SYSCONF 1
++#if !defined(__linux__) || defined(__GLIBC__)
+ #define HAVE_SYSCTL 1
++#else
++#define HAVE_SYSCTL 0
++#endif
+ #define HAVE_USLEEP 1
+ #define HAVE_VIRTUALALLOC 0
+ #define HAVE_PTHREADS 0

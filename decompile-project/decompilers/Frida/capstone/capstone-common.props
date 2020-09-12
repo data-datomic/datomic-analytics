@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>USE_SYS_DYN_MEM;CAPSTONE_HAS_X86;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4245;4267;4334;4459;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <ClInclude Include="include\capstone\arm.h" />
+    <ClInclude Include="include\capstone\arm64.h" />
+    <ClInclude Include="include\capstone\bpf.h" />
+    <ClInclude Include="include\capstone\capstone.h" />
+    <ClInclude Include="include\capstone\evm.h" />
+    <ClInclude Include="include\capstone\m680x.h" />
+    <ClInclude Include="include\capstone\m68k.h" />
+    <ClInclude Include="include\capstone\mips.h" />
+    <ClInclude Include="include\capstone\mos65xx.h" />
+    <ClInclude Include="include\capstone\platform.h" />
+    <ClInclude Include="include\capstone\ppc.h" />
+    <ClInclude Include="include\capstone\riscv.h" />
+    <ClInclude Include="include\capstone\sparc.h" />
+    <ClInclude Include="include\capstone\systemz.h" />
+    <ClInclude Include="include\capstone\tms320c64x.h" />
+    <ClInclude Include="include\capstone\wasm.h" />
+    <ClInclude Include="include\capstone\x86.h" />
+    <ClInclude Include="include\capstone\xcore.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="cs_priv.h" />
+    <ClInclude Include="LEB128.h" />
+    <ClInclude Include="MathExtras.h" />
+    <ClInclude Include="MCDisassembler.h" />
+    <ClInclude Include="MCFixedLenDisassembler.h" />
+    <ClInclude Include="MCInst.h" />
+    <ClInclude Include="MCInstrDesc.h" />
+    <ClInclude Include="MCRegisterInfo.h" />
+    <ClInclude Include="SStream.h" />
+    <ClInclude Include="utils.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClCompile Include="cs.c" />
+    <ClCompile Include="MCInst.c" />
+    <ClCompile Include="MCInstrDesc.c" />
+    <ClCompile Include="MCRegisterInfo.c" />
+    <ClCompile Include="SStream.c" />
+    <ClCompile Include="utils.c" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="arch\X86\X86BaseInfo.h" />
+    <ClInclude Include="arch\X86\X86Disassembler.h" />
+    <ClInclude Include="arch\X86\X86DisassemblerDecoder.h" />
+    <ClInclude Include="arch\X86\X86DisassemblerDecoderCommon.h" />
+    <ClInclude Include="arch\X86\X86InstPrinter.h" />
+    <ClInclude Include="arch\X86\X86InstPrinterCommon.h" />
+    <ClInclude Include="arch\X86\X86Mapping.h" />
+    <ClInclude Include="arch\X86\X86Module.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClCompile Include="arch\X86\X86ATTInstPrinter.c" />
+    <ClCompile Include="arch\X86\X86Disassembler.c" />
+    <ClCompile Include="arch\X86\X86DisassemblerDecoder.c" />
+    <ClCompile Include="arch\X86\X86InstPrinterCommon.c" />
+    <ClCompile Include="arch\X86\X86IntelInstPrinter.c" />
+    <ClCompile Include="arch\X86\X86Mapping.c" />
+    <ClCompile Include="arch\X86\X86Module.c" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="arch\X86\X86GenAsmWriter.inc" />
+    <None Include="arch\X86\X86GenAsmWriter1.inc" />
+    <None Include="arch\X86\X86GenAsmWriter1_reduce.inc" />
+    <None Include="arch\X86\X86GenAsmWriter_reduce.inc" />
+    <None Include="arch\X86\X86GenDisassemblerTables.inc" />
+    <None Include="arch\X86\X86GenDisassemblerTables2.inc" />
+    <None Include="arch\X86\X86GenDisassemblerTables_reduce.inc" />
+    <None Include="arch\X86\X86GenDisassemblerTables_reduce2.inc" />
+    <None Include="arch\X86\X86GenInstrInfo.inc" />
+    <None Include="arch\X86\X86GenInstrInfo_reduce.inc" />
+    <None Include="arch\X86\X86GenRegisterInfo.inc" />
+    <None Include="arch\X86\X86GenRegisterName.inc" />
+    <None Include="arch\X86\X86GenRegisterName1.inc" />
+    <None Include="arch\X86\X86ImmSize.inc" />
+    <None Include="arch\X86\X86Lookup16.inc" />
+    <None Include="arch\X86\X86Lookup16_reduce.inc" />
+    <None Include="arch\X86\X86MappingInsn.inc" />
+    <None Include="arch\X86\X86MappingInsnName.inc" />
+    <None Include="arch\X86\X86MappingInsnName_reduce.inc" />
+    <None Include="arch\X86\X86MappingInsnOp.inc" />
+    <None Include="arch\X86\X86MappingInsnOp_reduce.inc" />
+    <None Include="arch\X86\X86MappingInsn_reduce.inc" />
+    <None Include="arch\X86\X86MappingReg.inc" />
+  </ItemGroup>
+
+</Project>

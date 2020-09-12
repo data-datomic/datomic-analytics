@@ -1,0 +1,71 @@
+# Template build file for 'ruby'.
+_ruby_abiver=2.3.0
+
+pkgname=ruby
+version=2.3.0
+revision=1
+build_style=gnu-configure
+configure_args="--enable-shared --disable-rpath
+ DOXYGEN=/usr/bin/doxygen DOT=/usr/bin/dot PKG_CONFIG=/usr/bin/pkg-config"
+make_build_args="all capi"
+short_desc="Ruby programming language"
+homepage="http://www.ruby-lang.org/en/"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+distfiles="ftp://ftp.ruby-lang.org/pub/ruby/${version%.*}/${pkgname}-${version}.tar.bz2"
+checksum=ec7579eaba2e4c402a089dbc86c98e5f1f62507880fd800b9b34ca30166bfa5e
+
+hostmakedepends="pkg-config bison groff doxygen graphviz"
+makedepends="zlib-devel readline-devel libffi-devel libressl-devel
+ gdbm-devel libyaml-devel pango-devel"
+
+if [ "$CROSS_BUILD" ]; then
+	hostmakedepends+=" ruby"
+fi
+
+pre_build() {
+	# Force getaddrinfo detection.
+	sed -e 's,\(checking_for("wide getaddrinfo") {try_\)run,\1link,' -i ext/socket/extconf.rb
+	# Hack for cross-builds.
+	touch ext/ripper/check
+}
+post_install() {
+	# Remove references to the cross compiler
+	if [ "$CROSS_BUILD" ]; then
+		sed -e "s,${XBPS_CROSS_TRIPLET}-,,g" -i ${DESTDIR}/usr/lib/ruby/${_ruby_abiver}/*/rbconfig.rb
+	fi
+	# Replace reference to the install(1) wrapper
+	sed -e "s,${XBPS_WRAPPERDIR},/usr/bin,g" -i \
+		${DESTDIR}/usr/lib/ruby/${_ruby_abiver}/*/rbconfig.rb
+	# Remove references to hardening -specs.
+	sed -e "s|\(-specs=.*hardened-ld\)||g" -e "s|\(-specs=.*hardened-cc1\)||g" -i \
+		${DESTDIR}/usr/lib/ruby/${_ruby_abiver}/*/rbconfig.rb
+}
+
+ruby-devel-doc_package() {
+	short_desc+=" - HTML C API documentation files"
+	noarch=yes
+	pkg_install() {
+		vmove usr/share/doc
+	}
+}
+ruby-devel_package() {
+	depends="ruby-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove usr/lib/ruby/${_ruby_abiver}/mkmf.rb
+		vmove usr/lib/pkgconfig
+	}
+}
+ruby-ri_package() {
+	depends="ruby-${version}_${revision}"
+	short_desc="Ruby Interactive reference"
+	noarch=yes
+	pkg_install() {
+		vmove usr/bin/ri
+		vmove usr/share/ri
+		vmove "usr/share/man/man1/ri*"
+	}
+}

@@ -1,0 +1,31 @@
+# Template file for 'sndio'
+pkgname=sndio
+version=1.0.1
+revision=1
+build_style=configure
+configure_args="--prefix=/usr"
+makedepends="alsa-lib-devel"
+short_desc="Small audio and MIDI framework part of the OpenBSD project"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="ISC"
+system_accounts="sndiod"
+sndiod_descr="sndio daemon"
+homepage="http://www.sndio.org/"
+distfiles="http://www.sndio.org/${pkgname}-${version}.tar.gz"
+checksum=95591fbcb3faaebb0ce023f1c95d6809a506269758d57b700d9549322eaef702
+
+post_install() {
+	vsv sndiod
+	sed -n '/Copyright/,/PERFORMANCE/p' <sndiod/sndiod.c >LICENSE
+	vlicense LICENSE
+}
+
+sndio-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" -- development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/share/man/man3/*.3"
+		vmove "usr/lib/*.so"
+	}
+}

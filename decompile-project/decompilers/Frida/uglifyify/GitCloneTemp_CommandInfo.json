@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/uglifyify undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/uglifyify",
+    "repo": "https://github.com/frida/uglifyify",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/uglifyify",
+    "startTime": "2020-09-12T11:04:35.789Z",
+    "endTime": "2020-09-12T11:04:36.594Z",
+    "childProcessPid": 27905,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--uglifyify--27905"
+}

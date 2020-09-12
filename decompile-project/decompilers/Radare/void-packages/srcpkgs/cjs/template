@@ -1,0 +1,28 @@
+# Template file for 'cjs'
+pkgname=cjs
+version=2.8.0
+revision=1
+short_desc="Javascript for Cinnamon"
+build_style=gnu-configure
+configure_args="--disable-static"
+hostmakedepends="automake libtool gnome-common pkg-config gobject-introspection glib-devel"
+makedepends="mozjs24-devel dbus-glib-devel readline-devel"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://cinnamon.linuxmint.com/"
+distfiles="https://github.com/linuxmint/cjs/archive/${version}.tar.gz"
+checksum=eceddb46dd7c1da9652c99355158feb8a107e213b5f7240700e1777b28d00a73
+
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+
+cjs-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove "usr/lib/*.so"
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+	}
+}

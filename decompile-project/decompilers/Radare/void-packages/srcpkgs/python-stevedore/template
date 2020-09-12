@@ -1,0 +1,36 @@
+# Template file for 'python-stevedore'
+pkgname=python-stevedore
+version=1.10.0
+revision=1
+noarch=yes
+wrksrc="stevedore-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools python-pbr python3.4-pbr"
+depends="python-six"
+pycompile_module="stevedore"
+short_desc="Manage dynamic plugins for Python2 applications"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="https://git.openstack.org/cgit/openstack/stevedore"
+license="Apache-2.0"
+distfiles="${PYPI_SITE}/s/stevedore/stevedore-${version}.tar.gz"
+checksum=f5d689ef38e0ca532d57a03d1ab95e89b17c57f97b58d10c92da94699973779f
+
+pre_build() {
+	# remove dependency on argparse; it's in python>=2.7,>=3.2 stdlib
+	sed -i '/argparse/d' requirements.txt
+
+	# remove dependency on pbr; it's not a runtime dependency
+	sed -i '/pbr/d' requirements.txt
+}
+
+python3.4-stevedore_package() {
+	noarch=yes
+	depends="python3.4-six"
+	pycompile_version="3.4"
+	pycompile_module="stevedore"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

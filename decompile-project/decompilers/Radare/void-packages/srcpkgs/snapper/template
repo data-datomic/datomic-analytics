@@ -1,0 +1,58 @@
+# Template file for 'snapper'
+pkgname=snapper
+version=0.2.8
+revision=2
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--disable-zypp --with-conf=/etc/conf.d --sbindir=/usr/bin"
+hostmakedepends="pkg-config automake libtool libxml2-devel libxslt docbook-xsl"
+makedepends="zlib-devel boost-devel dbus-devel libxml2-devel pam-devel
+ acl-devel libmount-devel libbtrfs-devel"
+conf_files="/etc/conf.d/snapper"
+short_desc="Tool for Linux filesystem snapshot management"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://snapper.io"
+distfiles="ftp://ftp.suse.com/pub/projects/$pkgname/$pkgname-$version.tar.bz2"
+checksum=a44608648ed21a1346f8ae9345044901c39ad01abb501806a22c9d4a771eadc5
+
+case "$XBPS_TARGET_MACHINE" in
+	*-musl)	# We define MUSL_LIBC to pick the correct return type
+		# for strerror_r(2) which is int (XSI-compliant)
+		CXXFLAGS="-DMUSL_LIBC=1"
+esac
+
+pre_configure() {
+	# rename cron scripts
+	sed -i -e 's@suse.de-@@g' scripts/Makefile.am
+	# fix config location in cron scripts
+	sed -i -e 's@/etc/sysconfig/@/etc/conf.d/@g' scripts/snapper-{daily,hourly}
+
+	sed -i -e 's@lboost_thread-mt@lboost_thread@g' snapper/Makefile.am
+	sed -i -e 's@lboost_system-mt@lboost_system@g' snapper/Makefile.am
+
+	# fix pam plugin install location
+	sed -i -e 's@shell echo /@shell echo /usr/@g' pam/Makefile.am
+
+	autoreconf -fi
+}
+
+post_install() {
+	vinstall data/sysconfig.snapper 644 etc/conf.d snapper
+	vsv snapperd
+}
+
+libsnapper_package() {
+	short_desc+=" - runtime library"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}
+snapper-devel_package() {
+	short_desc+=" - development files"
+	depends="libsnapper>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+	}
+}

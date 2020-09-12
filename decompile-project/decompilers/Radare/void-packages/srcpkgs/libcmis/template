@@ -1,0 +1,36 @@
+# Template file for 'libcmis'
+pkgname=libcmis
+version=0.5.0
+revision=3
+build_style=gnu-configure
+hostmakedepends="pkg-config libtool automake"
+makedepends="libcurl-devel libxml2-devel libcppunit-devel boost-devel"
+short_desc="C++ client library for the CMIS interface"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="GPL,LGPL,MPL"
+homepage="http://sourceforge.net/projects/libcmis/"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/$pkgname-${version}.tar.gz"
+checksum=a87e02913dee3ee659db5abf6d7dafcfcd85dd4b24bf4389d8d4afe8c8dcf9b6
+configure_args="--without-man"
+
+post_extract() {
+	autoreconf -fi
+}
+
+libcmis-devel_package() {
+	depends="libcmis>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}
+
+libcmis-tools_package() {
+	short_desc+=" - tools"
+	pkg_install() {
+		vmove usr/bin
+	}
+}

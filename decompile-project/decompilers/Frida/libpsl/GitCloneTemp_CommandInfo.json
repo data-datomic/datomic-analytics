@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/libpsl undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/libpsl",
+    "repo": "https://github.com/frida/libpsl",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/libpsl",
+    "startTime": "2020-09-12T11:03:59.895Z",
+    "endTime": "2020-09-12T11:04:02.805Z",
+    "childProcessPid": 27772,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--libpsl--27772"
+}

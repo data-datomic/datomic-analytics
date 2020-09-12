@@ -1,0 +1,17 @@
+# Template file for 'axel'
+pkgname=axel
+version=2.5
+revision=1
+build_style=gnu-configure
+conf_files=/etc/axelrc
+short_desc="Download accelerator for FTP and HTTP"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-2"
+homepage="https://axel.alioth.debian.org/"
+distfiles="${DEBIAN_SITE}/main/a/axel/axel_${version}.orig.tar.gz"
+checksum="02376767e7f9e6c4292333e69ad0f615f62be5df176a8daaee395f25b0ab1a83"
+
+post_configure() {
+	# Fix Makefile so our $CFLAGS are used
+	sed -i Makefile.settings -e 's; -Os;;' -e 's;CFLAGS=;CFLAGS+=;'
+}

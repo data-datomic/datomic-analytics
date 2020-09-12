@@ -1,0 +1,25 @@
+# Template build file for 'libXcursor'.
+pkgname=libXcursor
+version=1.1.14
+revision=4
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="fixesproto libXfixes-devel libXrender-devel"
+short_desc="Client-side cursor loading library for X"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://xorg.freedesktop.org/wiki/"
+license="MIT"
+distfiles="${XORG_SITE}/lib/$pkgname-$version.tar.bz2"
+checksum=9bc6acb21ca14da51bda5bc912c8955bc6e5e433f0ab00c5e8bef842596c33df
+
+libXcursor-devel_package() {
+	depends="xproto libXfixes-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/share
+	}
+}

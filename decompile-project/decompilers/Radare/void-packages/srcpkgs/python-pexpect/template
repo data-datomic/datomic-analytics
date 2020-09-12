@@ -1,0 +1,36 @@
+# Template file for 'python-pexpect'
+pkgname=python-pexpect
+version=4.0.1
+revision=1
+noarch=yes
+wrksrc="${pkgname/python-}-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python-ptyprocess"
+pycompile_module="pexpect"
+short_desc="Python2 module for spawning child applications and controlling them"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://pexpect.readthedocs.org/"
+license="ISC"
+distfiles="${PYPI_SITE}/p/pexpect/pexpect-${version}.tar.gz"
+checksum=232795ebcaaf2e120396dbbaa3a129eda51757eeaae1911558f4ef8ee414fc6c
+
+pre_build() {
+	sed -i '/^#!/d' pexpect/FSM.py
+}
+post_install() {
+	vlicense LICENSE
+}
+
+python3.4-pexpect_package() {
+	noarch=yes
+	depends="python3.4-ptyprocess"
+	pycompile_version="3.4"
+	pycompile_module="pexpect"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+		vlicense LICENSE
+	}
+}

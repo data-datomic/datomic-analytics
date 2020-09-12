@@ -1,0 +1,56 @@
+# Template file for 'evince'
+pkgname=evince
+version=3.18.2
+revision=1
+short_desc="GNOME Document viewer for multiple document formats"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://projects.gnome.org/evince/"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=42ad6c7354d881a9ecab136ea84ff867acb942605bcfac48b6c12e1c2d8ecb17
+
+build_style=gnu-configure
+build_options="gir"
+
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+configure_args="$(vopt_enable gir introspection) --disable-schemas-compile
+ --enable-comics --disable-static --enable-xps --disable-t1lib
+ --disable-browser-plugin"
+
+hostmakedepends="pkg-config intltool itstool
+ gnome-doc-utils glib-devel $(vopt_if gir gobject-introspection)
+ adwaita-icon-theme"
+
+# XXX missing packages for DVI backend.
+makedepends="tiff-devel libarchive-devel nautilus-devel
+ poppler-glib-devel libxml2-devel djvulibre-devel libgxps-devel
+ libSM-devel libICE-devel libspectre-devel libsecret-devel
+ gsettings-desktop-schemas-devel gnome-desktop-devel
+ adwaita-icon-theme"
+depends="desktop-file-utils hicolor-icon-theme"
+
+libevince_package() {
+	short_desc+=" - runtime libraries"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+		if [ "$build_option_gir" ]; then
+			vmove usr/lib/girepository-1.0
+		fi
+	}
+}
+evince-devel_package() {
+	depends="gtk+3-devel libevince>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}

@@ -1,0 +1,29 @@
+# Template file for 'wxMaxima'
+pkgname=wxMaxima
+version=15.08.2
+revision=1
+wrksrc="wxmaxima-${version}"
+build_style=gnu-configure
+configure_args="--with-wx-config=wx-config-3.0 --enable-printing"
+makedepends="wxWidgets-devel"
+depends="maxima desktop-file-utils"
+short_desc="Cross-platform GUI for the computer algebra system Maxima"
+maintainer="Martin Riese <grauehaare@gmx.de>"
+homepage="http://andrejv.github.io/wxmaxima/"
+license="GPL-2"
+distfiles="${SOURCEFORGE_SITE}/wxmaxima/wxmaxima-${version}.tar.gz"
+checksum=7ad3f018e42d15d06bee5af10053edb72e441c1d1feee318dc6eb927db6a26c5
+
+post_install() {
+	# Fix .desktop file
+	sed -i \
+		-e 's/Utility;X-Red-Hat-Base;X-Red-Hat-Base-Only;/Science;Math;/' \
+		-e 's|^Icon=wxmaxima.png|Icon=wxmaxima|' data/wxMaxima.desktop
+
+	# Install desktop file and icon
+	vinstall data/wxMaxima.desktop 644 usr/share/applications
+	vinstall data/wxmaxima.png 644 usr/share/pixmaps
+
+	# remove unpackaged files
+	rm -f ${DESTDIR}/usr/share/wxMaxima/{COPYING,README}
+}

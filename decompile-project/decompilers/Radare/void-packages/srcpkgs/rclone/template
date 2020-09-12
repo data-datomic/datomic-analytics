@@ -1,0 +1,20 @@
+# Template file for 'rclone'
+pkgname=rclone
+version=1.25
+revision=1
+build_style=go
+go_import_path="github.com/ncw/rclone"
+hostmakedepends="git pandoc perl python"
+short_desc="A rsync for cloud storage"
+maintainer="Diogo Leal <diogo@diogoleal.com>"
+license="MIT"
+homepage="http://rclone.org/downloads/"
+distfiles="https://github.com/ncw/rclone/archive/v${version}.tar.gz"
+checksum=6f8685e28c30aa700e0859cc017a76605c00dab8cd69aa5f16a4fd022d16d200
+
+post_install() {
+	vlicense COPYING
+	python make_manual.py
+	make rclone.1
+	vman rclone.1
+}

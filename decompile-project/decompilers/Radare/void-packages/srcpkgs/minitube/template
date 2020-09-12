@@ -1,0 +1,20 @@
+# Template file for 'minitube'
+pkgname=minitube
+version=2.5.2
+revision=1
+build_style=qmake
+hostmakedepends="qt5-tools"
+makedepends="qt5-devel phonon-qt5-devel qt5-script-devel"
+depends="virtual?phonon-qt5-backend desktop-file-utils hicolor-icon-theme"
+short_desc="A native YouTube client in Qt5"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://flavio.tordini.org/minitube"
+distfiles="https://github.com/flaviotordini/minitube/archive/$version.tar.gz"
+checksum=63678bf153e77e8cdaf6b43bb9a7bf2c5694c62698c3236f1a1133494362d6b5
+
+pre_configure() {
+	# Provided by Gottox
+	local _api_key=AIzaSyBzMj41taMuHLAF95-y9cTXL4JpPGqMORk
+	sed -i "1i DEFINES += APP_GOOGLE_API_KEY=\"$_api_key\"" minitube.pro
+}

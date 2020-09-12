@@ -1,0 +1,14 @@
+# Template file for 'terminology'
+pkgname=terminology
+version=0.9.1
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config efl"
+makedepends="elementary-devel"
+depends="desktop-file-utils xdg-utils"
+homepage="http://enlightenment.org"
+short_desc="Enlightenment's terminal emulator"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="2-clause-BSD"
+distfiles="http://download.enlightenment.org/rel/apps/${pkgname}/${pkgname}-${version}.tar.xz"
+checksum=ecee7ae6ba2fa10bfc5b6531292157dec2373dbb7d248cc62eb53d0be74e9bcf

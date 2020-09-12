@@ -1,0 +1,21 @@
+# Template file for 'mono'
+pkgname=mono
+version=4.0.1.44
+revision=1
+wrksrc="mono-${version%.*}"
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--disable-static --disable-system-aot"
+# XXX: figure out how to split this up into subpkgs.
+hostmakedepends="automake libtool perl python"
+makedepends="zlib-devel libX11-devel libgdiplus-devel"
+short_desc="Free implementation of the .NET platform including runtime and compiler"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.go-mono.org"
+license="GPL-2, LGPL-2, MPL, MIT"
+distfiles="http://download.mono-project.com/sources/mono/$pkgname-$version.tar.bz2"
+checksum=eaf5bd9d19818cb89483b3c9cae2ee3569643fd621560da036f6a49f6b3e3a6f
+
+pre_configure() {
+	autoreconf -fi
+}

@@ -1,0 +1,71 @@
+# Template file for 'mongodb'
+pkgname=mongodb
+version=3.0.7
+revision=1
+hostmakedepends="scons"
+makedepends="boost-devel pcre-devel snappy-devel libressl-devel libpcap-devel gperftools-devel"
+conf_files="/etc/mongodb/mongodb.conf"
+system_accounts="mongodb"
+mongodb_homedir="/var/lib/mongodb"
+short_desc="High-performance, schema-free document-oriented database"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+homepage="http://www.mongodb.org"
+license="AGPL-3"
+distfiles="http://downloads.mongodb.org/src/mongodb-src-r${version}.tar.gz"
+checksum=2d25bae7c3bfb3c0e168fcad526dc212da72faaeae6d1573db631cacb172a7e7
+make_dirs="
+	/var/lib/mongodb 0700 mongodb mongodb
+	/var/log/mongodb 0750 mongodb mongodb"
+wrksrc="mongodb-src-r${version}"
+_scons_args=" --use-system-boost \
+	--use-system-pcre \
+	--use-system-snappy \
+	--use-system-tcmalloc \
+	--ssl \
+	--c++11=on \
+	--variant-dir=void \
+	--nostrip \
+	--disable-warnings-as-errors"
+#	--use-system-v8 \ # disabled - configure error
+# ETOOHUGE
+nodebug=1
+
+nocross="http://build.voidlinux.eu/builders/armv7l_builder/builds/10684/steps/shell_3/logs/stdio"
+
+do_configure() {
+	find . -name SConstruct -print0 | xargs -0 sed -i "s/-Werror/-Wno-error/g"
+}
+
+post_configure() {
+	case "$XBPS_TARGET_MACHINE" in
+	*-musl) # Disable strtouq(3)
+		sed -i src/third_party/wiredtiger/build_linux/wiredtiger_config.h \
+			-e "s;#define HAVE_STRTOUQ 1;#undef HAVE_STRTOUQ;"
+	esac
+}
+
+do_build() {
+	scons core ${makejobs} \
+		--cc=$CC \
+		--cxx=$CXX \
+		--ld=$CXX \
+		--libpath="${XBPS_CROSS_BASE}/usr/lib" \
+		--cpppath="${XBPS_CROSS_BASE}/usr/include" \
+		--prefix="/usr" \
+		$_scons_args
+}
+
+do_install() {
+	scons install \
+		--cc=$CC \
+		--cxx=$CXX \
+		--ld=$CXX \
+		--libpath=${XBPS_CROSS_BASE}/usr/lib \
+		--cpppath=${XBPS_CROSS_BASE}/usr/include \
+		--prefix="${DESTDIR}/usr" \
+		$_scons_args
+
+	vinstall ${FILESDIR}/mongodb.conf 644 etc/mongodb
+
+	vsv mongodb
+}

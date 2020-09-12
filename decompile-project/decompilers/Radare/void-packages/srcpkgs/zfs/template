@@ -1,0 +1,50 @@
+# Template file for 'zfs'
+pkgname=zfs
+version=0.6.5.3
+revision=1
+wrksrc="${pkgname}-${pkgname}-${version/r/-}"
+build_style=gnu-configure
+configure_args="--with-config=user --with-mounthelperdir=/usr/bin
+ --with-udevdir=/usr/lib/udev --with-udevruledir=/usr/lib/udev/rules.d
+ --with-dracutdir=/usr/lib/dracut"
+hostmakedepends="dracut automake libtool"
+makedepends="spl-devel zlib-devel libuuid-devel libblkid-devel"
+conf_files="/etc/zfs/zed.d/zed.rc"
+short_desc="Z File System -- userland and kernel modules (using DKMS)"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="CDDL"
+homepage="http://zfsonlinux.org/"
+distfiles="https://github.com/zfsonlinux/${pkgname}/archive/${pkgname}-${version/r/-}.tar.gz"
+checksum=8ec72b5c8439ec977e193ebcb716430e74e90bbf4cd8625cfe985700c9bb4e60
+nocross=yes
+
+triggers="dkms"
+dkms_modules="zfs ${version/r/-}"
+depends="dkms>=2.2.0.3_9 spl>=${version}"
+
+pre_configure() {
+	autoreconf -fi
+	tar czf ../clean.tar.gz .
+}
+post_install() {
+	vlicense COPYRIGHT
+	vlicense OPENSOLARIS.LICENSE
+
+	vmkdir usr/src/${pkgname}-${version/r/-}
+	tar xf ../clean.tar.gz -C ${DESTDIR}/usr/src/${pkgname}-${version/r/-}
+	scripts/dkms.mkconf -v ${version/r/-} -f ${DESTDIR}/usr/src/${pkgname}-${version/r/-}/dkms.conf -n zfs
+
+	vsv zfs-import
+}
+zfs-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc="Z File System -- development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}
+do_clean() {
+	rm -f ../clean.tar.gz
+}

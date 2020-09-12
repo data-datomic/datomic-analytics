@@ -1,0 +1,43 @@
+# Template file for 'toybox'
+pkgname=toybox
+version=0.6.1
+revision=2
+short_desc="A BSD-licensed alternative to busybox"
+maintainer="Steve Prybylski <sa.prybylx@gmail.com>"
+license="BSD"
+homepage="http://www.landley.net/toybox"
+distfiles="${homepage}/downloads/${pkgname}-${version}.tar.gz"
+checksum=122ceb30c6ca0e8b8e914a427b1aaa89715c53a3df500afc56524ce88426838c
+
+post_extract() {
+	mkdir toybox
+	mv * toybox || true
+	cp -a toybox toybox-static
+}
+
+do_build() {
+	# toybox
+	cd ${wrksrc}/toybox
+	make defconfig
+	rm -f ${XBPS_WRAPPERDIR}/strip
+	make ${makejobs} toybox
+
+	# toybox-static
+	cd ${wrksrc}/toybox-static
+	make defconfig
+	make ${makejobs} LDFLAGS="--static" toybox
+}
+
+do_install() {
+	vbin toybox/toybox_unstripped toybox
+	vlicense toybox/LICENSE
+}
+
+toybox-static_package() {
+	short_desc+=" - statically linked"
+	pkg_install() {
+		vbin toybox-static/toybox_unstripped toybox.static
+		vlicense toybox-static/LICENSE
+	}
+}
+

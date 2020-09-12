@@ -1,0 +1,30 @@
+# Template file for 'syncthing'
+pkgname=syncthing
+version=0.12.10
+revision=1
+build_style=go
+go_import_path="github.com/syncthing/syncthing"
+short_desc="Open Source Continuous File Synchronization"
+maintainer="Duncaen <duncaen@voidlinux.eu>"
+license="MPLv2"
+homepage="http://syncthing.net/"
+distfiles="https://github.com/syncthing/${pkgname}/archive/v${version}.tar.gz"
+checksum=9bea460f7d2098bb2eecce5f0e2788616d9d1a8c44aa44445ac6e868296ba1f8
+
+do_build() {
+	goarch="${GOARCH}"
+	unset GOARCH
+	export CGO_ENABLED=0
+	mkdir -p $GOPATH/src/github.com/syncthing
+	ln -s $PWD $GOPATH/src/github.com/syncthing/${pkgname}
+
+	mkdir tmp
+	TMPDIR=${PWD}/tmp/ go run build.go -goarch ${goarch} -no-upgrade -version "v${version}" build
+	rm -rf tmp
+}
+
+do_install() {
+	vbin syncthing
+	vlicense LICENSE
+	vdoc README.md
+}

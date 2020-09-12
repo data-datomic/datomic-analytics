@@ -1,0 +1,31 @@
+# Template file for 'pinentry'
+pkgname=pinentry
+version=0.9.7
+revision=1
+build_style=gnu-configure
+configure_args="--disable-rpath --without-libcap --disable-pinentry-gtk
+	--enable-pinentry-curses --enable-fallback-curses --enable-pinentry-gtk2"
+hostmakedepends="pkg-config"
+makedepends="ncurses-devel gtk+-devel libassuan-devel libgpg-error-devel"
+short_desc="PIN or passphrase entry dialogs for GnuPG"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="GPL-2"
+homepage="https://www.gnupg.org/related_software/pinentry/index.html"
+distfiles="ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${version}.tar.bz2"
+checksum=6398208394972bbf897c3325780195584682a0d0c164ca5a0da35b93b1e4e7b2
+
+pre_build() {
+	sed -e 's,ncursesw/curses.h,curses.h,' -i pinentry/pinentry-curses.c
+}
+
+post_install() {
+	rm ${DESTDIR}/usr/bin/pinentry
+}
+
+pinentry-gtk_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" based on GTK+"
+	pkg_install() {
+		vmove usr/bin/pinentry-gtk-2
+	}
+}

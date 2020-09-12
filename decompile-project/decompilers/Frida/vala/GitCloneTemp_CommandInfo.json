@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/vala undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/vala",
+    "repo": "https://github.com/frida/vala",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/vala",
+    "startTime": "2020-09-12T11:07:13.145Z",
+    "endTime": "2020-09-12T11:07:23.847Z",
+    "childProcessPid": 28810,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--vala--28810"
+}

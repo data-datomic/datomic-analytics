@@ -1,0 +1,14 @@
+# Template file for 'easytag'
+pkgname=easytag
+version=2.2.6
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool itstool"
+makedepends="gtk+3-devel id3lib-devel libid3tag-devel libvorbis-devel
+ libflac-devel opusfile-devel speex-devel taglib-devel wavpack-devel"
+short_desc="GUI audio tag editor"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="GPL-2,GPL-3"
+homepage="http://easytag.sourceforge.net/"
+distfiles="http://download.gnome.org/sources/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=26437f0d698c3b16794336c335b40f53fa26aefeb77322e45e4e2501c4cff14a

@@ -1,0 +1,34 @@
+# Template file for 'pluma'
+pkgname=pluma
+version=1.12.1
+revision=1
+build_style=gnu-configure
+configure_args="--with-gtk=3.0 $(vopt_enable python)"
+hostmakedepends="pkg-config intltool itstool glib-devel"
+makedepends="gtk+3-devel enchant-devel libSM-devel mate-desktop-devel
+ gtksourceview-devel libsoup-devel iso-codes
+ $(vopt_if python 'pygtk-devel pygtksourceview')"
+depends="$(vopt_if python pygtksourceview) desktop-file-utils iso-codes zenity"
+pycompile_dirs="usr/lib/pluma/plugins"
+short_desc="A powerful text editor for MATE"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2"
+homepage="http://mate-desktop.org"
+distfiles="http://pub.mate-desktop.org/releases/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=f96cdc5415bb44b234ad9045520dd095c3f9d49dc965e7883d613d23af75e92c
+
+build_options="python"
+
+pre_configure() {
+	# ACCESSPERMS is glibc specific... unportable.
+	sed -i 's,ACCESSPERMS,(S_IRWXU|S_IRWXG|S_IRWXO),g' tests/document-saver.c
+}
+
+pluma-devel_package() {
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/share/gtk-doc
+	}
+}

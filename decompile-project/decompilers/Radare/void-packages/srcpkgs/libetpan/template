@@ -1,0 +1,31 @@
+# Template file for 'libetpan'
+pkgname=libetpan
+version=1.6
+revision=6
+build_style=gnu-configure
+configure_args="--enable-ipv6 --with-curl --with-expat --with-openssl
+ --with-curl --with-zlib --with-sasl"
+hostmakedepends="libtool automake"
+makedepends="db-devel expat-devel libressl-devel zlib-devel
+ libsasl-devel libcurl-devel"
+short_desc="Mail Framework library for C language"
+maintainer="Jakub Skrzypnik <jot.skrzyp@gmail.com>"
+license="BSD"
+homepage="http://www.etpan.org/libetpan.html"
+distfiles="https://github.com/dinhviethoa/libetpan/archive/${version}.tar.gz"
+checksum="7962b1f9445be24d1eb72daddabaebb427074c14a50e9dad0cebdec044c71e17"
+
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+
+libetpan-devel_package() {
+	depends="${makedepends} ${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin
+		vmove usr/include
+		vmove "usr/lib/*.so"
+		vmove "usr/lib/*.a"
+	}
+}

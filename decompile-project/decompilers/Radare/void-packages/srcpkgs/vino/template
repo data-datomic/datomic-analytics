@@ -1,0 +1,18 @@
+# Template file for 'vino'
+pkgname=vino
+version=3.18.1
+revision=1
+build_style=gnu-configure
+configure_args="--disable-schemas-compile"
+hostmakedepends="pkg-config intltool gnome-doc-utils glib-devel"
+makedepends="libjpeg-turbo-devel gtk+3-devel
+ libnotify-devel avahi-glib-libs-devel dbus-glib-devel telepathy-glib-devel
+ libsoup-devel libXtst-devel NetworkManager-devel libsecret-devel
+ gnutls-devel libSM-devel"
+depends="libsoup>=2.46 desktop-file-utils"
+short_desc="VNC server for the GNOME desktop"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=07ec6e78bbecd4ee3fce873eb26932fdda9c7642bb09d17ac36483b996fafe5a

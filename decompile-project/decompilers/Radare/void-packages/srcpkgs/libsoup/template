@@ -1,0 +1,62 @@
+# Template file for 'libsoup'
+pkgname=libsoup
+version=2.52.2
+revision=1
+build_style=gnu-configure
+configure_args="--disable-static $(vopt_if gir '--enable-introspection --enable-vala' '--disable-introspection --disable-vala')"
+hostmakedepends="pkg-config intltool glib-devel libtool automake gettext-devel $(vopt_if gir 'gobject-introspection vala-devel')"
+makedepends="libglib-devel libxml2-devel sqlite-devel glib-networking"
+depends="glib-networking"
+short_desc="HTTP library implementation in C"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=db55628b5c7d952945bb71b236469057c8dfb8dea0c271513579c6273c2093dc
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	autoreconf -fi
+}
+
+libsoup-devel_package() {
+	depends="libglib-devel libxml2-devel libsoup>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/lib/pkgconfig/libsoup-2.4.pc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0/Soup-2.4.gir
+		fi
+		vmove usr/include/libsoup-2.4
+		vmove usr/share/gtk-doc
+		vmove "usr/lib/libsoup-2.4.so"
+	}
+}
+libsoup-gnome-devel_package() {
+	depends="libsoup-devel>=${version}_${revision} libsoup-gnome>=${version}_${revision}"
+	short_desc+=" - GNOME development files"
+	pkg_install() {
+		vmove "usr/include/libsoup-gnome*"
+		vmove "usr/lib/pkgconfig/*gnome*"
+		if [ "$build_option_gir" ]; then
+			vmove "usr/share/gir-1.0/SoupGNOME*"
+		fi
+		vmove "usr/lib/libsoup-gnome*.so"
+	}
+}
+libsoup-gnome_package() {
+	short_desc+=" - GNOME libraries"
+	pkg_install() {
+		vmove "usr/lib/libsoup-gnome*.so.*"
+		if [ "$build_option_gir" ]; then
+			vmove "usr/lib/girepository-1.0/SoupGNOME*"
+		fi
+	}
+}

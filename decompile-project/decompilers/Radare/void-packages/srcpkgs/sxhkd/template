@@ -1,0 +1,16 @@
+# Template file for 'sxhkd'
+pkgname=sxhkd
+version=0.5.5
+revision=2
+build_style=gnu-makefile
+makedepends="libxcb-devel xcb-util-devel xcb-util-keysyms-devel"
+short_desc="Simple X HotKey Daemon"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="BSD"
+homepage="https://github.com/baskerville/sxhkd"
+distfiles="${homepage}/archive/${version}.tar.gz"
+checksum=e6699f77564e34a890d27f6c251e1ed29b04f5177e48290e7f02948497f04313
+
+post_install() {
+	vlicense LICENSE
+}

@@ -1,0 +1,47 @@
+# Template file for 'opensmtpd'
+pkgname=opensmtpd
+version=5.7.3p1
+revision=1
+build_style=gnu-configure
+configure_args="--sysconfdir=/etc/smtpd --sbindir=/usr/bin
+ --with-maildir=/var/spool/mail --with-privsep-path=/var/empty
+ --with-sock-dir=/run --with-mantype=doc --with-pie --enable-table-db
+ --with-privsep-user=smtpd --with-queue-user=smtpq
+ --with-ca-file=/etc/ssl/certs/ca-certificates.crt"
+hostmakedepends="automake libtool pkg-config bison"
+makedepends="zlib-devel libressl-devel libevent-devel db-devel libasr-devel"
+depends="ca-certificates"
+conf_files="/etc/smtpd/smtpd.conf /etc/smtpd/aliases"
+provides="smtp-forwarder-0_1 smtp-server-0_1"
+replaces="smtp-forwarder>=0 smtp-server>=0"
+short_desc="Free implementation of the server-side SMTP protocol"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD, ISC, MIT"
+homepage="http://www.opensmtpd.org"
+distfiles="http://www.opensmtpd.org/archives/${pkgname}-${version}.tar.gz"
+checksum=848a3c72dd22b216bb924b69dc356fc297e8b3671ec30856978950208cba74dd
+
+system_accounts="smtpd smtpq"
+smtpd_descr="SMTPD daemon"
+smtpq_descr="SMTPD queue"
+
+case "$XBPS_TARGET_MACHINE" in
+	*-musl) makedepends+=" musl-fts-devel"
+		LDFLAGS="-L${XBPS_CROSS_BASE}/usr/lib -lfts"
+		;;
+esac
+
+pre_configure() {
+	touch README AUTHORS NEWS ChangeLog
+	autoreconf -fi
+	# XXX hardcode the libevent major version for now.
+	# XXX the configure test needs to execute a binary to
+	# XXX get this result.
+	sed -e 's,^\(libevent_major_version\)=.*$,\1=2,' -i configure
+	sed -ri 's,/etc/mail,/etc/smtpd,g' smtpd/smtpd.conf
+}
+post_install() {
+	vsv opensmtpd
+	vlicense LICENSE
+	vinstall /dev/null 644 etc/smtpd aliases
+}

@@ -1,0 +1,14 @@
+# Template build file for 'gnome-video-effects'.
+pkgname=gnome-video-effects
+version=0.4.1
+revision=1
+noarch="yes"
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool"
+makedepends="gstreamer-devel"
+short_desc="A collection of GStreamer effects for GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/0.4/$pkgname-$version.tar.xz"
+checksum=34be42713a97caf698b84ce7e1158aa21cc0977df7f7a7477cece226bc8d844a

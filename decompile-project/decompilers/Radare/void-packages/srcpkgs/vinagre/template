@@ -1,0 +1,17 @@
+# Template file for 'vinagre'
+pkgname=vinagre
+version=3.18.2
+revision=1
+build_style=gnu-configure
+configure_args="--disable-schemas-compile"
+hostmakedepends="pkg-config intltool itstool glib gnome-doc-utils"
+makedepends="libxml2-devel libsecret-devel avahi-ui-libs-devel
+ spice-devel avahi-glib-libs-devel telepathy-glib-devel vte3-devel
+ gtk-vnc-devel openssh"
+depends="openssh desktop-file-utils hicolor-icon-theme"
+short_desc="VNC client for the GNOME desktop"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://projects.gnome.org/vinagre"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=65b81299de0b75a9433e5654d5314f347895d5efb7acd3b111e5e8c03f48fbc4

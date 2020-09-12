@@ -1,0 +1,47 @@
+# Template file for 'x264'
+pkgname=x264
+_snap_date=20141218
+_snap_rev=2245
+version="${_snap_date}.${_snap_rev}"
+revision=1
+wrksrc="x264-snapshot-${_snap_date}-${_snap_rev}-stable"
+hostmakedepends="yasm perl"
+short_desc="Free library for encoding H264/AVC video streams"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.videolan.org/developers/x264.html"
+license="GPL-2"
+distfiles="http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${_snap_date}-${_snap_rev}-stable.tar.bz2"
+checksum=3519e8fa3399845c7d2248d0a7297a923ac6bdc78d0ec15e85026e810670e1be
+
+do_configure() {
+	case "$XBPS_TARGET_MACHINE" in
+		armv[56]*) args+=" --disable-asm";;
+		armv7*) export AS=$CC;;	
+	esac
+	if [ "$CROSS_BUILD" ]; then
+		args+=" --host=$XBPS_CROSS_TRIPLET"
+	fi
+	./configure --prefix=/usr --disable-swscale --enable-static \
+		--enable-pic --enable-shared ${args}
+}
+
+do_build() {
+	make ${makejobs}
+}
+do_install() {
+	make DESTDIR=${DESTDIR} \
+		bindir=/usr/bin libdir=/usr/lib includedir=/usr/include install
+	# Set version as x.x.0 in pkg-config file.
+	sed -i -e "s|0.142.x|0.142.0|" ${DESTDIR}/usr/lib/pkgconfig/x264.pc
+}
+
+x264-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

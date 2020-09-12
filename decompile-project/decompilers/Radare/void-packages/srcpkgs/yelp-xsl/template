@@ -1,0 +1,14 @@
+# Template file for 'yelp-xsl'
+pkgname=yelp-xsl
+version=3.18.1
+revision=1
+noarch="yes"
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool itstool libxslt"
+makedepends="libxslt-devel"
+short_desc="Help browser for GNOME desktop - XSL and misc files"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://www.gnome.org"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=00870fbe59a1bc7797b385fce16386917e2987c404e9b5a7adcf0036f1c1ba62

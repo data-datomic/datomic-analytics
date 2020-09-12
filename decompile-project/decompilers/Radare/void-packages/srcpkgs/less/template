@@ -1,0 +1,13 @@
+# Template file for 'less'
+pkgname=less
+version=481
+revision=1
+build_style=gnu-configure
+configure_args="--with-regex=pcre"
+makedepends="ncurses-devel pcre-devel"
+short_desc="Pager program similar to more(1)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.greenwoodsoftware.com/less"
+distfiles="${homepage}/less-${version}.tar.gz"
+checksum=3fa38f2cf5e9e040bb44fffaa6c76a84506e379e47f5a04686ab78102090dda5

@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/aurora undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/aurora",
+    "repo": "https://github.com/frida/aurora",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/aurora",
+    "startTime": "2020-09-12T11:01:29.801Z",
+    "endTime": "2020-09-12T11:01:30.706Z",
+    "childProcessPid": 27240,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--aurora--27240"
+}

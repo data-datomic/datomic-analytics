@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/frida-java-bridge undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-java-bridge",
+    "repo": "https://github.com/frida/frida-java-bridge",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-java-bridge",
+    "startTime": "2020-09-12T11:02:51.791Z",
+    "endTime": "2020-09-12T11:02:52.891Z",
+    "childProcessPid": 27580,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--frida-java-bridge--27580"
+}

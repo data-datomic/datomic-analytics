@@ -1,0 +1,19 @@
+# Template file for 'gnome-terminal'
+pkgname=gnome-terminal
+version=3.18.2
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--disable-static --with-nautilus-extension --disable-migration"
+hostmakedepends="pkg-config intltool itstool gnome-doc-utils appdata-tools
+ glib-devel"
+makedepends="gtk+3-devel vte3-devel dconf-devel libuuid-devel
+ gsettings-desktop-schemas-devel nautilus-devel gnome-shell
+ desktop-file-utils"
+depends="desktop-file-utils"
+short_desc="The GNOME terminal emulator application"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=5e35c0fa1395258bab83952cfabe4c1828b8655bcd761f8faed70b452bd89efa

@@ -1,0 +1,23 @@
+# Template file for 'wpa_gui'
+pkgname=wpa_gui
+version=2.5
+revision=1
+wrksrc="wpa_supplicant-${version}"
+build_wrksrc="wpa_supplicant/wpa_gui-qt4"
+build_style=qmake
+hostmakedepends="qt-qmake"
+makedepends="qt-devel"
+depends="wpa_supplicant desktop-file-utils"
+short_desc="WPA/WPA2/IEEE 802.1X Supplicant -- Graphical User Interface"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="BSD"
+homepage="http://hostap.epitest.fi/wpa_supplicant"
+distfiles="http://hostap.epitest.fi/releases/wpa_supplicant-${version}.tar.gz"
+checksum=cce55bae483b364eae55c35ba567c279be442ed8bab5b80a3c7fb0d057b9b316
+
+do_install() {
+	vbin wpa_gui
+	vman ../doc/docbook/wpa_gui.8
+	vinstall wpa_gui.desktop 644 usr/share/applications
+	vinstall icons/wpa_gui.svg 644 usr/share/pixmaps
+}

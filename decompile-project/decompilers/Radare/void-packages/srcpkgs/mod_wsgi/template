@@ -1,0 +1,14 @@
+# Template file for 'mod_wsgi'
+pkgname=mod_wsgi
+version=4.4.21
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+hostmakedepends="python"
+makedepends="apache-devel python-devel"
+short_desc="Python WSGI adapter module for Apache"
+homepage="https://modwsgi.org"
+license="APL-2.0"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="https://github.com/GrahamDumpleton/$pkgname/archive/$version.tar.gz"
+checksum=69e0b83e6735d04e4b0b75472d178eaf3b935f4f83788f138a2610b67b635187

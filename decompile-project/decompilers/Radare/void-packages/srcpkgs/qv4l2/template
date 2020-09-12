@@ -1,0 +1,28 @@
+# Template file for 'qv4l2'
+pkgname=qv4l2
+version=1.8.1
+revision=1
+wrksrc="v4l-utils-${version}"
+build_style=gnu-configure
+configure_args="--enable-qv4l2 --with-udevdir=/usr/lib/udev"
+hostmakedepends="pkg-config"
+makedepends="libjpeg-turbo-devel libsysfs-devel qt-devel"
+depends="hicolor-icon-theme desktop-file-utils"
+short_desc="QT v4l2 control panel application"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://freshmeat.net/projects/libv4l"
+license="GPL-2, LGPL-2.1"
+distfiles="http://linuxtv.org/downloads/v4l-utils/v4l-utils-${version}.tar.bz2"
+checksum=2f6219b03f19ea07c100e860238d5cdbfcbcfe440a14477e75137cc073431b33
+
+case "$XBPS_TARGET_MACHINE" in
+	*-musl) makedepends+=" argp-standalone"
+		CFLAGS="-D__off_t=off_t -D__off64_t=off_t"
+		LDFLAGS="-largp"
+		;;
+esac
+
+do_install() {
+	cd utils/qv4l2
+	make DESTDIR=${DESTDIR} install
+}

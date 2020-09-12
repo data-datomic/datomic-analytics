@@ -1,0 +1,37 @@
+# Template file for 'avidemux'
+pkgname=avidemux
+version=2.6.11
+revision=1
+_beta=beta1
+wrksrc="${pkgname}_${version}${_beta}"
+hostmakedepends="cmake pkg-config qt5-qmake yasm"
+# XXX: MesaLib-devel, libva-devel, libvdpau-devel, etc. and make display output work
+makedepends="faac-devel faad2-devel gettext-devel jack-devel
+ lame-devel libass-devel libdca-devel libvorbis-devel libvpx-devel libXv-devel
+ sqlite-devel qt5-multimedia-devel qt5-script-devel qt5-tools-devel
+ SDL-devel x264-devel x265-devel xvidcore-devel"
+depends="python"
+nocross=yes
+short_desc="Video editing and processing application"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-2"
+homepage="http://avidemux.sourceforge.net/"
+distfiles="${SOURCEFORGE_SITE}/avidemux/avidemux/${version}${_beta}/${pkgname}_${version}${_beta}.tar.gz"
+checksum=e45808fedf480e0ef2b33321b2e9e0c525aef0a1c487558a586c8c54924c16c3
+
+do_build() {
+	bash bootStrap.bash --without-gtk --enable-qt5
+}
+do_install() {
+	# Remove Windows stuff
+	rm -r install/usr/share/ADM6_addons/avsfilter
+	cp -aR install/usr ${DESTDIR}
+	ln -s avidemux3_qt5 ${DESTDIR}/usr/bin/avidemux
+	vman man/avidemux.1
+	vinstall avidemux_icon.png 644 usr/share/pixmaps avidemux.png
+	sed avidemux2.desktop \
+		-e "s;avidemux2;avidemux3;g" \
+		-e "s;_gtk;_qt5;g" \
+		> avidemux.desktop
+	vinstall avidemux.desktop 644 usr/share/applications
+}

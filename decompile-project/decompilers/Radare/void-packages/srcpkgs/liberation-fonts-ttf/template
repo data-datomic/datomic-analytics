@@ -1,0 +1,29 @@
+# Template build file for 'liberation-fonts-ttf'.
+pkgname=liberation-fonts-ttf
+version=2.00.1
+revision=1
+makedepends="font-util xbps-triggers"
+depends="${makedepends}"
+noarch="yes"
+font_dirs="/usr/share/fonts/TTF"
+short_desc="TrueType fonts from RedHat"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2, ${pkgname}"
+homepage="http://www.redhat.com/promo/fonts/"
+distfiles="https://fedorahosted.org/releases/l/i/liberation-fonts/${pkgname}-${version}.tar.gz"
+checksum=7890278a6cd17873c57d9cd785c2d230d9abdea837e96516019c5885dd271504
+
+do_install() {
+	vmkdir usr/share/fonts/TTF
+	install -m644 *.ttf ${DESTDIR}/usr/share/fonts/TTF
+
+	# install fontconfig files
+	vinstall ${FILESDIR}/30-0-liberation-mono.conf 644 \
+		etc/fonts/conf.avail 30-${pkgname}-mono.conf
+	vinstall ${FILESDIR}/30-0-liberation-sans.conf 644 \
+		etc/fonts/conf.avail 30-${pkgname}-sans.conf
+	vinstall ${FILESDIR}/30-0-liberation-serif.conf 644 \
+		etc/fonts/conf.avail 30-${pkgname}-serif.conf
+
+	vlicense LICENSE
+}

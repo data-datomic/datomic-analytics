@@ -1,0 +1,99 @@
+# Template file for 'cyrus-sasl'
+pkgname=cyrus-sasl
+version=2.1.26
+revision=8
+patch_args="-Np1"
+hostmakedepends="automake libtool groff pkg-config"
+makedepends="libsasl-devel libressl-devel db-devel libldap-devel
+ mit-krb5-devel pam-devel sqlite-devel postgresql-libs-devel
+ libmysqlclient-devel"
+depends="libsasl>=${version}"
+short_desc="Cyrus SASL - auth daemon and administration tools"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://cyrusimap.web.cmu.edu/"
+license="BSD"
+distfiles="ftp://ftp.cyrusimap.org/cyrus-sasl/${pkgname}-${version}.tar.gz"
+checksum=8fbc5136512b59bb793657f36fadda6359cae3b08f01fd16b3d406f1345b7bc3
+
+pre_configure() {
+	# XXX
+	if [ "$CROSS_BUILD" ]; then
+		sed 's,AC_TRY_RUN,AC_TRY_LINK_FUNC,' -i cmulocal/sasl2.m4
+	fi
+	rm -f config/config.guess config/config.sub
+	rm -f config/ltconfig config/ltmain.sh config/libtool.m4
+	rm -fr autom4te.cache
+	libtoolize -c
+	aclocal -I config -I cmulocal
+	automake -a -c
+	autoheader
+	autoconf
+
+	pushd saslauthd
+	rm -f config/config.guess config/config.sub
+	rm -f config/ltconfig config/ltmain.sh config/libtool.m4
+	rm -fr autom4te.cache
+	libtoolize -c
+	aclocal -I config -I ../cmulocal -I ../config
+	automake -a -c
+	autoheader
+	autoconf
+	popd
+}
+do_configure() {
+	export CFLAGS+=" -fPIC"
+	LIBS=-lsasl2 ./configure ${configure_args} \
+		--sbindir=/usr/bin --disable-static --enable-shared \
+		--enable-alwaystrue --enable-checkapop --enable-cram \
+		--enable-digest --disable-otp --disable-srp \
+		--disable-srp-setpass --disable-krb4 --enable-gssapi \
+		--enable-auth-sasldb --enable-plain --enable-anon \
+		--enable-login --enable-ntlm --disable-passdss --enable-sql \
+		--enable-ldapdb --disable-macos-framework --with-pam \
+		--with-saslauthd=/run/saslauthd --with-ldap \
+		--with-configdir=/etc/sasl2:/etc/sasl:/usr/lib/sasl2 \
+		--with-devrandom=/dev/urandom
+}
+do_build() {
+	make
+}
+do_install() {
+	make DESTDIR=${DESTDIR} install
+
+	# Remove libsasl{,-devel} files.
+	rm -rf ${DESTDIR}/usr/include
+	rm -f ${DESTDIR}/usr/lib/libsasl*
+	rm -rf ${DESTDIR}/usr/share/man/man3
+	rm ${DESTDIR}/usr/lib/pkgconfig/libsasl2.pc
+
+	vlicense COPYING LICENSE
+}
+
+cyrus-sasl-modules-ldap_package() {
+	depends="cyrus-sasl>=${version}_${revision}"
+	short_desc="Cyrus SASL - pluggable authentication modules (LDAP)"
+	pkg_install() {
+		vmove "usr/lib/sasl2/libldapdb.*"
+	}
+}
+cyrus-sasl-modules-sql_package() {
+	depends="cyrus-sasl>=${version}_${revision}"
+	short_desc="Cyrus SASL - pluggable authentication modules (SQL)"
+	pkg_install() {
+		vmove "usr/lib/sasl2/libsql.*"
+	}
+}
+cyrus-sasl-modules-gssapi_package() {
+	depends="cyrus-sasl>=${version}_${revision}"
+	short_desc="Cyrus SASL - pluggable authentication modules (GSSAPI)"
+	pkg_install() {
+		vmove "usr/lib/sasl2/libgssapi*"
+	}
+}
+cyrus-sasl-modules_package() {
+	depends="cyrus-sasl>=${version}_${revision}"
+	short_desc="Cyrus SASL - pluggable authentication modules"
+	pkg_install() {
+		vmove usr/lib/sasl2
+	}
+}

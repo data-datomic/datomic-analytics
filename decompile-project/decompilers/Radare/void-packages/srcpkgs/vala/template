@@ -1,0 +1,32 @@
+# Template file for 'vala'
+pkgname=vala
+version=0.30.0
+revision=1
+build_style=gnu-configure
+configure_args="--enable-vapigen"
+hostmakedepends="pkg-config flex libxslt"
+makedepends="libglib-devel libfl-devel"
+short_desc="Compiler for the GObject type system"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://live.gnome.org/Vala"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/vala/${version%.*}/vala-${version}.tar.xz"
+checksum=61f0337b000f7ed6ef8c1fea87e0047d9bd7c0f91dd9c5b4eb70fd3fb883dedf
+
+libvala_package() {
+	short_desc+=" - shared library"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}
+vala-devel_package() {
+	depends="libglib-devel vala>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/aclocal
+		vmove usr/share/devhelp
+	}
+}

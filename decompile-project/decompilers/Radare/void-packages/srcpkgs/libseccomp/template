@@ -1,0 +1,32 @@
+# Template file for 'libseccomp'
+pkgname=libseccomp
+version=2.2.3
+revision=1
+build_style=gnu-configure
+hostmakedepends="which automake libtool"
+short_desc="High level interface to the Linux Kernel's seccomp filter"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://github.com/seccomp/libseccomp/"
+license="LGPL-2.1"
+distfiles="https://github.com/seccomp/${pkgname}/archive/v${version}.tar.gz"
+checksum=fee0a6671f160481dcd07760ea0df8b6d954bdd8b4ab20a423ac9ade5e4feced
+
+post_extract() {
+	case "$XBPS_TARGET_MACHINE" in
+		*-musl) sed -i '/<linux\/prctl.h>/d' src/system.h;;
+	esac
+}
+pre_configure() {
+	./autogen.sh
+}
+
+libseccomp-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

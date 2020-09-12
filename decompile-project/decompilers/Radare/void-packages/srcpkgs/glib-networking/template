@@ -1,0 +1,20 @@
+# Template file for 'glib-networking'
+pkgname=glib-networking
+version=2.46.1
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--disable-static --with-libproxy --with-gnome-proxy
+ --with-gnutls --with-pkcs11
+ --with-ca-certificates=/etc/ssl/certs/ca-certificates.crt"
+hostmakedepends="pkg-config intltool"
+makedepends="libglib-devel libproxy-devel libgpg-error-devel
+ libgcrypt-devel p11-kit-devel gnutls-devel
+ gsettings-desktop-schemas-devel ca-certificates"
+depends="ca-certificates gsettings-desktop-schemas"
+short_desc="Network-related giomodules for glib"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=d5034214217f705891b6c9e719cc2c583c870bfcfdc454ebbb5e5e8940ac90b1

@@ -1,0 +1,25 @@
+# Template file for 'msgpack'
+pkgname=msgpack
+version=1.3.0
+revision=1
+wrksrc="msgpack-${version}"
+build_style=gnu-configure
+hostmakedepends="cmake"
+makedepends="zlib-devel"
+short_desc="An efficient binary serialization format"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Apache-2.0"
+homepage="http://msgpack.org/"
+distfiles="https://github.com/$pkgname/$pkgname-c/releases/download/cpp-$version/$pkgname-$version.tar.gz"
+checksum=b539c9aa1bbe728b9c43bfae7120353461793fa007363aae8e4bb8297948b4b7
+
+msgpack-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+	}
+}

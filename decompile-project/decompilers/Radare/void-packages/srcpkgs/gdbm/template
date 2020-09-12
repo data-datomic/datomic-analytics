@@ -1,0 +1,39 @@
+# Template file for 'gdbm'
+pkgname=gdbm
+version=1.11
+revision=6
+build_style=gnu-configure
+configure_args="--enable-libgdbm-compat --disable-rpath"
+short_desc="GNU database routines"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.gnu.org.ua/software/gdbm/"
+distfiles="${GNU_SITE}/$pkgname/$pkgname-$version.tar.gz"
+checksum=8d912f44f05d0b15a4a5d96a76f852e905d051bb88022fcdfd98b43be093e3c3
+
+if [ "$CROSS_BUILD" ]; then
+	hostmakedepends="libtool automake gettext-devel"
+	pre_configure() {
+		autoreconf -fi
+	}
+fi
+
+post_install() {
+	# create symlinks for compatibility
+	vmkdir usr/include/gdbm
+	ln -sf ../gdbm.h ${DESTDIR}/usr/include/gdbm/gdbm.h
+	ln -sf ../ndbm.h ${DESTDIR}/usr/include/gdbm/ndbm.h
+	ln -sf ../dbm.h ${DESTDIR}/usr/include/gdbm/dbm.h
+}
+
+gdbm-devel_package() {
+	short_desc+=" - development files"
+	depends="gdbm>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share/info
+		vmove usr/share/man/man3
+	}
+}

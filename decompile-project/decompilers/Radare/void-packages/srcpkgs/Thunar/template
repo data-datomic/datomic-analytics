@@ -1,0 +1,34 @@
+# Template file for 'Thunar'
+pkgname=Thunar
+version=1.6.10
+revision=2
+build_style=gnu-configure
+configure_args="--enable-gio-unix --enable-dbus --enable-gudev
+ --enable-exif --enable-pcre --disable-static --enable-notifications"
+short_desc="Thunar File Manager"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://thunar.xfce.org"
+license="GPL-2, LGPL-2.1"
+distfiles="http://archive.xfce.org/src/xfce/thunar/${version%.*}/${pkgname}-${version}.tar.bz2"
+checksum=7e9d24067268900e5e44d3325e60a1a2b2f8f556ec238ec12574fbea15fdee8a
+
+hostmakedepends="xfce4-dev-tools gettext-devel glib-devel"
+makedepends="pcre-devel libglib-devel gvfs-devel
+ libgudev-devel libnotify-devel libxfce4ui-devel xfce4-panel-devel
+ dbus-glib-devel libexif-devel startup-notification-devel exo-devel"
+depends="hicolor-icon-theme desktop-file-utils"
+
+pre_configure() {
+	mkdir m4
+	NOCONFIGURE=1 xdt-autogen
+}
+
+Thunar-devel_package() {
+	depends="libglib-devel gtk+-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.so
+	}
+}

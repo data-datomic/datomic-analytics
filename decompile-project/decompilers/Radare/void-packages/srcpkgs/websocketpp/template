@@ -1,0 +1,12 @@
+# Template file for 'websocketpp'
+pkgname=websocketpp
+version=0.5.1
+revision=2
+build_style=cmake
+hostmakedepends="cmake"
+short_desc="C++/Boost Asio based websocket client/server library"
+maintainer="Duncan Overbruck <mail@duncano.de>"
+license="BSD"
+homepage="http://www.zaphoyd.com/websocketpp"
+distfiles="https://github.com/zaphoyd/websocketpp/archive/${version}.tar.gz"
+checksum=6d4d9b7b9feee63d45b1a2f62610c419238346fb824336bd732dca31b3aea69e

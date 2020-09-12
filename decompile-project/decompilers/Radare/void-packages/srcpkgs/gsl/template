@@ -1,0 +1,27 @@
+# Template file for 'gsl'
+pkgname=gsl
+version=1.16
+revision=2
+build_style=gnu-configure
+short_desc="A numerical library for C and C++ programmers"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnu.org/software/gsl/gsl.html"
+license="GPL-2"
+distfiles="$GNU_SITE/gsl/$pkgname-$version.tar.gz"
+checksum=73bc2f51b90d2a780e6d266d43e487b3dbd78945dd0b04b14ca5980fe28d2f53
+
+gsl-devel_package() {
+	depends="gsl>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin/gsl-config
+		vmove usr/share/man/man1/gsl-config.1
+		vmove usr/share/man/man3
+		vmove usr/share/aclocal
+		vmove usr/share/info
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

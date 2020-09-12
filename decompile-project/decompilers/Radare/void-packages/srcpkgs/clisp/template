@@ -1,0 +1,29 @@
+# Template file for 'clisp'
+
+lib32disabled=yes
+nocross=yes
+
+pkgname="clisp"
+version="2.49"
+revision=2
+build_style=configure
+configure_args="--prefix=/usr --disable-rpath"
+short_desc="ANSI Common Lisp Interpreter, Compiler and Debugger"
+maintainer="Martin Riese <grauehaare@gmx.de>"
+license="GPL2"
+homepage="http://clisp.cons.org"
+makedepends="ffcall readline-devel libsigsegv-devel"
+distfiles="${SOURCEFORGE_SITE}/clisp/clisp-${version}.tar.bz2"
+checksum="8132ff353afaa70e6b19367a25ae3d5a43627279c25647c220641fed00f8e890"
+
+do_build() {
+	# Need to increase the Limit
+	ulimit -s 16384
+	cd src
+	make
+}
+
+do_install() {
+	cd src
+	make DESTDIR=${DESTDIR} install
+}

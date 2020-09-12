@@ -1,0 +1,23 @@
+# Template file for 'nasm'
+pkgname=nasm
+version=2.11.08
+revision=1
+build_style=gnu-configure
+hostmakedepends="groff perl"
+short_desc="An 80x86 assembler designed for portability and modularity"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.nasm.us"
+license="BSD"
+distfiles="http://www.nasm.us/pub/nasm/releasebuilds/${version}/nasm-${version}.tar.bz2"
+checksum=9da3a0291a0bdc06305b7ba194f1e2c2b55ae6f11210b4af43729868149d5445
+
+post_build() {
+	make ${makejobs} -C doc info
+}
+do_install() {
+	make INSTALLROOT=${DESTDIR} install install_rdf
+	vmkdir usr/share/info
+	install -m644 doc/info/* ${DESTDIR}/usr/share/info
+	touch ${DESTDIR}/usr/share/info/dir
+	vlicense LICENSE
+}

@@ -1,0 +1,41 @@
+# Template file for 'clutter'
+pkgname=clutter
+version=1.24.2
+revision=6
+build_style=gnu-configure
+build_options="gir"
+configure_args="$(vopt_enable gir introspection) --enable-evdev --enable-evdev-input
+ --enable-wayland-backend --enable-egl-backend --enable-wayland-compositor"
+hostmakedepends="automake libtool pkg-config intltool glib-devel
+ gettext-devel $(vopt_if gir gobject-introspection)"
+makedepends="
+ atk-devel pango-devel libXi-devel libXcomposite-devel json-glib-devel libgudev-devel
+ libxkbcommon-devel cogl-devel libinput-devel libevdev-devel eudev-libudev-devel"
+short_desc="OpenGL based interactive canvas library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.clutter-project.org"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/clutter/${version%.*}/clutter-${version}.tar.xz"
+checksum=9631c98cb4bcbfec15e1bbe9eaa6eef0f127201552fce40d7d28f2133803cd63
+
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	autoreconf -fi
+}
+
+clutter-devel_package() {
+	depends="${makedepends} clutter>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}

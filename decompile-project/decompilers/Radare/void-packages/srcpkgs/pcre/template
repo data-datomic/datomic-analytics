@@ -1,0 +1,58 @@
+# Template file for 'pcre'
+pkgname=pcre
+version=8.38
+revision=1
+build_style=gnu-configure
+configure_args="--enable-utf8 --enable-unicode-properties --with-pic
+--enable-pcregrep-libz --enable-pcregrep-libbz2 --enable-newline-is-anycrlf
+--enable-pcretest-libreadline --enable-jit --enable-static"
+makedepends="zlib-devel bzip2-devel readline-devel"
+short_desc="Perl Compatible Regular Expressions"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.pcre.org/"
+license="BSD"
+#distfiles="${SOURCEFORGE_SITE}/pcre/pcre-$version.tar.gz"
+distfiles="ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${version}.tar.bz2"
+checksum=b9e02d36e23024d6c02a2e5b25204b3a4fa6ade43e0a5f869f254f49535079df
+
+post_install() {
+	vlicense LICENCE
+}
+
+if [ "$CROSS_BUILD" ]; then
+	hostmakedepends="automake libtool"
+	pre_configure() {
+		autoreconf -fi
+	}
+fi
+
+libpcrecpp_package() {
+	short_desc+=" - C++ shared libraries"
+	pkg_install() {
+		vmove "usr/lib/libpcrecpp.so.*"
+	}
+}
+
+libpcre_package() {
+	short_desc+=" - shared libraries"
+	replaces="pcre<8.11"
+	pkg_install() {
+		vmove "usr/lib/libpcre.so.*"
+		vmove "usr/lib/libpcreposix.so.*"
+	}
+}
+
+pcre-devel_package() {
+	depends="zlib-devel bzip2-devel libpcre>=${version}_${revision} libpcrecpp>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin/pcre-config
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/share/man/man1/pcre-config.1
+		vmove usr/share/man/man3
+		vmove usr/share/doc
+	}
+}

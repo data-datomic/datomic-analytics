@@ -1,0 +1,23 @@
+{
+  "name": "frida-gumjs",
+  "version": "1.0.0",
+  "description": "GumJS",
+  "private": true,
+  "main": "runtime/index.js",
+  "devDependencies": {
+    "frida-compile": "^9.5.0",
+    "frida-java-bridge": "3.9.1",
+    "frida-objc-bridge": "5.0.1",
+    "promiscuous": "0.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frida/frida-gum.git"
+  },
+  "author": "Frida Developers",
+  "license": "LGPL-2.0 WITH WxWindows-exception-3.1",
+  "bugs": {
+    "url": "https://github.com/frida/frida-gum/issues"
+  },
+  "homepage": "https://github.com/frida/frida-gum#readme"
+}

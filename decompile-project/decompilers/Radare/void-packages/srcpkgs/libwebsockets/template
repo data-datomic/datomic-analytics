@@ -1,0 +1,31 @@
+# Template file for 'libwebsockets'
+pkgname=libwebsockets
+version=1.5
+revision=1
+_ffver=41
+_chromever=47
+build_style=cmake
+hostmakedepends="cmake"
+makedepends="zlib-devel libressl-devel libev-devel"
+configure_args="-DLWS_WITH_LIBEV=1 -DLWS_USE_IPV6=1"
+short_desc="Lightweight client and server websocket library"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="LGPL-2"
+homepage="https://libwebsockets.org"
+wrksrc=libwebsockets-$version-chrome$_chromever-firefox$_ffver
+distfiles="http://git.libwebsockets.org/cgi-bin/cgit/libwebsockets/snapshot/$wrksrc.tar.gz"
+checksum=27f3e2dbd04b8375923f6353536c741559a21dd4713f8c302b23441d6fe82403
+CFLAGS="-Wno-error"
+
+libwebsockets-devel_package() {
+	depends="libwebsockets>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin
+		vmove usr/share/libwebsockets-test-server
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

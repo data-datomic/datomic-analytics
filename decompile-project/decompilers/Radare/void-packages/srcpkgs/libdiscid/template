@@ -1,0 +1,22 @@
+# Template file for 'libdiscid'
+pkgname=libdiscid
+version=0.6.1
+revision=1
+build_style=gnu-configure
+configure_args="--disable-static"
+short_desc="A Library for creating MusicBrainz DiscIDs"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://musicbrainz.org/doc/libdiscid"
+distfiles="http://ftp.musicbrainz.org/pub/musicbrainz/libdiscid/${pkgname}-${version}.tar.gz"
+checksum=aceb2bd1a8d15d69b2962dec7c51983af32ece318cbbeb1c43c39802922f6dd5
+
+libdiscid-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" -- development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

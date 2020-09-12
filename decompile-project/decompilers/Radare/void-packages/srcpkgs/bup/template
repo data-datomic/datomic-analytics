@@ -1,0 +1,14 @@
+# Template file for 'bup'
+pkgname=bup
+version=0.27
+revision=1
+build_style=configure
+hostmakedepends="python perl git"
+makedepends="python-devel"
+short_desc="Backup system based on the git packfile format"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="LGPL-2"
+homepage="https://github.com/bup/bup"
+distfiles="https://github.com/bup/bup/archive/${version}.tar.gz"
+checksum=ae8a744a3415ce4766d1d896f3d48b9b2ae6167c7bc65d8d1a112f37b42720fb
+noarch=yes

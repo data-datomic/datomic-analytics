@@ -1,0 +1,26 @@
+# Template file for 'hiawatha'
+pkgname=hiawatha
+version=10.0
+revision=1
+build_style=cmake
+hostmakedepends="cmake"
+makedepends="libxslt-devel mbedtls-devel"
+short_desc="Advanced and secure webserver for Unix"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="GPL-2"
+homepage="https://hiawatha-webserver.org"
+distfiles="$homepage/files/$pkgname-$version.tar.gz"
+checksum=a39d1f771d818025538bd1231f42001bf29a1ebf55ce3d82afb7305cc251dd0e
+configure_args="
+ -DLOG_DIR=/var/log/hiawatha
+ -DPID_DIR=/run
+ -DWEBROOT_DIR=/var/www
+ -DWORK_DIR=/var/lib/hiawatha
+ -DUSE_SYSTEM_MBEDTLS=ON
+ -DCMAKE_INSTALL_SYSCONFDIR=/etc"
+conf_files="/etc/$pkgname/*.conf /etc/$pkgname/*.xslt"
+LDFLAGS="-lmbedtls -lmbedx509 -lmbedcrypto"
+
+post_install() {
+	vsv hiawatha
+}

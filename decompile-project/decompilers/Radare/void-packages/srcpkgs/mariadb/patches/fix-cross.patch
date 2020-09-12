@@ -1,0 +1,32 @@
+--- ./CMakeLists.txt.orig	2015-09-17 15:47:59.794784111 -0400
++++ ./CMakeLists.txt	2015-09-19 19:42:16.751348473 -0400
+@@ -362,10 +376,10 @@
+ 
+ CHECK_PCRE()
+ 
+-IF(CMAKE_CROSSCOMPILING)
+-  SET(IMPORT_EXECUTABLES "IMPORTFILE-NOTFOUND" CACHE FILEPATH "Path to import_executables.cmake from a native build")
+-  INCLUDE(${IMPORT_EXECUTABLES})
+-ENDIF()
++# IF(CMAKE_CROSSCOMPILING)
++#   SET(IMPORT_EXECUTABLES "IMPORTFILE-NOTFOUND" CACHE FILEPATH "Path to import_executables.cmake from a native build")
++#   INCLUDE(${IMPORT_EXECUTABLES})
++# ENDIF()
+ 
+ #
+ # Setup maintainer mode options. Platform checks are
+
+--- ./storage/innobase/CMakeLists.txt.orig	2015-09-18 21:28:54.446428704 -0400
++++ ./storage/innobase/CMakeLists.txt	2015-09-18 21:40:24.987436643 -0400
+@@ -15,6 +15,10 @@
+ 
+ # This is the CMakeLists for InnoDB
+ 
++IF(NOT WITH_INNOBASE_STORAGE_ENGINE)
++  RETURN()
++ENDIF()
++
+ INCLUDE(CheckFunctionExists)
+ INCLUDE(CheckCSourceCompiles)
+ INCLUDE(CheckCSourceRuns)
+

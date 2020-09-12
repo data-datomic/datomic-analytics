@@ -1,0 +1,31 @@
+# Template build file for 'talloc'.
+pkgname=talloc
+version=2.1.2
+revision=2
+build_style=configure
+hostmakedepends="pkg-config python libxslt docbook-xsl"
+short_desc="Hierarchical pool based memory allocator with destructors"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://talloc.samba.org/"
+license="GPL-3"
+distfiles="http://samba.org/ftp/$pkgname/$pkgname-$version.tar.gz"
+checksum=230d78a3fca75a15ab0f5d76d7bbaeadd3c1e695adcbb085932d227f5c31838d
+
+do_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		cp ${FILESDIR}/cross-32bit.answers .
+		_args="--cross-compile --hostcc=cc --cross-answers=cross-32bit.answers"
+	fi
+	./configure --prefix=/usr --disable-python ${_args}
+}
+
+talloc-devel_package() {
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/libtalloc.so
+		vmove usr/share/man/man3
+	}
+}

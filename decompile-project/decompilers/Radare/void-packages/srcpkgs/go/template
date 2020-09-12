@@ -1,0 +1,182 @@
+# Template file for 'go'
+pkgname=go
+_bootstrap_version=1.4.2
+version=1.5.2
+revision=1
+wrksrc=go
+hostmakedepends="git ca-certificates"
+short_desc="The Go Programming Language"
+maintainer="Dominik Honnef <dominik@honnef.co>"
+homepage="http://golang.org/"
+license="BSD"
+distfiles="http://golang.org/dl/go${_bootstrap_version}.src.tar.gz
+ http://golang.org/dl/go${version}.src.tar.gz"
+checksum="299a6fd8f8adfdce15bc06bde926e7b252ae8e24dd5b16b7d8791ed79e7b5e9b
+ f3ddd624c00461641ce3d3a8d8e3c622392384ca7699e901b370a4eac5987a74"
+
+nostrip=yes
+noverifyrdeps=yes
+nopie=yes
+
+_go_targetarch() {
+	local hostarch targetarch
+
+	case "$XBPS_MACHINE" in
+		arm*) export hostarch=arm;;
+		i686*) export hostarch=386;;
+		x86_64*) export hostarch=amd64;;
+	esac
+	case "$XBPS_TARGET_MACHINE" in
+		arm*) targetarch=arm;;
+		i686*) targetarch=386;;
+		x86_64*) targetarch=amd64;;
+		*) targetarch=$hostarch;;
+	esac
+	echo $targetarch
+}
+
+do_extract() {
+	mkdir "${XBPS_BUILDDIR}/go_bootstrap"
+	tar -xf "${XBPS_SRCDISTDIR}/${pkgname}-${version}/go${_bootstrap_version}.src.tar.gz" \
+		-C "${XBPS_BUILDDIR}/go_bootstrap" --strip-components=1
+
+	tar -xf "${XBPS_SRCDISTDIR}/${pkgname}-${version}/go${version}.src.tar.gz" \
+		-C "${XBPS_BUILDDIR}/go" --strip-components=1
+}
+
+do_build() {
+	unset GCC CC CXX LD CFLAGS
+
+	local targetarch=$(_go_targetarch)
+	export GOROOT=$PWD
+	export GOROOT_FINAL="/usr/lib/go"
+	export GOOS=
+	export GOARCH=
+	export GOPATH=/tmp
+	export GOROOT_BOOTSTRAP="${XBPS_BUILDDIR}/go_bootstrap"
+	mkdir -p $GOPATH/src
+
+	cd "${XBPS_BUILDDIR}/go_bootstrap/src"
+	./make.bash
+
+	cd "${XBPS_BUILDDIR}/go/src"
+
+	GOOS=linux
+	GOARCH=arm
+	bash make.bash --no-clean
+	for os in darwin freebsd linux windows; do
+		for arch in 386 amd64; do
+			GOARCH=$arch
+			GOOS=$os
+			bash make.bash --no-clean
+		done
+	done
+
+	GOOS=linux
+	GOARCH=$targetarch
+
+	git clone https://go.googlesource.com/tools \
+		-b release-branch.go$(echo "$version" | cut -d "." -f "1-2") \
+		$GOPATH/src/golang.org/x/tools
+
+	for tool in godoc cover; do
+		$GOROOT/bin/go install golang.org/x/tools/cmd/${tool}
+	done
+}
+
+do_install() {
+	local bindir
+
+	if [ "$CROSS_BUILD" ]; then
+		case "$XBPS_TARGET_MACHINE" in
+			arm*) bindir=bin/linux_arm;;
+			i686*) bindir=bin/linux_386;;
+			x86_64*) bindir=bin/linux_amd64;;
+		esac
+	else
+		bindir=bin
+	fi
+
+	vmkdir usr/bin
+	vmkdir usr/lib/go
+	vmkdir usr/share/go
+	cp -d --preserve=all ${bindir}/* ${DESTDIR}/usr/bin || true
+	cp -a pkg src lib ${DESTDIR}/usr/lib/go
+	cp -r doc misc -t ${DESTDIR}/usr/share/go
+	ln -s /usr/share/go/doc ${DESTDIR}/usr/lib/go/doc
+	vlicense LICENSE
+
+	# This is to make go get code.google.com/p/go-tour/gotour and
+	# then running the gotour executable work out of the box.
+	#
+	# Also, /usr/bin is the place for system-wide executables,
+	# not /usr/lib/go/bin. Users should use different paths by
+	# setting the appropriate environment variables.
+	#
+	ln -sf /usr/bin ${DESTDIR}/usr/lib/go/bin
+
+	# For godoc
+	vinstall favicon.ico 644 usr/lib/go
+
+	rm -f ${DESTDIR}/usr/share/go/doc/articles/wiki/get.bin
+	rm -f ${DESTDIR}/usr/lib/go/pkg/tool/*/api
+}
+
+go-cross-linux_package() {
+	nostrip=yes
+	noverifyrdeps=yes
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - Cross compilers for Linux"
+	pkg_install() {
+		local targetarch=$(_go_targetarch)
+		mkdir -p $PKGDESTDIR/usr/lib/go/pkg/tool/
+		cd ${DESTDIR}/usr/lib/go/pkg/tool/
+		for i in linux_*; do
+			if [ "$i" != "linux_${targetarch}" ]; then
+				mv "$i" $PKGDESTDIR/usr/lib/go/pkg/tool/
+			fi
+		done
+
+		mkdir -p $PKGDESTDIR/usr/lib/go/pkg/
+		cd ${DESTDIR}/usr/lib/go/pkg/
+		for i in linux_*; do
+			if [ "$i" != "linux_${targetarch}" ]; then
+				mv "$i" $PKGDESTDIR/usr/lib/go/pkg/
+			fi
+		done
+	}
+}
+
+go-cross-darwin_package() {
+	nostrip=yes
+	noverifyrdeps=yes
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - Cross compilers for Darwin"
+	pkg_install() {
+		vmove "usr/lib/go/pkg/tool/darwin_*"
+		vmove "usr/lib/go/pkg/darwin_*"
+	}
+}
+
+go-cross-freebsd_package() {
+	nostrip=yes
+	noverifyrdeps=yes
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - Cross compilers for FreeBSD"
+	pkg_install() {
+		vmove "usr/lib/go/pkg/tool/freebsd_*"
+		vmove "usr/lib/go/pkg/freebsd_*"
+	}
+}
+
+
+go-cross-windows_package() {
+	nostrip=yes
+	noverifyrdeps=yes
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - Cross compilers for Windows"
+	pkg_install() {
+		vmove "usr/lib/go/pkg/tool/windows_*"
+		vmove "usr/lib/go/pkg/windows_*"
+	}
+}

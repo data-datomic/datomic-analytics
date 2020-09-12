@@ -1,0 +1,24 @@
+# Template file for 'usbutils'
+pkgname=usbutils
+version=008
+revision=1
+build_style=gnu-configure
+configure_args="--datadir=/usr/share/hwdata --disable-zlib"
+hostmakedepends="pkg-config"
+makedepends="libusb-devel libudev-devel"
+depends="hwids"
+homepage="http://linux-usb.sourceforge.net/"
+short_desc="Linux USB utilities"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+distfiles="${KERNEL_SITE}/utils/usb/$pkgname/${pkgname}-${version}.tar.xz"
+checksum=44741af0bae9d402a0ef160a29b2fa700bb656ab5e0a4b3343d51249c2a44c8c
+
+post_install() {
+	# Remove lsusb.py - avoid useless python scripts
+	rm -f ${DESTDIR}/usr/bin/lsusb.py
+	# Remove usb ids - provided by hwids
+	rm -rf ${DESTDIR}/usr/share/hwdata
+	# Remove update-usbids.sh - handled by hwids
+	rm -f ${DESTDIR}/usr/sbin/update-usbids.sh
+}

@@ -1,0 +1,17 @@
+#baseURL = "https://radare.today"
+baseURL = "https://radareorg.github.io/blog"
+languageCode = "en-us"
+title = "The Official Radare Blog"
+Paginate = 10
+theme = "cactus"
+
+[params]
+name = "The radare team"
+description = "The blog of radare2"
+bio = ""
+twitter = "radareorg"
+copyright = "The radare team"
+enableRSS = true
+
+about = "https://www.radare.org"
+tweet = "https://twitter.com/radareorg"

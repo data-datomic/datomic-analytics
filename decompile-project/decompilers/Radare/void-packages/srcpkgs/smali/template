@@ -1,0 +1,28 @@
+# Template file for 'smali'
+pkgname=smali
+version=2.0.3
+revision=2
+short_desc="An assembler/disassembler for Android's dex format"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Simplified BSD"
+homepage="https://code.google.com/p/smali/"
+depends="virtual?java-runtime"
+distfiles="
+ https://smali.googlecode.com/files/smali-${version}.jar
+ https://smali.googlecode.com/files/baksmali-${version}.jar"
+checksum="
+ 2460a3b764b6f185de505523d644f1a877c17e02427f3b042ed8a74b03c0a66c
+ 9373a47d8ed39021de36004f6bbc1d5c7efc2c61906251aa56a06440a67c8878"
+
+do_extract() {
+	:
+}
+do_install() {
+	vmkdir usr/share/smali
+	vcopy ${XBPS_SRCDISTDIR}/${pkgname}-${version}/smali-${version}.jar usr/share/smali
+	vcopy ${XBPS_SRCDISTDIR}/${pkgname}-${version}/baksmali-${version}.jar usr/share/smali
+	vmkdir usr/bin
+	for f in smali baksmali; do
+		sed -e "s,@VERSION@,${version},g" ${FILESDIR}/${f} > ${DESTDIR}/usr/bin/${f}
+	done
+}

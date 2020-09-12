@@ -1,0 +1,24 @@
+# Template file for 'fribidi'
+pkgname=fribidi
+version=0.19.7
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="libglib-devel"
+short_desc="Free Implementation of the Unicode Bidirectional Algorithm"
+homepage="http://fribidi.org/"
+license="LGPL-2.1"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="http://fribidi.org/download/$pkgname-$version.tar.bz2"
+checksum=08222a6212bbc2276a2d55c3bf370109ae4a35b689acbc66571ad2a670595a8e
+
+fribidi-devel_package() {
+	depends="${makedepends} fribidi>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

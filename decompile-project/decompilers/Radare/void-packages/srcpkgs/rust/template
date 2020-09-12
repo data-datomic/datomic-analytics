@@ -1,0 +1,37 @@
+# Template file for 'rust'
+pkgname=rust
+version=1.5.0
+revision=1
+wrksrc="rustc-${version}"
+lib32disabled=yes
+build_style=configure
+only_for_archs="x86_64"
+hostmakedepends="pkg-config curl python"
+short_desc="A safe, concurrent, practical systems language"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.rust-lang.org/"
+license="MIT, Apache-2.0"
+distfiles="https://static.rust-lang.org/dist/rustc-${version}-src.tar.gz"
+checksum=641037af7b7b6cad0b231cc20671f8a314fbf2f40fc0901d0b877c39fc8da5a0
+
+do_configure() {
+	local _triplet
+	case $XBPS_TARGET_MACHINE in
+		i686*) _triplet=i686-unknown-linux-gnu;;
+		x86_64*) _triplet=x86_64-unknown-linux-gnu;;
+		*) _triplet=$XBPS_TARGET_MACHINE;;
+	esac
+	./configure --prefix=/usr --disable-docs --enable-ccache --build=${_triplet} --release-channel=stable
+}
+post_install() {
+	vlicense COPYRIGHT
+	vlicense LICENSE-APACHE
+	vlicense LICENSE-MIT
+
+	cd ${DESTDIR}/usr/lib/rustlib
+	rm install.log uninstall.sh components manifest-rustc rust-installer-version
+	cd ${DESTDIR}/usr/lib
+	ln -sf rustlib/*/lib/*.so .   # symlinks instead of copies
+
+	rm -rf ${DESTDIR}/usr/share/doc/rust
+}

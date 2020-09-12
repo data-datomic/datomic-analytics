@@ -1,0 +1,24 @@
+# Template file for 'mathjax'
+pkgname=mathjax
+version=2.5.3
+revision=1
+noarch=yes
+wrksrc="MathJax-${version}"
+depends="font-util"
+font_dirs="/usr/share/fonts/mathjax"
+short_desc="JavaScript display engine for LaTeX, MathML and AsciiMath"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="http://www.mathjax.org/"
+license="Apache-2.0"
+distfiles="https://github.com/mathjax/MathJax/archive/${version}.tar.gz"
+checksum=d24fcd6e66db4d79177513fbd25be9b75bff30f2a379199e8a05d5051fed5df3
+
+do_install() {
+	vmkdir usr/share/mathjax
+	vmkdir usr/share/fonts/mathjax
+	vcopy "MathJax.js config extensions fonts jax images localization test" usr/share/mathjax
+	for d in Asana-Math Gyre-{Pagella,Termes} Latin-Modern Neo-Euler STIX-Web TeX; do
+		ln -sfr ${DESTDIR}/usr/share/mathjax/fonts/HTML-CSS/${d}/otf/*.otf \
+			${DESTDIR}/usr/share/fonts/mathjax
+	done
+}

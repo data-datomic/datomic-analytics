@@ -1,0 +1,20 @@
+# Template file for 'zsh-syntax-highlighting'
+pkgname=zsh-syntax-highlighting
+version=0.4.0
+revision=1
+noarch=yes
+depends="zsh"
+short_desc="Fish shell like syntax highlighting for Zsh"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="BSD"
+homepage="https://github.com/zsh-users/zsh-syntax-highlighting"
+distfiles="${homepage}/archive/${version}.tar.gz>${pkgname}-${version}.tar.gz"
+checksum=e38581310479646e8f4df7e572489b28b361c8332b186207685efbd90b3016f1
+
+do_install() {
+	vinstall ${pkgname}.zsh 644 usr/share/zsh/plugins/${pkgname}
+	vinstall .version 644 usr/share/zsh/plugins/${pkgname}
+	vinstall .revision-hash 644 usr/share/zsh/plugins/${pkgname}
+	vcopy highlighters usr/share/zsh/plugins/${pkgname}
+	vlicense COPYING.md
+}

@@ -1,0 +1,41 @@
+# Template file for 'openmpi'
+pkgname=openmpi
+version=1.10.1
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+hostmakedepends="perl libgomp-devel"
+makedepends="zlib-devel libgomp-devel"
+conf_files="
+ /etc/openmpi-default-hostfile
+ /etc/openmpi-mca-params.conf
+ /etc/openmpi-totalview.tcl"
+short_desc="A High Performance Message Passing Library"
+homepage="http://www.open-mpi.org/"
+license="3-clause-BSD"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="http://www.open-mpi.org/software/ompi/v1.10/downloads/${pkgname}-${version}.tar.bz2"
+checksum=7919ecde15962bab2e26d01d5f5f4ead6696bbcacb504b8560f2e3a152bfe492
+nocross=yes  # libtool -rpath /usr/lib issue
+
+post_install() {
+	vlicense LICENSE
+}
+
+libopenmpi_package() {
+	short_desc+=" - runtime libraries"
+	pkg_install() {
+		vmove usr/lib/*.so.*
+	}
+}
+
+openmpi-devel_package() {
+	depends="libstdc++-devel zlib-devel lib${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share/man/man3
+	}
+}

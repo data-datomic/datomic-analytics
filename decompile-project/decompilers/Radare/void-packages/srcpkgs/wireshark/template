@@ -1,0 +1,84 @@
+# Template file for 'wireshark'
+pkgname=wireshark
+version=2.0.0
+revision=1
+build_style=gnu-configure
+configure_args="--with-ssl --with-pcap --with-libcap --with-zlib --with-lua
+ --with-krb5 --with-gtk3=yes --without-portaudio CC_FOR_BUILD=cc"
+hostmakedepends="pkg-config flex perl python-devel mit-krb5-devel automake libtool"
+makedepends="libpcap-devel zlib-devel lua52-devel mit-krb5-devel gnutls-devel
+ geoip-devel libgcrypt-devel gtk+3-devel libcap-devel sbc-devel"
+depends="libcap-progs"
+short_desc="A network protocol analyzer"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+homepage="http://www.wireshark.org"
+license="GPL-2"
+distfiles="http://www.wireshark.org/download/src/${pkgname}-${version}.tar.bz2"
+checksum=90026c761a85701d7783c7e2eaa4c1de247dfbadbd53221df355f121e42691dd
+system_groups="wireshark"
+subpackages="libwireshark libwireshark-devel wireshark-gtk"
+
+CFLAGS="-I${XBPS_CROSS_BASE}/usr/include/lua5.2"
+CXXFLAGS="-I${XBPS_CROSS_BASE}/usr/include/lua5.2"
+if [ -z "$CROSS_BUILD" ]; then
+	makedepends+=" qt5-devel"
+	configure_args+=" --with-qt=yes"
+	subpackages+=" wireshark-qt"
+else
+	configure_args+=" --with-qt=no"
+fi
+
+pre_configure() {
+	autoreconf -fi
+	find -type f -name Makefile.in -exec sed -i "s/^LIBS = .*/\0 -ldl/" {} \;
+}
+post_install() {
+	local _includeDir=usr/include/wireshark
+
+	# Headers
+	vmkdir $_includeDir
+	vcopy "color.h config.h register.h ws_symbol_export.h" $_includeDir
+
+	for i in wiretap wsutil; do
+		vmkdir $_includeDir/$i
+		vcopy "$i/*.h" $_includeDir/$i
+	done
+
+	chmod +754 $DESTDIR/usr/bin/dumpcap
+}
+
+libwireshark_package() {
+	short_desc+=" - library"
+	pkg_install() {
+		vmove usr/lib/*.so.*
+		vmove usr/lib/wireshark
+	}
+}
+libwireshark-devel_package() {
+	short_desc+=" - development files"
+	depends="libwireshark>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.so
+	}
+}
+wireshark-gtk_package() {
+	replaces="wireshark<1.12.2_1"
+	depends="${sourcepkg}>=${version}_${revision} hicolor-icon-theme desktop-file-utils"
+	short_desc+=" - GTK+ frontend"
+	pkg_install() {
+		vmove usr/bin/wireshark-gtk
+		vmove usr/share/icons
+		vmove usr/share/applications/wireshark-gtk.desktop
+	}
+}
+wireshark-qt_package() {
+	replaces="wireshark<1.12.2_1"
+	depends="${sourcepkg}>=${version}_${revision} desktop-file-utils"
+	short_desc+=" - Qt frontend"
+	pkg_install() {
+		vmove usr/bin/wireshark
+		vmove usr/share/man/man1/wireshark.1
+		vmove usr/share/applications/wireshark.desktop
+	}
+}

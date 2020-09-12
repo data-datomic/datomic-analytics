@@ -1,0 +1,27 @@
+# Template file for 'libmowgli'
+pkgname=libmowgli
+version=2.0.0
+revision=13
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="libressl-devel"
+short_desc="Performance and usability-oriented extensions to C"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.atheme.org/project/mowgli"
+license="MIT"
+distfiles="http://archlinux.c3sl.ufpr.br/other/packages/libmowgli/libmowgli-${version}.tar.gz"
+checksum=7c5a94082899d055fc9a02b94e2658b42616fdb98e58e9a71165c07b6f5cceba
+
+post_install() {
+	vlicense COPYING
+}
+
+libmowgli-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

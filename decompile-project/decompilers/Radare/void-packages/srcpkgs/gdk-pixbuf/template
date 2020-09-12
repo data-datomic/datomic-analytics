@@ -1,0 +1,53 @@
+# Template build file for 'gdk-pixbuf'.
+pkgname=gdk-pixbuf
+version=2.32.3
+revision=1
+build_style=gnu-configure
+configure_args="$(vopt_enable gir introspection) --without-libjasper
+ --with-included-loaders=png --with-x11 gio_can_sniff=yes"
+hostmakedepends="automake libtool perl pkg-config gettext-devel
+ glib-devel $(vopt_if gir gobject-introspection)"
+makedepends="libglib-devel libpng-devel libjpeg-turbo-devel tiff-devel libX11-devel"
+triggers="gtk-pixbuf-loaders"
+short_desc="An Image loading library for The GTK+ toolkit (v2)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gtk.org/"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=2b6771f1ac72f687a8971e59810b8dc658e65e7d3086bd2e676e618fd541d031
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	sed -i '/SUBDIRS/s/tests//' Makefile.am
+	autoreconf -fi
+}
+
+gdk-pixbuf-xlib_package() {
+	replaces="${sourcepkg}<2.30.8"
+	short_desc+=" - xlib rendering library"
+	pkg_install() {
+		vmove usr/lib/libgdk_pixbuf_xlib*.so.*
+	}
+}
+gdk-pixbuf-devel_package() {
+	depends="${makedepends} ${sourcepkg}-xlib>=${version}_${revision} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/include
+		vmove "usr/bin/*csource*"
+		vmove "usr/share/man/man1/*csource*"
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+		vmove usr/share/gtk-doc 
+	}
+}

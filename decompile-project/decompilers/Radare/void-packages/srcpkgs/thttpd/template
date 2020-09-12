@@ -1,0 +1,34 @@
+# Template file for 'thttpd'
+pkgname=thttpd
+version=2.27
+revision=1
+build_style=gnu-configure
+short_desc="Tiny/turbo/throttling HTTP server"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+homepage="http://www.acme.com/software/thttpd/"
+distfiles="http://www.acme.com/software/thttpd/thttpd-${version}.tar.gz"
+checksum=b1c4bc37ada7c39cc2bcfbf86b3bc05be91be49f8bb4f55379eaff1f66516d7a
+
+pre_configure() {
+	sed "s,-o bin -g bin,,g" -i Makefile.in
+}
+do_build() {
+	make CC=$CC LD=$CC CCOPT="$CFLAGS -D_DEFAULT_SOURCE"
+}
+do_install() {
+	vmkdir usr/bin
+	vmkdir usr/share/man/man1
+	vmkdir usr/share/man/man8
+
+	make WEBGROUP=$(whoami) \
+		WEBDIR=${DESTDIR}/usr/share/thttpd \
+		BINDIR=${DESTDIR}/usr/bin \
+		MANDIR=${DESTDIR}/usr/share/man install
+
+	vsv thttpd
+
+	# Rename htpasswd to not conflict with apache.
+	mv ${DESTDIR}/usr/bin/{htpasswd,thttpd-htpasswd}
+	mv ${DESTDIR}/usr/share/man/man1/{htpasswd,thttpd-htpasswd}.1
+}

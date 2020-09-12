@@ -1,0 +1,72 @@
+# Template file for 'python-gobject'
+pkgname=python-gobject
+version=3.18.2
+revision=1
+wrksrc="pygobject-${version}"
+hostmakedepends="pkg-config gobject-introspection"
+makedepends="libglib-devel python-cairo-devel python3.4-cairo-devel"
+depends="gir-freedesktop python-cairo>=1.10.0_2"
+replaces="pygobject>=0"
+pycompile_module="gi pygtkcompat"
+short_desc="Python2 bindings for GObject"
+homepage="https://live.gnome.org/PyGObject"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/pygobject/${version%.*}/pygobject-${version}.tar.xz"
+checksum=2a3cad1517916b74e131e6002c3824361aee0671ffb0d55ded119477fc1c2c5f
+
+nocross="http://build.voidlinux.eu/builders/armv7l_builder/builds/8676/steps/shell_3/logs/stdio"
+
+do_configure() {
+	# python2
+	mkdir ${wrksrc}/build-python2
+	cd ${wrksrc}/build-python2
+	../configure ${configure_args} --with-python=/usr/bin/python
+
+	# python3.4
+	mkdir ${wrksrc}/build-python3.4
+	cd ${wrksrc}/build-python3.4
+	../configure ${configure_args} --with-python=/usr/bin/python3.4
+}
+do_build() {
+	# python2
+	cd ${wrksrc}/build-python2
+	make ${makejobs}
+
+	# python3.4
+	cd ${wrksrc}/build-python3.4
+	make ${makejobs}
+}
+do_install() {
+	# python2
+	cd ${wrksrc}/build-python2
+	make DESTDIR=${DESTDIR} install
+
+	# python3.4
+	cd ${wrksrc}/build-python3.4
+	make DESTDIR=${DESTDIR} install
+}
+
+python3.4-gobject_package() {
+	depends="gir-freedesktop python3.4-cairo>=1.10.0_2"
+	replaces="py3gobject>=0"
+	short_desc="Python3.4 bindings for GObject"
+	pkg_install() {
+		vmkdir usr/lib
+		mv ${DESTDIR}/usr/lib/python3.4 ${PKGDESTDIR}/usr/lib
+	}
+}
+python-gobject-devel_package() {
+	depends="libgirepository-devel
+		 python-cairo-devel>=1.10.0_2
+		 python3.4-cairo-devel>=1.10.0_2
+		 python-gobject>=${version}_${revision}
+		 python3.4-gobject>=${version}_${revision}"
+	replaces="pygobject-devel>=0"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		rm -rf ${DESTDIR}/python3.4
+	}
+}

@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/frida-qml undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-qml",
+    "repo": "https://github.com/frida/frida-qml",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-qml",
+    "startTime": "2020-09-12T11:03:00.107Z",
+    "endTime": "2020-09-12T11:03:00.815Z",
+    "childProcessPid": 27637,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--frida-qml--27637"
+}

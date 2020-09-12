@@ -1,0 +1,41 @@
+# Template file for 'libkeybinder3'
+pkgname=libkeybinder3
+version=0.3.1
+revision=1
+wrksrc="keybinder-keybinder-3.0-v${version}"
+build_style=gnu-configure
+configure_args="$(vopt_enable gir introspection)"
+hostmakedepends="gnome-common gtk-doc libtool pkg-config $(vopt_if gir gobject-introspection)"
+makedepends="gtk+3-devel"
+short_desc="Library for registering global keyboard shortcuts (GTK+3)"
+maintainer="Steve Prybylski <sa.prybylx@gmail.com>"
+license="MIT"
+homepage="https://github.com/engla/keybinder"
+distfiles="${homepage}/archive/keybinder-3.0-v${version}.tar.gz"
+checksum=0ebd17f026ce4ff6f0fb4248a95c2962d76b60b8cbccf07de28b07d7c5e42204
+
+build_options="gir"
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+
+post_install() {
+	vlicense COPYING
+}
+
+libkeybinder3-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - developement files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}

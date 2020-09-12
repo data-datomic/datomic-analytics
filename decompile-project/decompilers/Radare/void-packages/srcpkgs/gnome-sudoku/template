@@ -1,0 +1,13 @@
+# Template file for 'gnome-sudoku'
+pkgname=gnome-sudoku
+version=3.18.2
+revision=1
+build_style=gnu-configure
+hostmakedepends="glib intltool itstool pkg-config"
+makedepends="gtk+3-devel libgee08-devel json-glib-devel qqwing-devel"
+short_desc="GNOME Sudoku Japanese logic game"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-2"
+homepage="https://wiki.gnome.org/Apps/Sudoku"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=4eefde04145d9f4bf30f4327b83929f6bfb8a19b604337c1d75f66e984f8c0ac

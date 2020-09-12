@@ -1,0 +1,12 @@
+# Template file for 'mdp'
+pkgname=mdp
+version=1.0.3
+revision=1
+build_style=gnu-makefile
+makedepends="ncurses-devel"
+short_desc="A command-line based markdown presentation tool"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="GPL-3"
+homepage="https://github.com/visit1985/mdp"
+distfiles="${homepage}/archive/${version}.tar.gz"
+checksum=56ade2d152433584bf31f631cc523326864ed76654d07596fd58570b279d4a60

@@ -1,0 +1,22 @@
+# Template file for 'khard'
+pkgname=khard
+version=0.6.3
+revision=1
+noarch=yes
+build_style=python-module
+pycompile_module="khard"
+hostmakedepends="python-setuptools"
+depends="python-configobj python-vobject"
+short_desc="Command-line addressbook built around CardDAV"
+maintainer="Oliver Kiddle <okiddle@yahoo.co.uk>"
+license="GPL-3"
+homepage="https://github.com/scheibler/khard"
+distfiles="${PYPI_SITE}/k/khard/khard-${version}.tar.gz"
+checksum=88f8962524490b78fd9780fa2abe8f65d59d4bac4bf0b2cf9485434442c01ec7
+
+post_install() {
+	vinstall misc/khard.conf.example 644 usr/share/examples/khard
+	vinstall misc/zsh/_khard 644 usr/share/zsh/site-functions
+	rm ${DESTDIR}/usr/bin/davcontroller
+	rm ${DESTDIR}/usr/lib/python2.7/site-packages/davcontroller/*
+}

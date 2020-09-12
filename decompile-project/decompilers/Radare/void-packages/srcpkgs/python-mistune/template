@@ -1,0 +1,25 @@
+# Template file for 'python-mistune'
+pkgname=python-mistune
+version=0.7.1
+revision=1
+wrksrc="mistune-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools python-Cython python3.4-Cython"
+makedepends="python-devel python3.4-devel"
+pycompile_module="mistune.py"
+short_desc="The fastest markdown parser for Python2"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="https://github.com/lepture/mistune"
+license="BSD"
+distfiles="${PYPI_SITE}/m/mistune/mistune-${version}.tar.gz"
+checksum=6076dedf768348927d991f4371e5a799c6a0158b16091df08ee85ee231d929a7
+
+python3.4-mistune_package() {
+	pycompile_version="3.4"
+	pycompile_module="mistune.py"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

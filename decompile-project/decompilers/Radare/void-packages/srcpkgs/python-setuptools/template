@@ -1,0 +1,41 @@
+# Template file for 'python-setuptools'
+pkgname=python-setuptools
+version=19.2
+revision=1
+noarch=yes
+wrksrc="setuptools-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-devel python3.4-devel"
+depends="python"
+pycompile_module="_markerlib pkg_resources setuptools easy_install.py"
+provides="python-distribute-${version}_1"
+replaces="python-distribute>=0"
+short_desc="Easily build and distribute Python2 packages"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="https://bitbucket.org/pypa/setuptools"
+license="PSF"
+distfiles="${PYPI_SITE}/s/setuptools/setuptools-${version}.tar.gz"
+checksum=f90ed8eb70b14b0594ba74e9de4ffca040c0ec8ee505cbf3570499467859f71a
+
+pre_build() {
+	sed -i '/^#!/d' setuptools/command/easy_install.py
+}
+post_install() {
+	rm -f ${DESTDIR}/usr/bin/easy_install
+	ln -sf easy_install-2.7 ${DESTDIR}/usr/bin/easy_install
+}
+
+python3.4-setuptools_package() {
+	noarch=yes
+	depends="python3.4"
+	pycompile_version="3.4"
+	pycompile_module="_markerlib pkg_resources setuptools easy_install.py"
+	short_desc="${short_desc/Python2/Python3.4}"
+	provides="python3-distribute-${version}_1"
+	replaces="python3-distribute>=0"
+	pkg_install() {
+		vmove usr/bin/easy_install-3.4
+		vmove usr/lib/python3.4
+	}
+}

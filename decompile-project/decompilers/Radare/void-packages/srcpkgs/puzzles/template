@@ -1,0 +1,26 @@
+# Template file for 'puzzles'
+pkgname=puzzles
+version=20150502
+revision=2
+wrksrc="${pkgname}-7f64f4a"
+hostmakedepends="pkg-config perl"
+makedepends="gtk+-devel"
+short_desc="Simon Tatham's Portable Puzzle Collection"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="MIT"
+homepage="http://www.chiark.greenend.org.uk/~sgtatham/puzzles/"
+distfiles="http://tartarus.org/~simon-git/gitweb/?p=puzzles.git;a=snapshot;h=7f64f4a50e46304b7bad011a1251e146ab63ca15;sf=tgz>${pkgname}-${version}.tar.gz"
+checksum=7f4edcbe542b64726461c17272ba49790197272231460abb363dd67fc3cde739
+
+do_build() {
+	./mkfiles.pl
+	CC="${CC}" CFLAGS="${CFLAGS} -Wno-error" make ${makejobs} -f Makefile.gtk \
+		prefix=/usr BINPREFIX=puzzles-
+}
+
+do_install() {
+	vmkdir usr/bin
+	make -f Makefile.gtk prefix=/usr gamesdir=/usr/bin \
+		DESTDIR="${DESTDIR}" BINPREFIX=puzzles- install
+	vlicense LICENCE LICENSE
+}

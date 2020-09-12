@@ -1,0 +1,22 @@
+cs_activate_env="$_"
+if [ -n "$BASH_SOURCE" ]; then
+  cs_activate_env="$BASH_SOURCE"
+fi
+pushd "$(dirname "$cs_activate_env")/../../" > /dev/null || exit $?
+unset cs_activate_env
+export CRYPTOSHARK_SRCDIR=$(pwd)
+pushd .. > /dev/null
+export CRYPTOSHARK_PARENTDIR=$(pwd)
+popd > /dev/null
+popd > /dev/null
+export CRYPTOSHARK_DISTDIR="$CRYPTOSHARK_PARENTDIR/dist"
+
+if [ -z "$CRYPTOSHARK_ARCH" ]; then
+  export CRYPTOSHARK_ARCH=$("$CRYPTOSHARK_SRCDIR/tools/unix/detect-arch")
+fi
+
+export CRYPTOSHARK_QTDIR="$CRYPTOSHARK_DISTDIR/gcc_64"
+
+[ -z "$CRYPTOSHARK_MAKEJ" ] && export CRYPTOSHARK_MAKEJ=8
+
+export PATH="$CRYPTOSHARK_QTDIR/bin:$CRYPTOSHARK_SRCDIR/tools/linux:$PATH"

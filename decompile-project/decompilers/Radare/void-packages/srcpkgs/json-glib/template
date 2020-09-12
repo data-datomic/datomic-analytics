@@ -1,0 +1,33 @@
+# Template build file for 'json-glib'.
+pkgname=json-glib
+version=1.0.4
+revision=1
+build_style=gnu-configure
+configure_args="$(vopt_enable gir introspection)"
+hostmakedepends="pkg-config glib-devel $(vopt_if gir gobject-introspection)"
+makedepends="libglib-devel"
+short_desc="A JSON parser for GLib-based libraries and applications"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://live.gnome.org/JsonGlib"
+license="LGPL-2"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=80f3593cb6bd13f1465828e46a9f740e2e9bd3cd2257889442b3e62bd6de05cd
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+json-glib-devel_package() {
+	depends="libglib-devel ${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/share
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

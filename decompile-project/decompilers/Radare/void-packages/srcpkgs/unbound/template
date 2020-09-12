@@ -1,0 +1,37 @@
+# Template file for 'unbound'
+pkgname=unbound
+version=1.5.7
+revision=1
+build_style=gnu-configure
+configure_args="--with-libevent --with-conf-file=/etc/unbound/unbound.conf
+ --with-pidfile=/run/unbound.pid --with-ssl=${XBPS_CROSS_BASE}/usr
+ --with-libevent=${XBPS_CROSS_BASE}/usr --with-libexpat=${XBPS_CROSS_BASE}/usr
+ --with-rootkey-file=/etc/dns/root.key --sbindir=/usr/bin"
+conf_files="/etc/unbound/unbound.conf"
+makedepends="libressl-devel expat-devel libevent-devel"
+depends="dnssec-anchors"
+system_accounts="unbound"
+short_desc="Validating, recursive, and caching DNS resolver"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="BSD"
+homepage="http://unbound.net/"
+distfiles="http://unbound.net/downloads/${pkgname}-${version}.tar.gz"
+checksum=4b2088e5aa81a2d48f6337c30c1cf7e99b2e2dc4f92e463b3bee626eee731ca8
+
+post_install() {
+	vsconf doc/example.conf unbound.conf
+	vinstall ${FILESDIR}/unbound.conf 644 etc/unbound
+	vsv unbound
+}
+
+unbound-devel_package() {
+	depends="unbound>=$version $makedepends"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/share/man/man3
+	}
+}
+

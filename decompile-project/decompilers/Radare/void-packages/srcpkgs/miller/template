@@ -1,0 +1,26 @@
+# Template file for 'miller'
+pkgname=miller
+version=3.2.2
+revision=1
+build_style=gnu-configure
+hostmakedepends="automake libtool flex asciidoc"
+short_desc="Tool like sed/awk/cut/join/sort for name-indexed data such as CSV"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="BSD-2"
+homepage="http://johnkerl.org/miller/"
+distfiles="https://github.com/johnkerl/${pkgname}/archive/v${version}.tar.gz"
+checksum=784f9aad3ba61ab8f732d25444bd6753a5116e2245f245b498cdb00fb776805b
+
+pre_configure() {
+	# Disable debugging and profiling versions, broken on musl.
+	echo 'noinst_PROGRAMS=' >> c/Makefile.am
+	autoreconf -fi
+}
+
+pre_build() {
+	make -C c/dsls lemon CC="$BUILD_CC" CFLAGS="$BUILD_CFLAGS -fPIC"
+}
+
+post_install() {
+	vlicense LICENSE.txt
+}

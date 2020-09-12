@@ -1,0 +1,573 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B7DC9B02-A5FF-4AA1-B2A2-DC1653168D44}</ProjectGuid>
+    <RootNamespace>frida</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)releng\frida-$(Configuration).props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)releng\frida-$(Configuration).props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)releng\frida-$(Configuration).props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)releng\frida-$(Configuration).props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)build\tmp-windows\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)build\tmp-windows\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)build\tmp-windows\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)build\tmp-windows\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>HAVE_I386=1;HAVE_WINDOWS=1;HAVE_GIOSCHANNEL=1;G_LOG_DOMAIN="Frida";$(FridaComponentDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(IntDir)data;$(IntDir)..\frida-interfaces-32;$(IntDir)..\frida-pipe-32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>$(IntDir)data\frida-data-winjector-blob.obj;$(IntDir)data\frida-data-agent-blob.obj;frida-interfaces-32.lib;frida-pipe-32.lib;capstone-32.lib;gum-32.lib;gumjs-inspector.lib;setupapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(IntDir)..\frida-interfaces-32;$(IntDir)..\frida-pipe-32;$(IntDir)..\capstone-32;$(IntDir)..\gum-32;$(IntDir)..\gumjs-inspector;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>HAVE_I386=1;HAVE_WINDOWS=1;HAVE_GIOSCHANNEL=1;G_LOG_DOMAIN="Frida";$(FridaComponentDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(IntDir)data;$(IntDir)..\frida-interfaces-32;$(IntDir)..\frida-pipe-32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>$(IntDir)data\frida-data-winjector-blob.obj;$(IntDir)data\frida-data-agent-blob.obj;frida-interfaces-32.lib;frida-pipe-32.lib;capstone-32.lib;gum-32.lib;gumjs-inspector.lib;setupapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(IntDir)..\frida-interfaces-32;$(IntDir)..\frida-pipe-32;$(IntDir)..\capstone-32;$(IntDir)..\gum-32;$(IntDir)..\gumjs-inspector;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>HAVE_I386=1;HAVE_WINDOWS=1;HAVE_GIOSCHANNEL=1;G_LOG_DOMAIN="Frida";$(FridaComponentDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(IntDir)data;$(IntDir)..\frida-interfaces-64;$(IntDir)..\frida-pipe-64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>$(IntDir)data\frida-data-winjector-blob.obj;$(IntDir)data\frida-data-agent-blob.obj;frida-interfaces-64.lib;frida-pipe-64.lib;capstone-64.lib;gum-64.lib;gumjs-inspector.lib;setupapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(IntDir)..\frida-interfaces-64;$(IntDir)..\frida-pipe-64;$(IntDir)..\capstone-64;$(IntDir)..\gum-64;$(IntDir)..\gumjs-inspector;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>HAVE_I386=1;HAVE_WINDOWS=1;HAVE_GIOSCHANNEL=1;G_LOG_DOMAIN="Frida";$(FridaComponentDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(IntDir)data;$(IntDir)..\frida-interfaces-64;$(IntDir)..\frida-pipe-64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>$(IntDir)data\frida-data-winjector-blob.obj;$(IntDir)data\frida-data-agent-blob.obj;frida-interfaces-64.lib;frida-pipe-64.lib;capstone-64.lib;gum-64.lib;gumjs-inspector.lib;setupapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(IntDir)..\frida-interfaces-64;$(IntDir)..\frida-pipe-64;$(IntDir)..\capstone-64;$(IntDir)..\gum-64;$(IntDir)..\gumjs-inspector;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="src\windows\winjector.resources">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe;$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\winjector-helper-32\winjector-helper-32.exe;$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\winjector-helper-64\winjector-helper-64.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe;$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\winjector-helper-32\winjector-helper-32.exe;$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\winjector-helper-64\winjector-helper-64.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe;$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\winjector-helper-32\winjector-helper-32.exe;$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\winjector-helper-64\winjector-helper-64.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe;$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\winjector-helper-32\winjector-helper-32.exe;$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\winjector-helper-64\winjector-helper-64.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Serializing Winjector resources</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)data\winjector.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Serializing Winjector resources</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)data\winjector.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Serializing Winjector resources</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)data\winjector.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Serializing Winjector resources</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)data\winjector.stamp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mkdir "$(IntDir)data" 2&gt;NUL
+"$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe" -m $(PlatformTarget) -c "$(ProjectDir)src\windows\winjector.resources" -o "$(IntDir)data\frida-data-winjector" "$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\winjector-helper-32\winjector-helper-32.exe" "$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\winjector-helper-64\winjector-helper-64.exe" || exit 1
+REM. &gt; "$(IntDir)data\winjector.stamp"
+</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mkdir "$(IntDir)data" 2&gt;NUL
+"$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe" -m $(PlatformTarget) -c "$(ProjectDir)src\windows\winjector.resources" -o "$(IntDir)data\frida-data-winjector" "$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\winjector-helper-32\winjector-helper-32.exe" "$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\winjector-helper-64\winjector-helper-64.exe" || exit 1
+REM. &gt; "$(IntDir)data\winjector.stamp"
+</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mkdir "$(IntDir)data" 2&gt;NUL
+"$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe" -m $(PlatformTarget) -c "$(ProjectDir)src\windows\winjector.resources" -o "$(IntDir)data\frida-data-winjector" "$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\winjector-helper-32\winjector-helper-32.exe" "$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\winjector-helper-64\winjector-helper-64.exe" || exit 1
+REM. &gt; "$(IntDir)data\winjector.stamp"
+</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mkdir "$(IntDir)data" 2&gt;NUL
+"$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe" -m $(PlatformTarget) -c "$(ProjectDir)src\windows\winjector.resources" -o "$(IntDir)data\frida-data-winjector" "$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\winjector-helper-32\winjector-helper-32.exe" "$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\winjector-helper-64\winjector-helper-64.exe" || exit 1
+REM. &gt; "$(IntDir)data\winjector.stamp"
+</Command>
+    </CustomBuild>
+    <CustomBuild Include="src\agent.resources">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe;$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\frida-agent-32\frida-agent-32.dll;$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\frida-agent-64\frida-agent-64.dll;$(SolutionDir)frida-gum\ext\dbghelp\dbghelp\dbghelp-32.dll;$(SolutionDir)frida-gum\ext\dbghelp\dbghelp\dbghelp-64.dll;$(SolutionDir)frida-gum\ext\symsrv\symsrv-32.dll;$(SolutionDir)frida-gum\ext\symsrv\symsrv-64.dll;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe;$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\frida-agent-32\frida-agent-32.dll;$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\frida-agent-64\frida-agent-64.dll;$(SolutionDir)frida-gum\ext\dbghelp\dbghelp\dbghelp-32.dll;$(SolutionDir)frida-gum\ext\dbghelp\dbghelp\dbghelp-64.dll;$(SolutionDir)frida-gum\ext\symsrv\symsrv-32.dll;$(SolutionDir)frida-gum\ext\symsrv\symsrv-64.dll;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe;$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\frida-agent-32\frida-agent-32.dll;$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\frida-agent-64\frida-agent-64.dll;$(SolutionDir)frida-gum\ext\dbghelp\dbghelp\dbghelp-32.dll;$(SolutionDir)frida-gum\ext\dbghelp\dbghelp\dbghelp-64.dll;$(SolutionDir)frida-gum\ext\symsrv\symsrv-32.dll;$(SolutionDir)frida-gum\ext\symsrv\symsrv-64.dll;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe;$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\frida-agent-32\frida-agent-32.dll;$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\frida-agent-64\frida-agent-64.dll;$(SolutionDir)frida-gum\ext\dbghelp\dbghelp\dbghelp-32.dll;$(SolutionDir)frida-gum\ext\dbghelp\dbghelp\dbghelp-64.dll;$(SolutionDir)frida-gum\ext\symsrv\symsrv-32.dll;$(SolutionDir)frida-gum\ext\symsrv\symsrv-64.dll;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Serializing Agent resources</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)data\agent.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Serializing Agent resources</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)data\agent.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Serializing Agent resources</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)data\agent.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Serializing Agent resources</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)data\agent.stamp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mkdir "$(IntDir)data" 2&gt;NUL
+"$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe" -m $(PlatformTarget) -c "$(ProjectDir)src\agent.resources" -o "$(IntDir)data\frida-data-agent" "$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\frida-agent-32\frida-agent-32.dll" "$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\frida-agent-64\frida-agent-64.dll" "$(SolutionDir)frida-gum\ext\dbghelp\dbghelp-32.dll" "$(SolutionDir)frida-gum\ext\dbghelp\dbghelp-64.dll" "$(SolutionDir)frida-gum\ext\symsrv\symsrv-32.dll" "$(SolutionDir)frida-gum\ext\symsrv\symsrv-64.dll" || exit 1
+REM. &gt; "$(IntDir)data\agent.stamp"
+</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mkdir "$(IntDir)data" 2&gt;NUL
+"$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe" -m $(PlatformTarget) -c "$(ProjectDir)src\agent.resources" -o "$(IntDir)data\frida-data-agent" "$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\frida-agent-32\frida-agent-32.dll" "$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\frida-agent-64\frida-agent-64.dll" "$(SolutionDir)frida-gum\ext\dbghelp\dbghelp-32.dll" "$(SolutionDir)frida-gum\ext\dbghelp\dbghelp-64.dll" "$(SolutionDir)frida-gum\ext\symsrv\symsrv-32.dll" "$(SolutionDir)frida-gum\ext\symsrv\symsrv-64.dll" || exit 1
+REM. &gt; "$(IntDir)data\agent.stamp"
+</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mkdir "$(IntDir)data" 2&gt;NUL
+"$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe" -m $(PlatformTarget) -c "$(ProjectDir)src\agent.resources" -o "$(IntDir)data\frida-data-agent" "$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\frida-agent-32\frida-agent-32.dll" "$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\frida-agent-64\frida-agent-64.dll" "$(SolutionDir)frida-gum\ext\dbghelp\dbghelp-32.dll" "$(SolutionDir)frida-gum\ext\dbghelp\dbghelp-64.dll" "$(SolutionDir)frida-gum\ext\symsrv\symsrv-32.dll" "$(SolutionDir)frida-gum\ext\symsrv\symsrv-64.dll" || exit 1
+REM. &gt; "$(IntDir)data\agent.stamp"
+</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mkdir "$(IntDir)data" 2&gt;NUL
+"$(IntDir)..\frida-resource-compiler\frida-resource-compiler.exe" -m $(PlatformTarget) -c "$(ProjectDir)src\agent.resources" -o "$(IntDir)data\frida-data-agent" "$(SolutionDir)build\tmp-windows\Win32-$(ConfigurationName)\frida-agent-32\frida-agent-32.dll" "$(SolutionDir)build\tmp-windows\x64-$(ConfigurationName)\frida-agent-64\frida-agent-64.dll" "$(SolutionDir)frida-gum\ext\dbghelp\dbghelp-32.dll" "$(SolutionDir)frida-gum\ext\dbghelp\dbghelp-64.dll" "$(SolutionDir)frida-gum\ext\symsrv\symsrv-32.dll" "$(SolutionDir)frida-gum\ext\symsrv\symsrv-64.dll" || exit 1
+REM. &gt; "$(IntDir)data\agent.stamp"
+</Command>
+    </CustomBuild>
+    <CustomBuild Include="src\frida.vala">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling vala code</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mkdir "$(IntDir)data" 2&gt;NUL
+mkdir "$(IntDir)src" 2&gt;NUL
+"$(ValaCompiler)" src/frida.vala src/debugger.vala src/host-session-service.vala src/agent-container.vala src/system.vala src/windows/windows-host-session.vala src/windows/winjector.vala src/windows/winjector-types.vala src/socket/socket-host-session.vala src/fruity/fruity-host-session.vala src/fruity/dtx.vala src/fruity/lockdown.vala src/fruity/installation-proxy.vala src/fruity/lldb.vala src/fruity/injector.vala src/fruity/usbmux.vala src/fruity/keyed-archive.vala src/fruity/plist.vala src/fruity/plist-service.vala src/droidy/droidy-host-session.vala src/droidy/droidy-client.vala -D WINDOWS -D HAVE_GIOSCHANNEL --ccode --directory=$(IntDir) --library=frida-core --header=$(IntDir)frida-core.h --symbols=$(IntDir)frida-core.symbols --vapidir="$(IntDir)..\frida-interfaces-32" --vapidir="$(IntDir)..\frida-interfaces-64" --vapidir="$(IntDir)..\frida-pipe-32" --vapidir="$(IntDir)..\frida-pipe-64" --vapidir="$(IntDir)data" $(ValaFlags) --pkg config --pkg=gmodule-2.0 --pkg=gio-2.0 --pkg=gioschannel --pkg=gee-0.8 --pkg=json-glib-1.0 --pkg=frida-gum-1.0 --pkg=frida-gumjs-1.0 --pkg=frida-interfaces --pkg=frida-pipe --pkg=frida-data-agent --pkg=frida-data-winjector || exit 1
+mkdir "$(IntDir)api" 2&gt;NUL
+"$(ProjectDir)src\api\generate.py" 1.0 "$(ProjectDir)src\frida.vala" "$(IntDir)frida-core.vapi" "$(IntDir)frida-core.h" "$(IntDir)..\frida-interfaces-32\frida-interfaces.vapi" "$(IntDir)..\frida-interfaces-32\frida-interfaces.h" "$(IntDir)api"
+echo &gt; "$(IntDir)valacode.stamp"
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ValaCompiler);$(ProjectDir)src\debugger.vala;$(ProjectDir)src\host-session-service.vala;$(ProjectDir)src\agent-container.vala;$(ProjectDir)src\system.vala;$(ProjectDir)src\windows\windows-host-session.vala;$(ProjectDir)src\windows\winjector.vala;$(ProjectDir)src\windows\winjector-types.vala;$(ProjectDir)src\socket\socket-host-session.vala;$(ProjectDir)src\fruity\fruity-host-session.vala;$(ProjectDir)src\fruity\dtx.vala;$(ProjectDir)src\fruity\lockdown.vala;$(ProjectDir)src\fruity\installation-proxy.vala;$(ProjectDir)src\fruity\lldb.vala;$(ProjectDir)src\fruity\injector.vala;$(ProjectDir)src\fruity\usbmux.vala;$(ProjectDir)src\fruity\keyed-archive.vala;$(ProjectDir)src\fruity\plist.vala;$(ProjectDir)src\fruity\plist-service.vala;$(ProjectDir)src\droidy\droidy-host-session.vala;$(ProjectDir)src\droidy\droidy-client.vala;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)valacode.stamp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compiling vala code</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mkdir "$(IntDir)data" 2&gt;NUL
+mkdir "$(IntDir)src" 2&gt;NUL
+"$(ValaCompiler)" src/frida.vala src/debugger.vala src/host-session-service.vala src/agent-container.vala src/system.vala src/windows/windows-host-session.vala src/windows/winjector.vala src/windows/winjector-types.vala src/socket/socket-host-session.vala src/fruity/fruity-host-session.vala src/fruity/dtx.vala src/fruity/lockdown.vala src/fruity/installation-proxy.vala src/fruity/lldb.vala src/fruity/injector.vala src/fruity/usbmux.vala src/fruity/keyed-archive.vala src/fruity/plist.vala src/fruity/plist-service.vala src/droidy/droidy-host-session.vala src/droidy/droidy-client.vala -D WINDOWS -D HAVE_GIOSCHANNEL --ccode --directory=$(IntDir) --library=frida-core --header=$(IntDir)frida-core.h --symbols=$(IntDir)frida-core.symbols --vapidir="$(IntDir)..\frida-interfaces-32" --vapidir="$(IntDir)..\frida-interfaces-64" --vapidir="$(IntDir)..\frida-pipe-32" --vapidir="$(IntDir)..\frida-pipe-64" --vapidir="$(IntDir)data" $(ValaFlags) --pkg config --pkg=gmodule-2.0 --pkg=gio-2.0 --pkg=gioschannel --pkg=gee-0.8 --pkg=json-glib-1.0 --pkg=frida-gum-1.0 --pkg=frida-gumjs-1.0 --pkg=frida-interfaces --pkg=frida-pipe --pkg=frida-data-agent --pkg=frida-data-winjector || exit 1
+mkdir "$(IntDir)api" 2&gt;NUL
+"$(ProjectDir)src\api\generate.py" 1.0 "$(ProjectDir)src\frida.vala" "$(IntDir)frida-core.vapi" "$(IntDir)frida-core.h" "$(IntDir)..\frida-interfaces-64\frida-interfaces.vapi" "$(IntDir)..\frida-interfaces-64\frida-interfaces.h" "$(IntDir)api"
+echo &gt; "$(IntDir)valacode.stamp"
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ValaCompiler);$(ProjectDir)src\debugger.vala;$(ProjectDir)src\host-session-service.vala;$(ProjectDir)src\agent-container.vala;$(ProjectDir)src\system.vala;$(ProjectDir)src\windows\windows-host-session.vala;$(ProjectDir)src\windows\winjector.vala;$(ProjectDir)src\windows\winjector-types.vala;$(ProjectDir)src\socket\socket-host-session.vala;$(ProjectDir)src\fruity\fruity-host-session.vala;$(ProjectDir)src\fruity\dtx.vala;$(ProjectDir)src\fruity\lockdown.vala;$(ProjectDir)src\fruity\installation-proxy.vala;$(ProjectDir)src\fruity\lldb.vala;$(ProjectDir)src\fruity\injector.vala;$(ProjectDir)src\fruity\usbmux.vala;$(ProjectDir)src\fruity\keyed-archive.vala;$(ProjectDir)src\fruity\plist.vala;$(ProjectDir)src\fruity\plist-service.vala;$(ProjectDir)src\droidy\droidy-host-session.vala;$(ProjectDir)src\droidy\droidy-client.vala;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)valacode.stamp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling vala code</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mkdir "$(IntDir)data" 2&gt;NUL
+mkdir "$(IntDir)src" 2&gt;NUL
+"$(ValaCompiler)" src/frida.vala src/debugger.vala src/host-session-service.vala src/agent-container.vala src/system.vala src/windows/windows-host-session.vala src/windows/winjector.vala src/windows/winjector-types.vala src/socket/socket-host-session.vala src/fruity/fruity-host-session.vala src/fruity/dtx.vala src/fruity/lockdown.vala src/fruity/installation-proxy.vala src/fruity/lldb.vala src/fruity/injector.vala src/fruity/usbmux.vala src/fruity/keyed-archive.vala src/fruity/plist.vala src/fruity/plist-service.vala src/droidy/droidy-host-session.vala src/droidy/droidy-client.vala -D WINDOWS -D HAVE_GIOSCHANNEL --ccode --directory=$(IntDir) --library=frida-core --header=$(IntDir)frida-core.h --symbols=$(IntDir)frida-core.symbols --vapidir="$(IntDir)..\frida-interfaces-32" --vapidir="$(IntDir)..\frida-interfaces-64" --vapidir="$(IntDir)..\frida-pipe-32" --vapidir="$(IntDir)..\frida-pipe-64" --vapidir="$(IntDir)data" $(ValaFlags) --pkg config --pkg=gmodule-2.0 --pkg=gio-2.0 --pkg=gioschannel --pkg=gee-0.8 --pkg=json-glib-1.0 --pkg=frida-gum-1.0 --pkg=frida-gumjs-1.0 --pkg=frida-interfaces --pkg=frida-pipe --pkg=frida-data-agent --pkg=frida-data-winjector || exit 1
+mkdir "$(IntDir)api" 2&gt;NUL
+"$(ProjectDir)src\api\generate.py" 1.0 "$(ProjectDir)src\frida.vala" "$(IntDir)frida-core.vapi" "$(IntDir)frida-core.h" "$(IntDir)..\frida-interfaces-32\frida-interfaces.vapi" "$(IntDir)..\frida-interfaces-32\frida-interfaces.h" "$(IntDir)api"
+echo &gt; "$(IntDir)valacode.stamp"
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ValaCompiler);$(ProjectDir)src\debugger.vala;$(ProjectDir)src\host-session-service.vala;$(ProjectDir)src\agent-container.vala;$(ProjectDir)src\system.vala;$(ProjectDir)src\windows\windows-host-session.vala;$(ProjectDir)src\windows\winjector.vala;$(ProjectDir)src\windows\winjector-types.vala;$(ProjectDir)src\socket\socket-host-session.vala;$(ProjectDir)src\fruity\fruity-host-session.vala;$(ProjectDir)src\fruity\dtx.vala;$(ProjectDir)src\fruity\lockdown.vala;$(ProjectDir)src\fruity\installation-proxy.vala;$(ProjectDir)src\fruity\lldb.vala;$(ProjectDir)src\fruity\injector.vala;$(ProjectDir)src\fruity\usbmux.vala;$(ProjectDir)src\fruity\keyed-archive.vala;$(ProjectDir)src\fruity\plist.vala;$(ProjectDir)src\fruity\plist-service.vala;$(ProjectDir)src\droidy\droidy-host-session.vala;$(ProjectDir)src\droidy\droidy-client.vala;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)valacode.stamp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compiling vala code</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mkdir "$(IntDir)data" 2&gt;NUL
+mkdir "$(IntDir)src" 2&gt;NUL
+"$(ValaCompiler)" src/frida.vala src/debugger.vala src/host-session-service.vala src/agent-container.vala src/system.vala src/windows/windows-host-session.vala src/windows/winjector.vala src/windows/winjector-types.vala src/socket/socket-host-session.vala src/fruity/fruity-host-session.vala src/fruity/dtx.vala src/fruity/lockdown.vala src/fruity/installation-proxy.vala src/fruity/lldb.vala src/fruity/injector.vala src/fruity/usbmux.vala src/fruity/keyed-archive.vala src/fruity/plist.vala src/fruity/plist-service.vala src/droidy/droidy-host-session.vala src/droidy/droidy-client.vala -D WINDOWS -D HAVE_GIOSCHANNEL --ccode --directory=$(IntDir) --library=frida-core --header=$(IntDir)frida-core.h --symbols=$(IntDir)frida-core.symbols --vapidir="$(IntDir)..\frida-interfaces-32" --vapidir="$(IntDir)..\frida-interfaces-64" --vapidir="$(IntDir)..\frida-pipe-32" --vapidir="$(IntDir)..\frida-pipe-64" --vapidir="$(IntDir)data" $(ValaFlags) --pkg config --pkg=gmodule-2.0 --pkg=gio-2.0 --pkg=gioschannel --pkg=gee-0.8 --pkg=json-glib-1.0 --pkg=frida-gum-1.0 --pkg=frida-gumjs-1.0 --pkg=frida-interfaces --pkg=frida-pipe --pkg=frida-data-agent --pkg=frida-data-winjector || exit 1
+mkdir "$(IntDir)api" 2&gt;NUL
+"$(ProjectDir)src\api\generate.py" 1.0 "$(ProjectDir)src\frida.vala" "$(IntDir)frida-core.vapi" "$(IntDir)frida-core.h" "$(IntDir)..\frida-interfaces-64\frida-interfaces.vapi" "$(IntDir)..\frida-interfaces-64\frida-interfaces.h" "$(IntDir)api"
+echo &gt; "$(IntDir)valacode.stamp"
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ValaCompiler);$(ProjectDir)src\debugger.vala;$(ProjectDir)src\host-session-service.vala;$(ProjectDir)src\agent-container.vala;$(ProjectDir)src\system.vala;$(ProjectDir)src\windows\windows-host-session.vala;$(ProjectDir)src\windows\winjector.vala;$(ProjectDir)src\windows\winjector-types.vala;$(ProjectDir)src\socket\socket-host-session.vala;$(ProjectDir)src\fruity\fruity-host-session.vala;$(ProjectDir)src\fruity\dtx.vala;$(ProjectDir)src\fruity\lockdown.vala;$(ProjectDir)src\fruity\installation-proxy.vala;$(ProjectDir)src\fruity\lldb.vala;$(ProjectDir)src\fruity\injector.vala;$(ProjectDir)src\fruity\usbmux.vala;$(ProjectDir)src\fruity\keyed-archive.vala;$(ProjectDir)src\fruity\plist.vala;$(ProjectDir)src\fruity\plist-service.vala;$(ProjectDir)src\droidy\droidy-host-session.vala;$(ProjectDir)src\droidy\droidy-client.vala;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)valacode.stamp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <None Include="src\debugger.vala" />
+    <None Include="src\host-session-service.vala" />
+    <None Include="src\agent-container.vala" />
+    <None Include="src\system.vala" />
+    <None Include="src\windows\windows-host-session.vala" />
+    <None Include="src\windows\winjector.vala" />
+    <None Include="src\windows\winjector-types.vala" />
+    <None Include="src\socket\socket-host-session.vala" />
+    <None Include="src\fruity\fruity-host-session.vala" />
+    <None Include="src\fruity\dtx.vala" />
+    <None Include="src\fruity\lockdown.vala" />
+    <None Include="src\fruity\installation-proxy.vala" />
+    <None Include="src\fruity\lldb.vala" />
+    <None Include="src\fruity\injector.vala" />
+    <None Include="src\fruity\usbmux.vala" />
+    <None Include="src\fruity\keyed-archive.vala" />
+    <None Include="src\fruity\plist.vala" />
+    <None Include="src\fruity\plist-service.vala" />
+    <None Include="src\droidy\droidy-host-session.vala" />
+    <None Include="src\droidy\droidy-client.vala" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(IntDir)src\frida.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\frida-glue.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\debugger.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\host-session-service.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\agent-container.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\system.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\windows\windows-host-session.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\windows\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\windows\windows-host-session-glue.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\windows\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\windows\winjector.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\windows\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\windows\winjector-glue.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\windows\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\windows\winjector-types.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\windows\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\windows\access-helpers.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\windows\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\windows\icon-helpers.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\windows\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\windows\system-windows.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\windows\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\windows\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\socket\socket-host-session.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\socket\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\socket\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\socket\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\socket\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\fruity-host-session.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\dtx.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\fruity\fruity-host-session-windows.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\lockdown.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\installation-proxy.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\lldb.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\injector.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\usbmux.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\keyed-archive.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\plist.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\fruity\plist-service.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\fruity\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\fruity\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\droidy\droidy-host-session.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\droidy\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\droidy\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\droidy\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\droidy\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)src\droidy\droidy-client.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)src\droidy\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)src\droidy\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)src\droidy\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)src\droidy\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)data\frida-data-winjector.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)data\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)data\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)data\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)data\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)data\frida-data-agent.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)data\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)data\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)data\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)data\</ObjectFileName>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\frida-gum\bindings\gumjs\gumjs-inspector.vcxproj">
+      <Project>{0b28ec3c-cc22-4067-9f08-6a3fac4fb454}</Project>
+      <Private>false</Private>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="lib\agent\frida-agent-32.vcxproj">
+      <Project>{b111ba27-807a-4b16-a4de-a33d7d6d7ce1}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="lib\agent\frida-agent-64.vcxproj">
+      <Project>{3194ec55-c1e5-423d-820f-13d38409b9d0}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="src\windows\winjector-helper-32.vcxproj">
+      <Project>{e0ac03f2-f077-4ba7-88dd-bbe95b4e4ef0}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="src\windows\winjector-helper-64.vcxproj">
+      <Project>{037e8466-f87b-486d-b6ad-fecb5740ce2c}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(IntDir)frida-core.h" />
+    <ClInclude Include="src\windows\access-helpers.h" />
+    <ClInclude Include="src\windows\icon-helpers.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

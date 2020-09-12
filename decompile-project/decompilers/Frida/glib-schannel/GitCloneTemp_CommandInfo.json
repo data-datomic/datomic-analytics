@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/glib-schannel undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/glib-schannel",
+    "repo": "https://github.com/frida/glib-schannel",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/glib-schannel",
+    "startTime": "2020-09-12T11:03:45.346Z",
+    "endTime": "2020-09-12T11:03:46.052Z",
+    "childProcessPid": 27732,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--glib-schannel--27732"
+}

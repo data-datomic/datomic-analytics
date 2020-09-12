@@ -1,0 +1,16 @@
+# Template file for 'ed'
+pkgname=ed
+version=1.12
+revision=1
+build_style=gnu-configure
+hostmakedepends="lzip"
+short_desc="GNU Line-oriented text editor"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.gnu.org/software/ed/ed.html"
+distfiles="${GNU_SITE}/$pkgname/$pkgname-$version.tar.lz"
+checksum=d2655743144a0f6071a619dea2e142d75d2335b3dbfe8d4a643984a10e0a802f
+
+do_build() {
+	make CC=$CC CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
+}

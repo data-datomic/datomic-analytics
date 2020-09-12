@@ -1,0 +1,25 @@
+# Template file for 'mc'
+pkgname=mc
+version=4.8.15
+revision=1
+build_style=gnu-configure
+configure_args="--with-screen=ncurses --without-x"
+hostmakedepends="pkg-config perl"
+makedepends="libglib-devel e2fsprogs-devel ncurses-devel libssh2-devel gpm-devel"
+conf_files="
+	/etc/mc/filehighlight.ini
+	/etc/mc/mc.default.keymap
+	/etc/mc/mc.emacs.keymap
+	/etc/mc/mc.ext
+	/etc/mc/mc.keymap
+	/etc/mc/mc.menu
+	/etc/mc/mc.menu.sr
+	/etc/mc/mcedit.menu
+	/etc/mc/sfs.ini"
+short_desc="User-friendly file manager and visual shell"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.ibiblio.org/mc/"
+#distfiles="http://www.midnight-commander.org/downloads/mc-${version}.tar.xz"
+distfiles="http://fossies.org/linux/misc/mc-${version}.tar.gz"
+checksum=b17765f419bbb33353571a87bdf81c458512c0397c01ee4266b149c86c75b5c3

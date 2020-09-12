@@ -1,0 +1,31 @@
+# Template build file for 'sudo'.
+pkgname=sudo
+version=1.8.15
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--with-ignore-dot -with-all-insults --with-env-editor
+ --enable-shell-sets-home --enable-noargs-shell --without-sendmail
+ --with-logfac=auth --disable-root-mailer --enable-pie --with-mdoc
+ --sbindir=/usr/bin"
+hostmakedepends="groff"
+makedepends="zlib-devel pam-devel"
+conf_files="/etc/pam.d/sudo /etc/sudoers"
+short_desc="Allow others to run commands as root"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gratisoft.us/sudo/"
+license="ISC, BSD, zlib"
+distfiles="http://www.courtesan.com/sudo/dist/$pkgname-$version.tar.gz"
+checksum=4316381708324da8b6cb151f655c1a11855207c7c02244d8ffdea5104d7cc308
+
+pre_install() {
+	find ${wrksrc} -type f -name Makefile -exec sed -i 's,$(INSTALL_OWNER),,g' {} \;
+}
+post_install() {
+	vinstall ${FILESDIR}/sudo.pam 644 etc/pam.d sudo
+	vmkdir usr/share/licenses/sudo
+	mv ${DESTDIR}/usr/share/doc/sudo/LICENSE ${DESTDIR}/usr/share/licenses/sudo
+	# remove unused stuff.
+	rm -rf ${DESTDIR}/usr/share/doc
+	rm -rf ${DESTDIR}/usr/include
+}

@@ -1,0 +1,20 @@
+# Template file for 'surf'
+pkgname=surf
+version=0.7
+revision=1
+build_style=gnu-makefile
+hostmakedepends="pkg-config"
+makedepends="webkitgtk2-devel"
+short_desc="Simple web browser based on WebKit/GTK+"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="MIT"
+homepage="http://surf.suckless.org"
+distfiles="http://dl.suckless.org/surf/$pkgname-$version.tar.gz"
+checksum=95608546fb64d01c7a8153c356be0e284ebe120c3c596a94eb3f3ad47e1c494a
+
+do_build() {
+	sed -i 's,/usr/include,,g;s,/usr/lib,,g' config.mk
+	sed -i "/CFLAGS/s|\${CPPFLAGS}|& $CFLAGS|g" config.mk
+	sed -i "/LDFLAGS/s|\-s|$LDFLAGS|g" config.mk
+	make CC=$CC ${makejobs}
+}

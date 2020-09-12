@@ -1,0 +1,48 @@
+# Template file for 'libvirt-glib'
+pkgname=libvirt-glib
+version=0.2.2
+revision=1
+build_options="gir"
+build_style=gnu-configure
+configure_args="--disable-static $(vopt_enable gir introspection)"
+hostmakedepends="automake libtool pkg-config intltool glib-devel
+ gettext-devel gtk-doc gobject-introspection vala-devel python-devel"
+makedepends="libglib-devel libvirt-devel libxml2-devel python-devel"
+short_desc="libvirt glib integration"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://libvirt.org"
+license="LGPL-2.1"
+distfiles="http://libvirt.org/sources/glib/$pkgname-$version.tar.gz"
+checksum=d7be16025231c91ccae43838b7cdb1d55d181856a2a50b0f7b1c5078ad202d9d
+
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	autoreconf -fi
+	sed -i "s,@PYTHON_INCLUDES@,${XBPS_CROSS_BASE}/usr/include/python2.7," python/Makefile.in
+}
+
+libvirt-glib-devel_package() {
+	depends="libglib-devel libxml2-devel libvirt-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+			vmove usr/share/vala
+		fi
+	}
+}
+libvirt-glib-python_package() {
+	lib32disabled=yes
+	depends="python"
+	short_desc+=" - python bindings"
+	pkg_install() {
+		vmove "usr/lib/python*"
+	}
+}

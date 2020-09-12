@@ -1,0 +1,15 @@
+# Template build file for 'perl-DBD-SQLite'.
+pkgname=perl-DBD-SQLite
+version=1.48
+revision=1
+wrksrc="DBD-SQLite-${version}"
+build_style=perl-module
+hostmakedepends="perl perl-DBI"
+makedepends="${hostmakedepends}"
+depends="${makedepends}"
+short_desc="DBD::SQLite - Self-contained RDBMS in a DBI driver"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://search.cpan.org/dist/DBD-SQLite"
+license="Artistic, GPL-1"
+distfiles="${CPAN_SITE}/DBD/DBD-SQLite-$version.tar.gz"
+checksum=b397230f5d4cdc9923f91c62da9e535234f3055c528ede75afd7d24698030ea6

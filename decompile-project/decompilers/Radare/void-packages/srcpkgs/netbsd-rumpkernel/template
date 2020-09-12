@@ -1,0 +1,39 @@
+# Template file for 'netbsd-rumpkernel'.
+pkgname=netbsd-rumpkernel
+version=20140526
+revision=1
+wrksrc="buildrump-${version}"
+short_desc="The NetBSD rump kernel"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+homepage="https://github.com/anttikantee/buildrump.sh"
+distfiles="${SOURCEFORGE_SITE}/rumpkernel/buildrump-${version}.tar.xz"
+checksum=82cbf228d862b17a29337d7ebaca3725e8d9cc8ca8dfa03634e5182f97cd8bb1
+
+do_configure() {
+	# Do not install preformatted manpages
+	sed -i '/MKCATPAGES/d' buildrump.sh
+}
+do_build() {
+	export CPPFLAGS=-Wno-error
+
+	./buildrump.sh ${makejobs} -r -V MKPICINSTALL=no -d ${DESTDIR}/usr tools
+	./buildrump.sh ${makejobs} -r -d ${DESTDIR}/usr build
+}
+do_install() {
+	./buildrump.sh -r -V MKPICINSTALL=no -d ${DESTDIR}/usr install
+	# Set proper perms to libs.
+	chmod 644 ${DESTDIR}/usr/lib/*.a
+	chmod 755 ${DESTDIR}/usr/lib/*.so.*
+}
+
+netbsd-rumpkernel-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/share
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

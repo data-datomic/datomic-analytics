@@ -1,0 +1,37 @@
+[package]
+name = "radeco"
+version = "0.1.0"
+authors = [
+	"pancake <pancake@nopcode.org>",
+	"Sushant <sushant.dinesh94@gmail.com>"
+]
+edition = "2018"
+build = "build.rs"
+
+[build-dependencies]
+toml = "*"
+
+[features]
+default = []
+trace_log = ["radeco-lib/trace_log", "log", "env_logger"]
+
+[dependencies]
+rustc-serialize = "*"
+base64 = "0.12"
+rustyline = "6.0"
+lazy_static = "1.4"
+clap = "2.33"
+syntect = "4.1"
+
+log = { version = "0.4", optional = true }
+env_logger = { version = "0.7", optional = true }
+
+[dependencies.r2pipe]
+# path = "../r2pipe.rs"
+git = "https://github.com/radareorg/r2pipe.rs"
+
+[dependencies.r2api]
+git = "https://github.com/radare/radare2-r2pipe-api"
+
+[dependencies.radeco-lib]
+path = "../radeco-lib"

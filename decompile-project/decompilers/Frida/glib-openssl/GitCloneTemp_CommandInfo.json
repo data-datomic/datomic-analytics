@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/glib-openssl undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/glib-openssl",
+    "repo": "https://github.com/frida/glib-openssl",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/glib-openssl",
+    "startTime": "2020-09-12T11:03:44.589Z",
+    "endTime": "2020-09-12T11:03:45.346Z",
+    "childProcessPid": 27727,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--glib-openssl--27727"
+}

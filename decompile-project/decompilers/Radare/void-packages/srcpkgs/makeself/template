@@ -1,0 +1,34 @@
+# Template file for 'makeself'
+pkgname=makeself
+version=2.2.0
+revision=1
+noarch=yes
+create_wrksrc=yes
+makedepends="tar gzip bzip2"
+depends="${makedepends}"
+short_desc="Make self-extractable archives on Unix"
+homepage="http://www.megastep.org/makeself/"
+license="GPL-2+"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="https://github.com/megastep/$pkgname/releases/download/release-$version/$pkgname-$version.run"
+checksum=3651adc6bde627e93911c28e696f7fd6b2849e0b2677ca368f3b8be97703922a
+
+do_extract() {
+	:
+}
+
+do_build() {
+	cp ${XBPS_SRCDISTDIR}/${pkgname}-${version}/${pkgname}-${version}.run .
+	chmod +x ${pkgname}-${version}.run
+	./${pkgname}-${version}.run
+}
+
+do_install() {
+	cd ${wrksrc}/${pkgname}-${version}
+
+	vmkdir usr/share/man/man1
+	for f in makeself makeself-header; do
+		vinstall ${f}.sh 755 usr/bin ${f}
+	done
+	install -m644 *.1 ${DESTDIR}/usr/share/man/man1
+}

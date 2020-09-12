@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/frida-codeshare undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-codeshare",
+    "repo": "https://github.com/frida/frida-codeshare",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-codeshare",
+    "startTime": "2020-09-12T11:02:29.283Z",
+    "endTime": "2020-09-12T11:02:30.820Z",
+    "childProcessPid": 27489,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--frida-codeshare--27489"
+}

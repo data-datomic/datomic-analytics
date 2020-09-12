@@ -1,0 +1,26 @@
+# Template file for 'glfw'
+pkgname=glfw
+version=3.1.2
+revision=1
+build_style=cmake
+hostmakedepends="cmake"
+makedepends="MesaLib-devel libXrandr-devel libXi-devel glu-devel libXcursor-devel
+ libXinerama-devel"
+short_desc="Multi-platform library for creating windows with OpenGL contexts"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="BSD-3"
+homepage="http://www.glfw.org"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.bz2"
+checksum=31a1e6b6d7c64bbf44dce623785c87c0f29d965b19c452828e48acd64fa643e7
+configure_args="-DBUILD_SHARED_LIBS=ON"
+
+glfw-devel_package() {
+	depends="glfw>=${version}_${revision} $makedepends"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove /usr/lib/cmake
+		vmove "usr/lib/*.so"
+	}
+}

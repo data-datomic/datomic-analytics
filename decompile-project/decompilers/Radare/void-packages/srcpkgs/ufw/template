@@ -1,0 +1,22 @@
+# Template file for 'ufw'
+pkgname=ufw
+version=0.34
+revision=1
+hostmakedepends="python iptables"
+depends="${hostmakedepends}"
+conf_files="/etc/default/ufw /etc/ufw/ufw.conf"
+noarch="yes"
+pycompile_module="ufw"
+short_desc="Uncomplicated Firewall"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://launchpad.net/ufw"
+license="GPL-3"
+distfiles="http://launchpad.net/ufw/${version}/${version}/+download/ufw-${version}.tar.gz"
+checksum=49b512ec49e39f6d17ea679a052c54aebbe6f0640ef476577f07bb5a14cfb908
+
+do_install() {
+	sed -e 's|/lib|/usr/lib|' -i setup.py
+	python2 setup.py install --root=$DESTDIR
+	vmkdir usr/bin
+	mv ${DESTDIR}/usr/sbin/* ${DESTDIR}/usr/bin
+}

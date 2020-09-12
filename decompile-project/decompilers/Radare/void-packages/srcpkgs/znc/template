@@ -1,0 +1,60 @@
+# Template file for 'znc'
+pkgname=znc
+version=1.6.2
+revision=2
+build_style=gnu-configure
+configure_args="--enable-python --enable-perl --enable-tcl --enable-cyrus"
+hostmakedepends="pkg-config perl"
+makedepends="libressl-devel python3.4-devel tcl-devel libsasl-devel icu-devel zlib-devel perl"
+short_desc="An advanced IRC Bouncer"
+maintainer="Duncaen <duncaen@voidlinux.eu>"
+license="Apache-2.0"
+homepage="http://znc.in/"
+distfiles="http://znc.in/releases/$pkgname-$version.tar.gz"
+checksum=eef17727c0c6433fed1affba0ea76ec7fd60198d2f3c234d8529bd5fb26f0593
+
+system_accounts="znc"
+znc_homedir="/var/lib/znc"
+make_dirs="/var/lib/znc 0750 znc znc"
+
+do_configure() {
+	export TCL_FLAGS="$CFLAGS $LDFLAGS -ltcl8.6"
+	${configure_script} ${configure_args}
+}
+post_install() {
+	vsv znc
+}
+
+znc-python3.4_package() {
+	depends="znc>=${version}_${revision}"
+	short_desc+=" - python3.4 plugin"
+	pkg_install() {
+		vmove usr/lib/znc/modpython
+		vmove usr/lib/znc/modpython.so
+	}
+}
+znc-perl_package() {
+	depends="znc>=${version}_${revision}"
+	short_desc+=" - perl plugin"
+	pkg_install() {
+		vmove usr/lib/znc/modperl
+		vmove usr/lib/znc/modperl.so
+		vmove usr/lib/znc/perleval.pm
+	}
+}
+znc-tcl_package() {
+	depends="znc>=${version}_${revision}"
+	short_desc+=" - tcl plugin"
+	pkg_install() {
+		vmove usr/share/znc/modtcl
+		vmove usr/lib/znc/modtcl.so
+	}
+}
+znc-devel_package() {
+	depends="znc>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+	}
+}

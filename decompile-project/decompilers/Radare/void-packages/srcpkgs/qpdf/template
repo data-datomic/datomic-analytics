@@ -1,0 +1,34 @@
+# Template file for 'qpdf'
+pkgname=qpdf
+version=6.0.0
+revision=1
+build_style=gnu-configure
+hostmakedepends="perl"
+makedepends="pcre-devel"
+short_desc="A Content-Preserving PDF Transformation System"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Artistic-2.0"
+homepage="http://qpdf.sourceforget.net"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=a9fdc7e94d38fcd3831f37b6e0fe36492bf79aa6d54f8f66062cf7f9c4155233
+
+post_install() {
+	vlicense Artistic-2.0
+}
+
+libqpdf_package() {
+	short_desc+=" - shared library"
+	pkg_install() {
+		vmove usr/lib/*.so.*
+	}
+}
+libqpdf-devel_package() {
+	depends="libqpdf>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+	}
+}

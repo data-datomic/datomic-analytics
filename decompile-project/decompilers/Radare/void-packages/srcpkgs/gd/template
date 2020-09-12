@@ -1,0 +1,35 @@
+# Template build file for 'gd'.
+pkgname=gd
+version=2.1.1
+revision=1
+wrksrc="libgd-${version}"
+build_style=gnu-configure
+configure_args="--without-xpm"
+hostmakedepends="pkg-config"
+makedepends="libjpeg-turbo-devel libpng-devel fontconfig-devel"
+short_desc="Graphics library for the dynamic creation of images"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.libgd.org/"
+license="BSD"
+distfiles="https://bitbucket.org/libgd/gd-libgd/downloads/libgd-${version}.tar.xz"
+checksum=9ada1ed45594abc998ebc942cef12b032fbad672e73efc22bc9ff54f5df2b285
+
+gd-devel_package() {
+	depends="libjpeg-turbo-devel fontconfig-devel zlib-devel libpng-devel>=1.6 gd-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/bin/gdlib-config
+	}
+}
+
+gd-progs_package() {
+	depends="perl"
+	short_desc+=" - utilities"
+	pkg_install() {
+		vmove usr/bin
+	}
+}

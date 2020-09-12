@@ -1,0 +1,8 @@
+case "$ACTION" in
+pre)
+	rm -f usr/lib/chromium/libwidevinecdm.so
+	rm -f usr/lib/chromium/libwidevinecdmadapter.so
+	rm -f usr/lib/chromium-widevine/libwidevinecdm.so
+	rm -f usr/lib/chromium-widevine/libwidevinecdmadapter.so
+	;;
+esac

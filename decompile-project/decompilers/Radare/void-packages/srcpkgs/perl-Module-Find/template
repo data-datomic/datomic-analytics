@@ -1,0 +1,16 @@
+# Template build file for 'perl-Module-Find'.
+pkgname=perl-Module-Find
+version=0.13
+revision=1
+wrksrc="${pkgname/perl-/}-${version}"
+build_style=perl-module
+hostmakedepends="perl"
+makedepends="${hostmakedepends}"
+depends="${makedepends}"
+noarch="yes"
+short_desc="Module::Find - Find and use installed modules in a (sub)category"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+homepage="http://search.cpan.org/dist/Module-Find"
+license="Artistic, GPL-1"
+distfiles="${CPAN_SITE}/Module/${pkgname/perl-/}-$version.tar.gz"
+checksum=4a47862072ca4962fa69796907476049dc60176003e946cf4b68a6b669f18568

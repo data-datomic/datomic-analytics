@@ -1,0 +1,29 @@
+# Template file for 'jemalloc'
+pkgname=jemalloc
+version=4.0.4
+revision=1
+build_style=gnu-configure
+configure_args="je_cv_static_page_shift=12"
+short_desc="A scalable concurrent allocator"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+homepage="http://www.canonware.com/jemalloc/"
+license="2-clause-BSD"
+distfiles="http://www.canonware.com/download/${pkgname}/${pkgname}-${version}.tar.bz2"
+checksum=3fda8d8d7fcd041aa0bebbecd45c46b28873cf37bd36c56bf44961b36d0f42d0
+
+post_install() {
+	vlicense COPYING
+}
+
+jemalloc-devel_package() {
+	depends="jemalloc>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/bin
+		vmove usr/share
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+	}
+}

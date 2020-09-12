@@ -1,0 +1,28 @@
+# Template file for 'python-bsddb3'
+pkgname=python-bsddb3
+version=6.1.0
+revision=1
+wrksrc="bsddb3-${version}"
+build_style=python-module
+make_build_args="--berkeley-db=${XBPS_CROSS_BASE}/usr"
+make_install_args="--berkeley-db=${XBPS_CROSS_BASE}/usr"
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools"
+makedepends="python-devel python3.4-devel db-devel"
+pycompile_module="bsddb3"
+short_desc="Python2 interface for BerkeleyDB"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="ttp://www.jcea.es/programacion/pybsddb.htm"
+license="MIT"
+distfiles="https://pypi.python.org/packages/source/b/bsddb3/bsddb3-${version}.tar.gz"
+checksum=b13163e3891c32390aea66edcf7880eb245abc89199a766b7b1907fc5c1efd15
+
+python3.4-bsddb3_package() {
+	depends="python3.4"
+	pycompile_version="3.4"
+	pycompile_module="bsddb3"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

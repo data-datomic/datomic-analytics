@@ -1,0 +1,20 @@
+# Template file for 'epiphany'
+pkgname=epiphany
+version=3.18.1
+revision=1
+build_style=gnu-configure
+configure_args="--disable-schemas-compile --disable-tests"
+hostmakedepends="which pkg-config intltool itstool gnome-doc-utils
+ gobject-introspection glib-devel"
+makedepends="nss-devel libsoup-gnome-devel libnotify-devel
+ webkit2gtk-devel sqlite-devel libxslt-devel avahi-glib-libs-devel
+ startup-notification-devel NetworkManager-devel gcr-devel
+ gnome-desktop-devel libsecret-devel libwnck-devel iso-codes"
+depends="webkit2gtk>=2.6 gsettings-desktop-schemas>=3.14 ca-certificates
+ hicolor-icon-theme desktop-file-utils iso-codes"
+short_desc="Intuitive GNOME web browser"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org/projects/epiphany/"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=12938e2616aef5dd95635bfc899e332ab6b096b6d4dc5b79093e3c6267219c0c

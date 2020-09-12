@@ -1,0 +1,16 @@
+# Template build file for 'perl-IO-Socket-SSL'.
+pkgname=perl-IO-Socket-SSL
+version=2.022
+revision=1
+wrksrc="${pkgname/perl-/}-${version}"
+build_style=perl-module
+hostmakedepends="perl"
+makedepends="${hostmakedepends}"
+depends="${makedepends} perl-Net-SSLeay perl-URI"
+noarch="yes"
+short_desc="IO::Socket::SSL -- SSL sockets with IO::Socket interface"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+homepage="http://search.cpan.org/dist/IO-Socket-SSL/"
+license="Artistic, GPL-1"
+distfiles="${CPAN_SITE}/IO/${pkgname/perl-/}-$version.tar.gz"
+checksum=651c4e5e2762ca780f2743986639b64557295bb326fddaff32f3adc0eac4f806

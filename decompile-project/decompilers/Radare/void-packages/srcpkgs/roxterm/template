@@ -1,0 +1,23 @@
+# Template file for 'roxterm'
+pkgname=roxterm
+version=3.3.1
+revision=1
+hostmakedepends="python-lockfile pkg-config docbook-xsl xmlto libtool itstool ImageMagick librsvg-utils"
+makedepends="dbus-glib-devel libSM-devel vte3-devel"
+depends="desktop-file-utils hicolor-icon-theme"
+short_desc="Tabbed, VTE-based terminal emulator"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://roxterm.sourceforge.net"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/$pkgname-$version.tar.xz"
+checksum=355c0b05e8fb90e86a5b52430dde64aa04cc96d8d36ac510ae9feb559dcfb046
+
+do_configure() {
+	python2 mscript.py configure --prefix=/usr --cc="$CC" --cpp="$CPP" --cxx="$CXX" --ld="$LD"
+}
+do_build() {
+	python2 mscript.py build --cc="$CC" --cpp="$CPP" --cxx="$CXX" --ld="$LD" --cflags="$CFLAGS" --ldflags="$LDFLAGS"
+}
+do_install() {
+	python2 mscript.py install --destdir=${DESTDIR}
+}

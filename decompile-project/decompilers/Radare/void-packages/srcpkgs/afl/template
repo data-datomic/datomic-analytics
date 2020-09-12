@@ -1,0 +1,18 @@
+# Template file for 'afl'
+pkgname=afl
+version=1.95b
+revision=1
+build_style=gnu-makefile
+# x86 only currently
+only_for_archs="i686 i686-musl x86_64 x86_64-musl"
+short_desc="American fuzzy lop - a brute-force fuzzer"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Apache-2.0"
+homepage="http://lcamtuf.coredump.cx/afl/"
+distfiles="http://lcamtuf.coredump.cx/afl/releases/afl-${version}.tgz"
+checksum=21ec6bb8c182fd821d25c8b67283f81a632c4f74419c9db5fec0135dd0c9ae2a
+
+pre_build() {
+	sed -i 's/^\(CFLAGS *+=\)/override \1/' Makefile
+	sed -i 's/^  \(LDFLAGS *+=\)/override \1/' Makefile
+}

@@ -1,0 +1,52 @@
+# Template file for 'python-Babel'
+pkgname=python-Babel
+version=2.1.1
+revision=1
+noarch=yes
+wrksrc="${pkgname#*-}-${version}"
+python_versions="2.7 3.4"
+build_style=python-module
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python-setuptools python-pytz"
+pycompile_module="babel"
+short_desc="Tools for internationalizing Python applications (Python2)"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="http://babel.pocoo.org/"
+license="BSD"
+distfiles="${PYPI_SITE}/B/Babel/Babel-${version}.tar.gz"
+checksum=7fb6d50effe88a087feb2036cb972fd7a893bf338361516f1a55a820bf7b5248
+
+pre_build() {
+	cp -a ${wrksrc} /tmp/babel-2.7
+	cp -a ${wrksrc} /tmp/babel-3.4
+	mv /tmp/babel-{2.7,3.4} ${wrksrc}
+
+	cd babel-3.4
+	sed -i 's|\(pybabel\) =|\13 =|' setup.py
+}
+do_build() {
+	for pyver in $python_versions; do
+		cd ${wrksrc}/babel-${pyver}
+		python${pyver} setup.py build
+	done
+}
+do_install() {
+	for pyver in $python_versions; do
+		cd ${wrksrc}/babel-${pyver}
+		python${pyver} setup.py install --root=${DESTDIR}
+	done
+	vlicense LICENSE
+}
+
+python3.4-Babel_package() {
+	noarch=yes
+	depends="python3.4-setuptools python3.4-pytz"
+	pycompile_version="3.4"
+	pycompile_module="babel"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/bin/pybabel3
+		vmove usr/lib/python3.4
+		vlicense LICENSE
+	}
+}

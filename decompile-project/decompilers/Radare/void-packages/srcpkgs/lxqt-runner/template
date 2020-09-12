@@ -1,0 +1,13 @@
+# Template file for 'lxqt-runner'
+pkgname=lxqt-runner
+version=0.10.0
+revision=1
+build_style=cmake
+hostmakedepends="cmake pkg-config"
+makedepends="qt5-tools-devel qt5-script-devel liblxqt-devel lxqt-globalkeys-devel menu-cache-devel"
+short_desc="LXQt application runner module"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://lxqt.org/"
+distfiles="http://downloads.lxqt.org/lxqt/${version}/${pkgname}-${version}.tar.xz"
+checksum=d02998b2b438cff94a458fb4510eb493d7c1a4205c20a50be977e099e5d6ee81

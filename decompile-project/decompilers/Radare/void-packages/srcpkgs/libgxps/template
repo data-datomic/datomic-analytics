@@ -1,0 +1,34 @@
+# Template file for 'libgxps'
+pkgname=libgxps
+version=0.2.3.2
+revision=1
+build_style=gnu-configure
+configure_args="--disable-static $(vopt_enable gir introspection)"
+hostmakedepends="pkg-config $(vopt_if gir gobject-introspection)"
+makedepends="cairo-devel libglib-devel libjpeg-turbo-devel libpng-devel
+ tiff-devel lcms2-devel libarchive-devel freetype-devel"
+short_desc="GObject base library for XPS documents"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://live.gnome.org/libgxps"
+distfiles="${GNOME_SITE}/$pkgname/0.2/$pkgname-$version.tar.xz"
+checksum=6ea5f0ed85665a4e6702e31e38b5f1b2e5ae4f3d316a55d7f1fb1799224b4127
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+libgxps-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/share
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.so
+	}
+}

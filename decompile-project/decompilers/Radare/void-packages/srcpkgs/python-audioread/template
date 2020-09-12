@@ -1,0 +1,16 @@
+# Template file for 'python-audioread'
+pkgname=python-audioread
+version=2.0.0
+revision=1
+noarch=yes
+wrksrc="audioread-${version}"
+build_style="python-module"
+hostmakedepends="python-setuptools"
+depends="python gst-python"
+pycompile_module="audioread"
+short_desc="Multi-library, cross-platform audio decoding in Python"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://github.com/sampsyo/audioread/"
+license="MIT"
+distfiles="${PYPI_SITE}/a/audioread/audioread-${version}.tar.gz"
+checksum=88c73dad947f92cdb98787d6f30913a3bce2636305ac4cd0dac1738908cb2055

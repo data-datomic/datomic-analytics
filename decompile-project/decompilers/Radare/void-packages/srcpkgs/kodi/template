@@ -1,0 +1,89 @@
+# Template file for 'kodi'
+pkgname=kodi
+version=15.2
+revision=3
+patch_args="-Np1"
+_codename="Isengard"
+wrksrc="xbmc-${version}-${_codename}"
+short_desc="A software media player and entertainment hub for digital media"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.kodi.tv/"
+license="GPL-2"
+distfiles="https://github.com/xbmc/xbmc/archive/${version}-${_codename}.tar.gz"
+checksum=dd8aeb942e6de5d1488e243e1346cff3f6597e21b5131a3ba72ff5cc82037110
+
+lib32disabled=yes
+only_for_archs="i686 i686-musl x86_64 x86_64-musl"
+
+# XXX add support for afp.
+hostmakedepends="
+ automake libtool pkg-config gperf cmake zip unzip nasm yasm python-devel
+ gettext-devel libltdl-devel curl"
+makedepends="
+ libudev-devel pcre-devel expat-devel libpng-devel libjpeg-turbo-devel
+ libXrandr-devel avahi-libs-devel pulseaudio-devel samba-devel tiff-devel
+ libmysqlclient-devel libmpeg2-devel wavpack-devel zlib-devel lzo-devel
+ libXmu-devel glew-devel fribidi-devel sqlite-devel libcdio-devel freetype-devel
+ jasper-devel faac-devel SDL2_image-devel faad2-devel libmodplug-devel libressl-devel
+ libmad-devel fontconfig-devel libXinerama-devel libsamplerate-devel libmms-devel
+ enca-devel boost-devel libcurl-devel libva-devel libvdpau-devel libass-devel
+ libbluetooth-devel yajl-devel libplist-devel librtmp-devel tinyxml-devel
+ taglib-devel libcap-devel lame-devel libbluray-devel libnfs-devel ffmpeg-devel
+ giflib-devel libxslt-devel gnutls-devel libssh-devel libmicrohttpd-devel
+ libcec-devel"
+# The following dependencies are dlopen(3)ed.
+depends="libbluray libmad libvorbis libcurl libflac libmodplug libass libmpeg2
+ lame librtmp libnfs>=1.9.7 libplist>=1.12"
+depends+=" glxinfo hicolor-icon-theme desktop-file-utils xdpyinfo"
+
+# musl builds need generated addons (no java).
+case "$XBPS_MACHINE" in
+	*-musl) _kodi_nojava=yes;;
+	*) hostmakedepends+=" swig openjdk-jre";;
+esac
+
+# XXX http://build.voidlinux.eu/builders/x86_64_builder/builds/10520/steps/shell_3/logs/stdio
+CXXFLAGS="-fpermissive"
+
+pre_configure() {
+	# Copy generated files to avoid requiring java.
+	if [ -n "${_kodi_nojava}" ]; then
+		$XBPS_FETCH_CMD http://repo.voidlinux.eu/distfiles/kodi-${version}-generated-addons.tar.xz
+		tar xf kodi-${version}-generated-addons.tar.xz -C ${wrksrc}
+		for f in xbmc/interfaces/python/generated/*.cpp; do
+			touch ${f/.cpp/.xml}
+		done
+		BOOTSTRAP_STANDALONE=1 make JAVA=/bin/true SWIG=/bin/true -f codegenerator.mk
+	else
+		. /etc/profile.d/10_openjdk.sh
+		BOOTSTRAP_STANDALONE=1 make -f codegenerator.mk
+	fi
+	BOOTSTRAP_STANDALONE=1 make -f bootstrap.mk
+}
+do_configure() {
+	./configure ${configure_args} \
+		--disable-debug --enable-optimizations --enable-gl \
+		--enable-sdl --enable-vdpau --enable-vaapi --enable-joystick \
+		--enable-xrandr --enable-rsxs --enable-projectm --enable-x11 \
+		--enable-pulse --enable-dvdcss --enable-optical-drive \
+		--enable-rtmp --enable-samba --enable-nfs --enable-ssh \
+		--enable-airplay --enable-ffmpeg-libvorbis --enable-udev \
+		--enable-avahi --enable-libbluray \
+		--enable-texturepacker --enable-external-libraries \
+		--with-ffmpeg=shared \
+		ac_cv_path_JAVA_EXE=/bin/true \
+		ac_cv_path_SWIG_EXE=/bin/true
+}
+do_build() {
+	for f in xbmc/interfaces/python/generated/*.cpp; do
+		touch ${f/.cpp/.xml}
+	done
+	make ${makejobs}
+}
+do_install() {
+	make DESTDIR=${DESTDIR} install
+	vinstall tools/TexturePacker/TexturePacker 755 usr/lib/kodi
+	# remove unused stuff
+	rm -rf ${DESTDIR}/usr/include
+	find ${DESTDIR}/usr/lib -name "*.cmake" -delete
+}

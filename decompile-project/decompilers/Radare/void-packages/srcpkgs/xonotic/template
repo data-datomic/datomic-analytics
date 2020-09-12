@@ -1,0 +1,54 @@
+# Template file for 'xonotic'
+pkgname=xonotic
+version=0.8.1
+revision=2
+wrksrc="Xonotic"
+homepage="http://xonotic.org"
+license="GPL-2, GPL-3"
+distfiles="http://dl.xonotic.org/xonotic-${version}-source.zip"
+short_desc="A free, fast-paced crossplatform first-person shooter"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+checksum=c212e31fc1de2c0b49e439e222520a424daa15e87f92a526d9a0f52d0f6c62be
+nocross=yes
+
+hostmakedepends="unzip automake libtool"
+makedepends="gmp-devel MesaLib-devel SDL2-devel libcurl-devel alsa-lib-devel
+ libmodplug-devel libvorbis-devel libXpm-devel libjpeg-turbo-devel"
+depends="desktop-file-utils xonotic-data"
+
+do_build() {
+	make_build_args="SDL_CONFIG=sdl2-config DP_FS_BASEDIR=/usr/share/xonotic/ DP_LINK_TO_LIBJPEG=1"
+	case "$XBPS_TARGET_MACHINE" in
+		i686*|x86_64*) ;;
+		*) make_build_args+=" CFLAGS_SSE= CFLAGS_SSE2=";;
+	esac
+	echo $make_build_args
+	make ${makejobs} -C source/darkplaces CPUOPTIMIZATIONS="${CFLAGS}" $make_build_args cl-release
+	make ${makejobs} -C source/darkplaces CPUOPTIMIZATIONS="${CFLAGS}" $make_build_args sdl-release
+	make ${makejobs} -C source/darkplaces CPUOPTIMIZATIONS="${CFLAGS}" $make_build_args sv-release
+
+	cd source/d0_blind_id
+	autoreconf -fi
+	./configure --prefix=/usr --disable-rijndael
+	make ${makejobs}
+}
+
+do_install() {
+	# binaries
+	vbin source/darkplaces/darkplaces-dedicated xonotic-dedicated
+	vbin source/darkplaces/darkplaces-glx xonotic-glx
+	vbin source/darkplaces/darkplaces-sdl xonotic-sdl
+
+	# convenience files
+	vmkdir usr/share/applications
+	install -Dm644 $FILESDIR/*.desktop -t $DESTDIR/usr/share/applications
+	install -Dm644 misc/logos/icons_png/xonotic_512.png \
+		$DESTDIR/usr/share/pixmaps/xonotic.png
+
+	# crypto stuff
+	cd source/d0_blind_id
+	make DESTDIR=$DESTDIR install
+
+	# Remove devel stuff
+	rm -rf $DESTDIR/usr/include $DESTDIR/usr/lib/pkgconfig $DESTDIR/usr/lib/*.a
+}

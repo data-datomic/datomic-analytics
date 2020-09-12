@@ -1,0 +1,24 @@
+# Template file for 'atop'
+pkgname=atop
+version=2.1
+revision=3
+build_style=gnu-makefile
+makedepends="ncurses-devel zlib-devel"
+short_desc="A system and process level monitor"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://www.atoptool.nl/"
+distfiles="http://www.atoptool.nl/download/atop-${version}-1.tar.gz"
+checksum=39a2d4febc338dd4147904b1496d1aa9513da0d22ad0602b66023452bdc7989f
+
+pre_install() {
+	sed -i '/chown/d' Makefile
+	sed -i 's,sbin,bin,g' Makefile
+}
+do_install() {
+	make PREFIX=/usr SBINDIR=/usr/bin DESTDIR=${DESTDIR} install
+	vsv atop
+	# Remove unused stuff.
+	rm -f ${DESTDIR}/usr/bin/atop{,sar}-${version}
+	rm -rf ${DESTDIR}/etc/init.d ${DESTDIR}/var
+}

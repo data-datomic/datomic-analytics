@@ -1,0 +1,22 @@
+# Template file for 'nzbget'
+pkgname=nzbget
+version=15.0
+revision=3
+build_style=gnu-configure
+configure_args="--with-tlslib=OpenSSL
+ --with-libcurses-includes=${XBPS_CROSS_BASE}/usr/include
+ --with-libcurses-libraries=${XBPS_CROSS_BASE}/usr/lib
+ --with-zlib-includes=${XBPS_CROSS_BASE}/usr/include
+ --with-zlib-libraries=${XBPS_CROSS_BASE}/usr/lib"
+hostmakedepends="pkg-config"
+makedepends="libxml2-devel ncurses-devel libressl-devel"
+short_desc="Download from Usenet using .nzb files"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="GPL-2"
+homepage="http://nzbget.net/"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/files/$pkgname-$version.tar.gz"
+checksum=3ef13f3e5917e4cda19c4fc0cd37e79967a19b4e3448c239ff24e37712a6cc0a
+
+post_extract() {
+	sed -i '1i#include <stdint.h>' daemon/remote/MessageBase.h
+}

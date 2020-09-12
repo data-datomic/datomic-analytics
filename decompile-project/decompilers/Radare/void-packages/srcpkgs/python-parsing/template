@@ -1,0 +1,33 @@
+# Template file for 'python-parsing'
+pkgname=python-parsing
+version=2.0.6
+revision=1
+noarch=yes
+wrksrc="pyparsing-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python"
+pycompile_module="pyparsing.py"
+short_desc="Python parsing module (Python2)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="MIT"
+homepage="http://pyparsing.wikispaces.com/"
+distfiles="${PYPI_SITE}/p/pyparsing/pyparsing-${version}.tar.gz"
+checksum=aea69042752ad7e9c436eea6ae5d40e73642e27f50edb6da4a2532030ef532da
+
+post_install() {
+	vlicense LICENSE
+}
+
+python3.4-parsing_package() {
+	noarch=yes
+	depends="python3.4"
+	pycompile_version="3.4"
+	pycompile_module="pyparsing.py"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+		vlicense LICENSE
+	}
+}

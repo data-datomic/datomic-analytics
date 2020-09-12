@@ -1,0 +1,29 @@
+# Template file for 'mcpp'
+pkgname=mcpp
+version=2.7.2
+revision=6
+build_style=gnu-configure
+configure_args="--enable-mcpplib"
+homepage="http://mcpp.sourceforge.net/"
+license="BSD"
+short_desc="Portable C preprocessor"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=3b9b4421888519876c4fc68ade324a3bbd81ceeb7092ecdbbc2055099fcb8864
+
+libmcpp_package() {
+	short_desc+=" - Runtime library"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}
+
+mcpp-devel_package() {
+	depends="libmcpp>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

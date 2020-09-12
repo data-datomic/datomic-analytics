@@ -1,0 +1,33 @@
+# Template file for 'unibilium'
+pkgname=unibilium
+version=1.2.0
+revision=3
+build_style=gnu-makefile
+hostmakedepends="libtool perl"
+short_desc="A simple, self-contained terminfo library"
+maintainer="Steve Prybylski <sa.prybylx@gmail.com>"
+license="LGPL-3"
+homepage="https://github.com/mauke/unibilium"
+distfiles="https://github.com/mauke/${pkgname}/archive/v${version}.tar.gz"
+checksum=623af1099515e673abfd3cae5f2fa808a09ca55dda1c65a7b5c9424eb304ead8
+
+do_build() {
+	if [ "$CROSS_BUILD" ]; then
+		cp /usr/bin/libtool .
+		sed -e "s,CCLD=.*,CCLD=$CC,g;s,CC=.*,CC=$CC,g" -i libtool
+		sed -e 's,libtool,./libtool,g' -i Makefile
+	fi
+	make ${makejobs}
+}
+
+unibilium-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+		vmove usr/share/man/man3
+	}
+}

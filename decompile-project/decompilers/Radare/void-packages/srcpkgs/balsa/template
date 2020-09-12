@@ -1,0 +1,18 @@
+# Template file for 'balsa'.
+pkgname=balsa
+version=2.5.2
+revision=3
+build_style=gnu-configure
+configure_args="--without-nm --without-gtkspell --without-gnome --with-ssl
+ --with-libsecret --with-gpgme --with-sqlite --with-html-widget=webkit"
+hostmakedepends="pkg-config intltool automake gettext-devel"
+makedepends="
+ iso-codes libressl-devel sqlite-devel enchant-devel libnotify-devel libesmtp-devel
+ gtk+3-devel gmime-devel webkitgtk-devel pcre-devel gpgme-devel libsecret-devel"
+depends="hicolor-icon-theme desktop-file-utils"
+short_desc="An email client for GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://pawsa.fedorapeople.org/balsa/"
+license="GPL-2"
+distfiles="http://pawsa.fedorapeople.org/balsa/balsa-${version}.tar.bz2"
+checksum=01218dd8cb2c052c2d221d96e4ef5e277271befb2b50bbf4913223913214d21d

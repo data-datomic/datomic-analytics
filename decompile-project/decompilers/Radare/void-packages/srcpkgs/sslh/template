@@ -1,0 +1,28 @@
+# Template file for 'sslh'
+pkgname=sslh
+version=1.17
+revision=2
+hostmakedepends="perl"
+makedepends="pcre-devel libconfig-devel libcap-devel"
+short_desc="Applicative Protocol Multiplexer"
+maintainer="Markus Berger <pulux@pf4sh.de>"
+license="GPL-2"
+homepage="http://www.rutschle.net/tech/sslh"
+distfiles="https://github.com/yrutschle/sslh/archive/v${version}.tar.gz"
+checksum=b557c3bf75289d203353c25d92e34549a22f64510c48f7748c1c027748d51ad1
+
+do_build() {
+	sed -i 's|^MAN=sslh.8.gz|MAN=sslh.8|g' Makefile
+	sed -i 's|sbin|bin|g' Makefile
+	sed -i 's|sslh.pod \| gzip -9 - > $(MAN)|sslh.pod > $(MAN)|g' Makefile
+	make CC=$CC ENABLE_REGEX=1 USELIBPCRE=1 USELIBCONFIG=1 USELIBCAP=1
+}
+do_install() {
+	make DESTDIR=${DESTDIR} PREFIX=/usr install
+	vman sslh.8
+	vsv sslh
+	for f in *.cfg; do
+		vdoc ${f}
+	done
+	vdoc README.md
+}

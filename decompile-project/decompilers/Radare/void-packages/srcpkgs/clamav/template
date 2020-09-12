@@ -1,0 +1,65 @@
+# Template file for 'clamav'
+pkgname=clamav
+version=0.99.0
+revision=2
+wrksrc=${pkgname}-${version%.*}
+build_style=gnu-configure
+configure_args="--sbindir=/usr/bin --with-pcre=/usr"
+conf_files="/etc/clamd.conf /etc/freshclam.conf"
+system_accounts="clamav"
+clamav_homedir="/var/lib/${pkgname}"
+clamav_descr="ClamAV user"
+hostmakedepends="pkg-config zip"
+makedepends="libressl-devel libxml2-devel libcurl-devel ncurses-devel pcre-devel
+ tcl-devel bzip2-devel zlib-devel"
+short_desc="Clam Anti-Virus scanner"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-2"
+homepage="http://www.clamav.net/"
+# Strangely the publish an archive without the subminor version
+distfiles="http://www.clamav.net/downloads/production/${wrksrc}.tar.gz"
+checksum=d2792c8cfadd685fffc40b2199679628815df031fd3149ccf961649fc8787ea9
+
+CPPFLAGS="-Wno-unused-local-typedefs"
+if [ "$CROSS_BUILD" ]; then
+	configure_args+=" --with-openssl=${XBPS_CROSS_BASE}/usr"
+	configure_args+=" --with-pcre=${XBPS_CROSS_BASE}/usr"
+	configure_args+=" --with-zlib=${XBPS_CROSS_BASE}/usr"
+	configure_args+=" --disable-mempool"
+fi
+case "$XBPS_TARGET_MACHINE" in
+	*-musl)	makedepends+=" musl-fts-devel"
+		LDFLAGS="-lfts"
+		;;
+esac
+
+do_configure() {
+	# Disable detection of sys/cdefs.h (it's obsolete)
+	sed -i configure -e 's; sys/cdefs\.h$;;'
+	# Need to set PCRE_HOME to make --with-pcre=/usr work
+	PCRE_HOME=/usr ./configure ${configure_args}
+}
+post_install() {
+	# Enable and patch clamd configuration
+	mv -v ${PKGDESTDIR}/etc/clamd.conf.sample ${PKGDESTDIR}/etc/clamd.conf
+	vsconf etc/clamd.conf.sample
+	sed -i ${PKGDESTDIR}/etc/clamd.conf \
+		-e "s;^Example$;# Example;" \
+		-e "s;#DatabaseDirectory.*;DatabaseDirectory /var/lib/${pkgname};"
+
+	# Enable and patch freshclam configuration
+	mv -v ${PKGDESTDIR}/etc/freshclam.conf.sample ${PKGDESTDIR}/etc/freshclam.conf
+	vsconf etc/freshclam.conf.sample
+	sed -i ${PKGDESTDIR}/etc/freshclam.conf \
+		-e "s;^Example$;# Example;" \
+		-e "s;#DatabaseDirectory.*;DatabaseDirectory /var/lib/${pkgname};"
+}
+clamav-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/lib/pkgconfig
+		vmove usr/include
+		vmove "usr/lib/*.so"
+	}
+}

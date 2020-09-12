@@ -1,0 +1,75 @@
+# Template file for 'mame'
+pkgname=mame
+version=0168
+revision=1
+wrksrc="mame-mame${version}"
+homepage="http://mamedev.org"
+distfiles="https://github.com/mamedev/mame/archive/mame${version}.tar.gz"
+short_desc="The Multiple Arcade Machine Emulator"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="mame"
+checksum=3b6db52ddffed867ae171664e327f0b2bade64139d3450dc7166c4f90b6d94e8
+
+hostmakedepends="perl pkg-config python automoc4"
+makedepends="SDL2_ttf-devel fontconfig-devel qt-devel lua-devel
+ libjpeg-turbo-devel libflac-devel sqlite-devel portaudio-devel portmidi-devel"
+depends="liberation-fonts-ttf"
+nocross=yes
+repository="nonfree"
+replaces="sdlmame>=0 sdlmess>=0"
+
+CXXFLAGS="-I${XBPS_CROSS_BASE}/usr/include/lua5.3"
+do_build() {
+	local opts="REGENIE=1"
+	opts+=" NOWERROR=1"
+	opts+=" TOOLS=1"
+	opts+=" OPTIMIZE=3"
+	opts+=" USE_QTDEBUG=1"
+	opts+=" USE_SYSTEM_LIB_EXPAT=1"
+	opts+=" USE_SYSTEM_LIB_ZLIB=1"
+	opts+=" USE_SYSTEM_LIB_JPEG=1"
+	opts+=" USE_SYSTEM_LIB_FLAC=1"
+	opts+=" USE_SYSTEM_LIB_LUA=1"
+	opts+=" USE_SYSTEM_LIB_SQLITE3=1"
+	opts+=" USE_SYSTEM_LIB_PORTMIDI=1"
+	opts+=" USE_SYSTEM_LIB_PORTAUDIO=1"
+	if [ "${CROSS_BUILD}" ]; then
+		# Doesn't work yet because of qt (which can't be cross compiled)
+		opts+=" CROSS_BUILD=1 OVERRIDE_CC=${CC} OVERRIDE_CXX=${CXX} OVERRIDE_LD=${CC}"
+	fi
+	make ${opts} ${makejobs}
+}
+do_install() {
+	# Install the mame script
+	vbin ${FILESDIR}/${pkgname}.sh ${pkgname}
+
+	# Install the applications and the UI font in /usr/share
+	if [ -r mame64 ]; then
+		vinstall mame64 755 usr/share/${pkgname} ${pkgname}
+	else
+		vinstall mame 755 usr/share/${pkgname} ${pkgname}
+	fi
+
+	for f in chdman jedutil regrep romcmp testkeys src2html srcclean \
+		ldverify ldresample unidasm castool floptool imgtool; do
+		vinstall ${f} 755 usr/share/${pkgname}
+		if [ -f src/osd/sdl/man/${f}.1 ]; then
+			vman src/osd/sdl/man/${f}.1
+		fi
+	done
+	vman src/osd/sdl/man/mame.6
+	# Currently mess.6 still exists, so install it as well
+	vman src/osd/sdl/man/mess.6
+
+	# Install the extra bits
+	install -d ${DESTDIR}/usr/share/${pkgname}/{artwork,ctrlr,keymaps,shader}
+	install -m644 src/osd/modules/opengl/shader/glsl*.*h \
+		${DESTDIR}/usr/share/${pkgname}/shader
+
+	install -m644 artwork/* ${DESTDIR}/usr/share/${pkgname}/artwork
+	install -m644 src/osd/sdl/keymaps/* \
+		${DESTDIR}/usr/share/${pkgname}/keymaps
+
+	# Include the license
+	vlicense docs/mamelicense.txt LICENSE
+}

@@ -1,0 +1,30 @@
+# Template file for 'libgit2'
+pkgname=libgit2
+version=0.23.4
+revision=1
+build_style=cmake
+hostmakedepends="cmake python git pkg-config"
+makedepends="zlib-devel libressl-devel http-parser-devel libssh2-devel"
+short_desc="The Git linkable library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://libgit2.github.com/"
+license="GPL-2 with Linking Exception"
+distfiles="https://github.com/libgit2/libgit2/archive/v${version}.tar.gz"
+checksum=c7f5e2d7381dbc4d7e878013d14f9993ae8a41bd23f032718e39ffba57894029
+
+case "$XBPS_TARGET_MACHINE" in
+	*-musl)
+		# Don't use qsort_r, see src/util.c
+		CFLAGS="-D__ANDROID_API__"
+		;;
+esac
+
+libgit2-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

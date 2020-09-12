@@ -1,0 +1,15 @@
+# Template file for 'perl-DBD-mysql'
+pkgname=perl-DBD-mysql
+version=4.033
+revision=1
+wrksrc="DBD-mysql-${version}"
+build_style=perl-module
+hostmakedepends="perl perl-DBI"
+makedepends="${hostmakedepends} libmysqlclient-devel libressl-devel zlib-devel"
+depends="perl-DBI"
+short_desc="DBD::mysql - MySQL DBI driver"
+maintainer="Diogo Leal <diogo@diogoleal.com>"
+homepage="http://search.cpan.org/dist/DBD-mysql/"
+license="Artistic, GPL-1"
+distfiles="${CPAN_SITE}/DBD/DBD-mysql-$version.tar.gz"
+checksum=cc98bbcc33581fbc55b42ae681c6946b70a26f549b3c64466740dfe9a7eac91c

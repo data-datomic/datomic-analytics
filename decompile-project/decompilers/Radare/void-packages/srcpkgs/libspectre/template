@@ -1,0 +1,23 @@
+# Template file for 'libspectre'
+pkgname=libspectre
+version=0.2.7
+revision=4
+build_style=gnu-configure
+configure_args="--disable-static"
+makedepends="ghostscript-devel"
+short_desc="Small library for rendering Postscript documents"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://libspectre.freedesktop.org/wiki/"
+distfiles="http://libspectre.freedesktop.org/releases/${pkgname}-${version}.tar.gz"
+checksum=e81b822a106beed14cf0fec70f1b890c690c2ffa150fa2eee41dc26518a6c3ec
+
+libspectre-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

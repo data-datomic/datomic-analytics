@@ -1,0 +1,39 @@
+# Template file for 'gnutls'
+pkgname=gnutls
+version=3.3.19
+revision=1
+build_style=gnu-configure
+configure_args="--with-zlib --disable-guile --disable-static
+ --disable-valgrind-tests --disable-rpath"
+hostmakedepends="automake gettext-devel pkg-config libtool"
+makedepends="zlib-devel lzo-devel readline-devel libgpg-error-devel
+ libtasn1-devel libgcrypt-devel p11-kit-devel nettle-devel libidn-devel"
+short_desc="GNU Transport Layer Security library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnu.org/software/gnutls/"
+license="GPL-3, LGPL-2.1"
+distfiles="ftp://ftp.gnutls.org/gcrypt/gnutls/v${version%.*}/gnutls-${version}.tar.xz"
+checksum=888d8779b48f21959b33d4d9ad0b546e5ec3dea20abf0d9bb03869d56b1f44cf
+
+pre_configure() {
+	autoreconf -fi
+}
+
+gnutls-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/share/man/man3
+		vmove usr/share/info
+	}
+}
+gnutls-tools_package() {
+	short_desc+=" - bundled tools"
+	pkg_install() {
+		vmove usr/bin
+		vmove usr/share/man/man1
+	}
+}

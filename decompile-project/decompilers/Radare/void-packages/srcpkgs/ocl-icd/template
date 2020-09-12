@@ -1,0 +1,26 @@
+# Template file for 'ocl-icd'
+pkgname=ocl-icd
+version=2.2.7
+revision=1
+build_style=gnu-configure
+hostmakedepends="ruby xmlto asciidoc"
+makedepends="opencl2-headers"
+short_desc="Generic OpenCL ICD loader/demultiplexer"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://forge.imag.fr/projects/ocl-icd/"
+license="GPL-2"
+distfiles="https://forge.imag.fr/frs/download.php/667/ocl-icd-${version}.tar.gz"
+checksum=be78886c83b903dd5861f35d62d473e4228b3c13e25535a8665c87cb8a51390b
+
+provides="libOpenCL-1.2_1"
+replaces="libOpenCL>=0"
+
+ocl-icd-devel_package() {
+	depends="opencl2-headers ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/share/doc
+	}
+}

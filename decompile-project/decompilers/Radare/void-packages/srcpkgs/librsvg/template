@@ -1,0 +1,49 @@
+# Template build file for 'librsvg'.
+pkgname=librsvg
+version=2.40.12
+revision=1
+build_style=gnu-configure
+configure_args="--disable-static $(vopt_enable gir introspection)"
+hostmakedepends="automake libtool pkg-config intltool python glib-devel gdk-pixbuf-devel gobject-introspection"
+makedepends="libcroco-devel gtk+3-devel"
+triggers="gtk-pixbuf-loaders"
+short_desc="SVG library for GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://librsvg.sourceforge.net/"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=ffe40c4378bf3899f4d679a475726bab03a127a5bdccddec86404cc329ffb550
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	autoreconf -fi
+}
+
+librsvg-devel_package() {
+	depends="gdk-pixbuf-devel cairo-devel libcroco-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}
+librsvg-utils_package() {
+	short_desc+=" - utilities"
+	pkg_install() {
+		vmove usr/bin/rsvg-view-3
+		vmove usr/bin/rsvg-convert
+		vmove usr/share/man/man1/rsvg-convert.1
+	}
+}

@@ -1,0 +1,38 @@
+# Template build file for 'libgtop'.
+pkgname=libgtop
+version=2.32.0
+revision=1
+build_style=gnu-configure
+configure_args="--with-libgtop-smp $(vopt_enable gir introspection)"
+hostmakedepends="pkg-config intltool $(vopt_if gir gobject-introspection)"
+makedepends="libglib-devel libXau-devel"
+short_desc="Library to retrieve system information, used in GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org/"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=8443246332f22b33e389f565825b58cd9623fb7625bf874d404354b705ad178e
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+libgtop-devel_package() {
+	depends="libglib-devel libXau-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share/info
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+		vmove usr/share/gtk-doc
+	}
+}

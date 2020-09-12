@@ -1,0 +1,26 @@
+# Template file for 'gst-plugins-good1'.
+pkgname=gst-plugins-good1
+reverts="1:1.4.5_3"
+version=1.6.2
+revision=1
+wrksrc="${pkgname/1/}-${version#*:}"
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--with-gudev --with-libv4l2 --enable-experimental
+ --enable-libcaca --disable-libdv --disable-dv1394 --disable-shout2
+ --enable-aalib --enable-speex"
+# XXX: libdv, dv1394 and shout2 modules.
+hostmakedepends="pkg-config intltool python glib-devel"
+makedepends="
+ libpng-devel libxml2-devel libgudev-devel libflac-devel
+ libXdamage-devel gtk+-devel aalib-devel libcaca-devel libvpx-devel
+ taglib-devel libsoup-gnome-devel gst-plugins-base1-devel
+ GConf-devel pulseaudio-devel orc-devel libXv-devel wavpack-devel
+ v4l-utils-devel jack-devel speex-devel"
+depends="gst-plugins-base1>=${version}"
+short_desc="GStreamer set of well-maintained good plug-ins (1.x)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://gstreamer.freedesktop.org/"
+license="LGPL-2.1"
+distfiles="http://gstreamer.freedesktop.org/src/${pkgname/1/}/${pkgname/1/}-${version#*:}.tar.xz"
+checksum=876e54dfce93274b98e024f353258d35fa4d49d1f9010069e676c530f6eb6a92

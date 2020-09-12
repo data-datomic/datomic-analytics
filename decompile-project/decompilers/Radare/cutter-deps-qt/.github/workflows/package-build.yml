@@ -1,0 +1,52 @@
+name: package build
+
+on:
+  push:
+    branches:
+    - master
+    #- qt14 # TODO: remove when branch is done
+    tags:
+    - v*
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: build windows
+      if: contains(matrix.os, 'windows')
+      shell: powershell
+      run: |
+        ./build_windows.ps1
+        echo '::set-env name=UPLOAD_FILE::cutter-deps-qt-win.tar.gz'
+        echo '::set-env name=UPLOAD_ASSET_TYPE::application/gzip'
+    - name: build macos
+      if: contains(matrix.os, 'macos')
+      run: |
+        xcode-select --print-path
+        make
+        echo '::set-env name=UPLOAD_FILE::cutter-deps-qt-macos.tar.gz'
+        echo '::set-env name=UPLOAD_ASSET_TYPE::application/gzip'
+    - name: Get release
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      id: get_release
+      uses: karliss/get-release@bee343636450eb2e9b85d9f1592d8d73c408dc74
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload release assets
+      if: steps.get_release.outputs.upload_url != null
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ${{ env.UPLOAD_FILE }}
+          asset_name: ${{ env.UPLOAD_FILE }}
+          asset_content_type: ${{ env.UPLOAD_ASSET_TYPE }}

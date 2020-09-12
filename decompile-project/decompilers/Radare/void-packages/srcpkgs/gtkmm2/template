@@ -1,0 +1,35 @@
+# Template file for 'gtkmm2'
+pkgname=gtkmm2
+version=2.24.4
+revision=5
+wrksrc="gtkmm-${version}"
+build_style=gnu-configure
+configure_args="--disable-static --disable-documentation"
+hostmakedepends="mm-common libtool pkg-config"
+makedepends="gtk+-devel libsigc++-devel atkmm-devel pangomm-devel libXcursor-devel"
+short_desc="C++ bindings for The GTK+ toolkit (v2)"
+homepage="http://www.gtkmm.org/"
+license="LGPL-2.1"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="${GNOME_SITE}/gtkmm/${version%.*}/gtkmm-${version}.tar.xz"
+checksum=443a2ff3fcb42a915609f1779000390c640a6d7fd19ad8816e6161053696f5ee
+
+CXXFLAGS="-std=c++11"
+
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+pre_install() {
+	sed -i -e 's/^doc_subdirs/#doc_subdirs/' Makefile
+}
+
+gtkmm2-devel_package() {
+	depends="glibmm-devel atkmm-devel pangomm-devel gtk+-devel gtkmm2-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/g*"
+		vmove "usr/lib/*.so"
+	}
+}

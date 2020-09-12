@@ -1,0 +1,55 @@
+# Template build file for 'libxslt'.
+pkgname=libxslt
+version=1.1.28
+revision=5
+build_style=gnu-configure
+configure_args="--disable-static"
+makedepends="python-devel libxml2-devel libgcrypt-devel"
+short_desc="XSLT parser library from the GNOME project"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://xmlsoft.org/XSLT/"
+license="MIT"
+distfiles="ftp://xmlsoft.org/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=5fc7151a57b89c03d7b825df5a0fae0a8d5f05674c0e7cf2937ecec4d54a028c
+
+if [ "$CROSS_BUILD" ]; then
+	hostmakedepends="libtool automake gettext-devel ${makedepends}"
+	pre_configure() {
+		sed -e "s|AM_CONFIG_HEADER|AC_CONFIG_HEADERS|g" -i configure.in
+		autoreconf -fi
+	}
+	pre_build() {
+		sed -e "s|/usr/\(include/python2.7\)|$XBPS_CROSS_BASE/\1|g" \
+			-e "s|/usr/\(lib/python2.7/site-packages\)|$XBPS_CROSS_BASE/\1|g" \
+			-i python/Makefile
+	}
+fi
+
+post_install() {
+	vinstall COPYING 644 usr/share/licenses/${pkgname}
+}
+
+libxslt-devel_package() {
+	depends="libxml2-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin/xslt-config
+		vmove usr/lib/xsltConf.sh
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/aclocal
+		vmove usr/share/doc/${sourcepkg}-${version}
+		vmove usr/share/man/man3
+	}
+}
+
+libxslt-python_package() {
+	lib32disabled=yes
+	short_desc+=" - python extension"
+	pycompile_module="libxslt.py"
+	pkg_install() {
+		vmove "usr/lib/python*"
+		vmove usr/share/doc/${sourcepkg}-python-${version}
+	}
+}

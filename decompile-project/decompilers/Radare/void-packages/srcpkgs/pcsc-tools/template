@@ -1,0 +1,34 @@
+# Template file for 'pcsc-tools'
+pkgname=pcsc-tools
+version=1.4.25
+revision=1
+hostmakedepends="pkg-config"
+makedepends="pcsclite-devel"
+depends="perl-Gtk2"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://ludovic.rousseau.free.fr/softwares/pcsc-tools"
+license="GPL-2"
+short_desc="Tools used to test a PC/SC driver, card or reader or send commands in a friendly environment"
+distfiles="http://ludovic.rousseau.free.fr/softwares/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=a9c715224e5ea293721e0bc4e1deb4a6ee73ca19f16679896ec3a47591f00c47
+
+do_build() {
+	make CC=$CC ${makejobs}
+}
+do_install() {
+	# copy the program in /usr/bin
+	vbin ATR_analysis
+	vbin pcsc_scan
+	vbin scriptor
+	vbin gscriptor
+
+	# copy the manpages in /usr/share/man/	
+	vman ATR_analysis.1p
+	vman pcsc_scan.1
+	vman scriptor.1p
+	vman gscriptor.1p
+
+	vdoc README
+	vdoc test.script
+	vdoc smartcard_list.txt
+}

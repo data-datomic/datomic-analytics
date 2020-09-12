@@ -1,0 +1,28 @@
+# Template file for 'python-cairocffi'
+pkgname=python-cairocffi
+version=0.7.2
+revision=1
+noarch=yes
+wrksrc="cairocffi-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools python-cffi python3.4-cffi"
+depends="python-cffi"
+pycompile_module="cairocffi"
+short_desc="CFFI-based cairo bindings for Python2"
+homepage="https://github.com/SimonSapin/cairocffi"
+license="BSD"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+distfiles="${PYPI_SITE}/c/cairocffi/cairocffi-${version}.tar.gz"
+checksum=e42b4256d27bd960cbf3b91a6c55d602defcdbc2a73f7317849c80279feeb975
+
+python3.4-cairocffi_package() {
+	noarch=yes
+	depends="python3.4-cffi"
+	pycompile_version="3.4"
+	pycompile_module="cairocffi"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

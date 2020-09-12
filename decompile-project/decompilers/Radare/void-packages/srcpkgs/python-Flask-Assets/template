@@ -1,0 +1,33 @@
+# Template file for 'python-Flask-Assets'
+pkgname=python-Flask-Assets
+version=0.11
+revision=1
+noarch=yes
+wrksrc="${pkgname#*-}-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+pycompile_module="flask_assets"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python-Flask python-webassets"
+short_desc="Asset management for Flask (Python2)"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="BSD"
+homepage="https://github.com/miracle2k/flask-assets"
+distfiles="${PYPI_SITE}/F/Flask-Assets/Flask-Assets-${version}.tar.gz"
+checksum=6e67a887bfd0dc5b27265fd1357b02da66d1b6e1112217cf909843fefc4b45ef
+
+post_install() {
+	vlicense LICENSE
+}
+
+python3.4-Flask-Assets_package() {
+	noarch=yes
+	depends="python3.4-Flask python3.4-webassets"
+	pycompile_version="3.4"
+	pycompile_module="flask_assets"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+		vlicense LICENSE
+	}
+}

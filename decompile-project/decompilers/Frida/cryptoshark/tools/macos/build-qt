@@ -1,0 +1,75 @@
+#!/bin/sh
+
+cd "$CRYPTOSHARK_PARENTDIR"
+
+flavor=$1
+[ -z "$flavor" ] && flavor=static
+
+case $flavor in
+  static)
+    flags="\
+      -release \
+      -optimize-size \
+      -ltcg \
+      -static \
+      -no-feature-qml-debug \
+      -no-feature-assistant \
+      -no-feature-designer \
+      -no-feature-distancefieldgenerator \
+      -no-feature-kmap2qmap \
+      -no-feature-linguist \
+      -no-feature-makeqpf \
+      -no-feature-pixeltool \
+      -no-feature-qev \
+      -no-feature-qtattributionsscanner \
+      -no-feature-qtdiag \
+      -no-feature-qtpaths \
+      -no-feature-qtplugininfo \
+      "
+    ;;
+  dynamic)
+    flags="\
+      -release \
+      -optimize-size \
+      -force-debug-info \
+      "
+    ;;
+  *)
+    echo "Usage: $0 [static|dynamic]" > /dev/stderr
+    exit 1
+esac
+
+if [ -d "build-qt-$CRYPTOSHARK_ARCH" ]; then
+  echo "Already built. Wipe build-qt-$CRYPTOSHARK_ARCH to rebuild."
+  exit 0
+fi
+
+pushd qt5/qtbase > /dev/null
+git reset --hard
+case $CRYPTOSHARK_ARCH in
+  arm64)
+    patch -p1 < "$CRYPTOSHARK_SRCDIR/tools/macos/qtbase-apple-silicon.patch" || exit $?
+    ;;
+esac
+popd > /dev/null
+
+mkdir "build-qt-$CRYPTOSHARK_ARCH" || exit $?
+pushd "build-qt-$CRYPTOSHARK_ARCH" > /dev/null
+../qt5/configure \
+    -opensource -confirm-license \
+    -prefix $CRYPTOSHARK_QTDIR \
+    -feature-relocatable \
+    $flags \
+    -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci -no-sql-odbc -no-sql-psql -no-sql-tds \
+    -nomake examples \
+    -nomake tests \
+    -qt-zlib -qt-libpng -qt-libjpeg \
+    -no-freetype -no-harfbuzz \
+    -no-openssl -securetransport \
+    -no-icu \
+    -no-fontconfig \
+    -no-dbus \
+    || exit $?
+make -j$CRYPTOSHARK_MAKEJ || exit $?
+make install || exit $?
+popd > /dev/null

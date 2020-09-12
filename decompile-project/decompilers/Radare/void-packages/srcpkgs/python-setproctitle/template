@@ -1,0 +1,24 @@
+# Template file for 'python-setproctitle'
+pkgname=python-setproctitle
+version=1.1.9
+revision=2
+wrksrc="setproctitle-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-devel python3.4-devel"
+makedepends="${hostmakedepends}"
+depends="python"
+short_desc="Python2 library to allow customization of the process title"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://code.google.com/p/py-setproctitle/"
+license="BSD"
+distfiles="https://pypi.python.org/packages/source/s/setproctitle/setproctitle-${version}.tar.gz"
+checksum=1c3414d18f9cacdab78b0ffd8e886d56ad45f22e55001a72aaa0b2aeb56a0ad7
+
+python3.4-setproctitle_package() {
+	depends="python3.4"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

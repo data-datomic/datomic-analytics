@@ -1,0 +1,25 @@
+# Template file for 'font-hack-ttf'
+pkgname=font-hack-ttf
+version=2.018
+revision=1
+wrksrc=Hack-${version}
+noarch="yes"
+short_desc="A typeface designed for source code"
+maintainer="Diogo Leal <diogo@diogoleal.com>"
+license="Hack Open Font License"
+depends="font-util xbps-triggers"
+hostmakedepends="unzip"
+font_dirs="/usr/share/fonts/TTF"
+homepage="http://sourcefoundry.org/hack/"
+distfiles="https://github.com/chrissimpkins/Hack/archive/v${version}.tar.gz"
+checksum=20e28ef9095674a57114b7742a406ef2db020d809fb7470dbc1eed448e80b9c1
+
+do_install() {
+	vmkdir usr/share/fonts/TTF
+ 	vinstall build/ttf/Hack-Bold.ttf 644 usr/share/fonts/TTF
+ 	vinstall build/ttf/Hack-BoldItalic.ttf 644 usr/share/fonts/TTF
+ 	vinstall build/ttf/Hack-Italic.ttf 644 usr/share/fonts/TTF
+ 	vinstall build/ttf/Hack-Regular.ttf 644 usr/share/fonts/TTF
+	vlicense LICENSE.md
+}
+

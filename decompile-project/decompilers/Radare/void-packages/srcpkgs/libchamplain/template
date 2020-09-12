@@ -1,0 +1,41 @@
+# Template file for 'libchamplain'
+pkgname=libchamplain
+version=0.12.12
+revision=1
+build_style=gnu-configure
+configure_args="$(vopt_enable gir introspection) --disable-static"
+hostmakedepends="automake libtool pkg-config intltool glib-devel $(vopt_if gir gobject-introspection)"
+makedepends="libsoup-gnome-devel gtk+3-devel clutter-gtk-devel sqlite-devel"
+short_desc="Library aimed to provide a Clutter widget to display rasterized maps"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://projects.gnome.org/libchamplain/"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=e7de797200a91dba07bd8ba6583a672e1b3dcee842b9b100798925ebde8254a6
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	autoreconf -if
+}
+
+libchamplain-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+		vmove usr/share/gtk-doc
+		vmove usr/share/vala
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

@@ -1,0 +1,2 @@
+#!/bin/sh
+exec minidlnad -d 1>&2

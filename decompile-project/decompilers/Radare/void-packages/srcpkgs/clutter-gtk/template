@@ -1,0 +1,36 @@
+# Template file for 'clutter-gtk'
+pkgname=clutter-gtk
+version=1.6.6
+revision=2
+build_style=gnu-configure
+configure_args="$(vopt_enable gir introspection)"
+hostmakedepends="pkg-config intltool $(vopt_if gir gobject-introspection)"
+makedepends="gtk+3-devel clutter-devel"
+short_desc="GTK+3 bindings for the Clutter Tolkit"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://clutter-project.org/"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=9440a68600f58d00fe0af35383738943e8ead9907f4cf507a102d96822434a28
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+clutter-gtk-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}

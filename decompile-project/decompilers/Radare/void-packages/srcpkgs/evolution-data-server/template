@@ -1,0 +1,57 @@
+# Template file for 'evolution-data-server'
+pkgname=evolution-data-server
+version=3.18.2
+revision=2
+build_style=gnu-configure
+configure_args="--with-openldap --disable-uoa
+ --with-krb5=${XBPS_CROSS_BASE}/usr
+ --with-nspr-includes=${XBPS_CROSS_BASE}/usr/include/nspr
+ --with-nss-includes=${XBPS_CROSS_BASE}/usr/include/nss
+ $(vopt_enable gir vala-bindings)"
+hostmakedepends="pkg-config intltool flex glib-devel gperf $(vopt_if gir gobject-introspection)"
+makedepends="db-devel sqlite-devel mit-krb5-devel nss-devel libical-devel
+ libsecret-devel libsoup-gnome-devel gcr-devel libldap-devel
+ libgdata-devel $(vopt_if gir vala-devel) libgweather-devel icu-devel"
+depends="libsoup-gnome>=2.46 libgweather>=3.12"
+short_desc="Centralized access to appointments and contacts"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://www.gnome.org"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=5942fc1cf395acdc15425939d83824d861d01c57225ee3fc8c1d77009468ce9b
+
+build_options="gir"
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		# Create iconv-detect.h for cross builds
+		echo '/* This is an auto-generated header, DO NOT EDIT! */' > iconv-detect.h
+		echo  >>iconv-detect.h
+		echo '#define ICONV_ISO_D_FORMAT "iso-%d-%d"' >>iconv-detect.h
+		echo '#define ICONV_ISO_S_FORMAT "iso-%d-%s"' >>iconv-detect.h
+	fi
+}
+post_install() {
+	# Fix broken pkg-config
+	sed -i "s|^Requires: gio-2.0, , |Requires: gio-2.0, mozilla-nspr, mozilla-nss|" \
+		$DESTDIR/usr/lib/pkgconfig/evolution-data-server-1.2.pc
+}
+
+evolution-data-server-devel_package() {
+	depends="sqlite-devel mit-krb5-devel nss-devel libical-devel
+		libldap-devel libgdata-devel>=0.15 libsecret-devel libglib-devel
+		${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+			vmove usr/share/vala
+		fi
+	}
+}

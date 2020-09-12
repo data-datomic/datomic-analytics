@@ -1,0 +1,51 @@
+# Template file for 'openbox'
+pkgname=openbox
+version=3.6.1
+revision=1
+build_style=gnu-configure
+configure_args="--enable-startup-notification $(vopt_enable svg librsvg)"
+hostmakedepends="automake libtool pkg-config gettext-devel"
+makedepends="startup-notification-devel libxml2-devel libXrandr-devel
+ libXcursor-devel libXinerama-devel libSM-devel imlib2-devel
+ pango-devel $(vopt_if svg librsvg-devel)"
+conf_files="
+	/etc/xdg/openbox/menu.xml
+	/etc/xdg/openbox/rc.xml
+	/etc/xdg/openbox/environment
+	/etc/xdg/openbox/autostart"
+short_desc="Standards compliant, fast, light-weight, extensible window manager"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://www.openbox.org"
+distfiles="http://icculus.org/openbox/releases/$pkgname-$version.tar.gz"
+checksum=8b4ac0760018c77c0044fab06a4f0c510ba87eae934d9983b10878483bde7ef7
+
+# Package build options
+build_options="svg"
+
+pre_configure() {
+	autoreconf -fi
+}
+post_install() {
+	rm ${DESTDIR}/usr/bin/{gdm-control,gnome-panel-control}
+
+	sed -i 's:startkde:/usr/bin/\0:' \
+		${DESTDIR}/usr/share/xsessions/openbox-kde.desktop
+	sed -i 's:=gnome-session:=/usr/bin/gnome-session:' \
+		${DESTDIR}/usr/share/xsessions/openbox-gnome.desktop
+}
+openbox-devel_package() {
+	depends="${makedepends} libopenbox>=${version}_${revision}"
+	pkg_install() {
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+	}
+}
+libopenbox_package() {
+	short_desc="openbox runtime shared libraries"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}

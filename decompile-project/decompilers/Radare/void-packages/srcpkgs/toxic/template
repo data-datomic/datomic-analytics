@@ -1,0 +1,20 @@
+# Template file for 'toxic'
+pkgname=toxic
+version=0.7.0
+revision=1
+short_desc="Ncurses-based TOX instant messanger client"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="https://wiki.tox.im/Toxic"
+distfiles="https://github.com/JFreegman/toxic/archive/v${version}.tar.gz"
+checksum=f11eab5dc3fd24ee329438f57dad068064c0900838f684af6596e64c68be7006
+
+build_style=gnu-makefile
+hostmakedepends="pkg-config"
+makedepends="toxcore-devel-git libX11-devel freealut-devel libconfig-devel
+ ncurses-devel libopenal-devel libnotify-devel libvpx-devel libsodium-devel
+ opus-devel qrencode-devel libcurl-devel"
+
+do_build() {
+	make CC=$CC USER_CFLAGS="$CFLAGS" USER_LDFLAGS="$LDFLAGS" ${makejobs}
+}

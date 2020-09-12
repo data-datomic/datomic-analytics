@@ -1,0 +1,29 @@
+# Template build file for 'gperftools'
+pkgname=gperftools
+version=2.4
+revision=2
+build_style=gnu-configure
+short_desc="Multi-threaded malloc() and performance analysis tools"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="BSD-3-Clause"
+homepage="http://gperftools.googlecode.com"
+distfiles="https://googledrive.com/host/0B6NtGsLhIcf7MWxMMF9JdTN3UVk/gperftools-$version.zip"
+checksum=2d80f7b0126d73f5cda70f36d2a4ba88da93b1775e9fd2acf773bb2854e97a38
+hostmakedepends="unzip"
+makedepends="libunwind-devel"
+
+pre_configure() {
+	sed -i -e "s/^UNWIND_LIBS = .*/UNWIND_LIBS = -lunwind/" Makefile.in
+}
+
+gperftools-devel_package() {
+	depends="gperftools>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

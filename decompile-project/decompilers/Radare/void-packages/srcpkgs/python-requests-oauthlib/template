@@ -1,0 +1,33 @@
+# Template file for 'python-requests-oauthlib'
+pkgname=python-requests-oauthlib
+version=0.6.0
+revision=1
+noarch=yes
+wrksrc="${pkgname#*-}-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+pycompile_module="requests_oauthlib"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python-requests python-oauthlib"
+short_desc="OAuthlib authentication support for Requests (Python2)"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="BSD"
+homepage="https://github.com/requests/requests-oauthlib"
+distfiles="${PYPI_SITE}/r/requests-oauthlib/requests-oauthlib-${version}.tar.gz"
+checksum=2a0ca56031940e917983aa1584b9d1311769ff9fc9bbf01e06c7f75ade7c7724
+
+post_install() {
+	vlicense LICENSE
+}
+
+python3.4-requests-oauthlib_package() {
+	noarch=yes
+	depends="python3.4-requests python3.4-oauthlib"
+	pycompile_version="3.4"
+	pycompile_module="requests_oauthlib"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+		vlicense LICENSE
+	}
+}

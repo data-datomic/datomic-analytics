@@ -1,0 +1,16 @@
+# Template file for 'gnote'
+pkgname=gnote
+version=3.18.1
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--disable-schemas-compile --disable-static --with-x11-support --with-cxx11-support"
+hostmakedepends="pkg-config itstool intltool desktop-file-utils"
+makedepends="boost-devel libsecret-devel libxslt-devel libuuid-devel gtkmm-devel"
+depends="desktop-file-utils"
+short_desc="GNOME note taking application"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://live.gnome.org/Gnote"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=5da4ec9e7852b09af1067311fc6ee18a2c64384f4f5943b71ac37665144be58d

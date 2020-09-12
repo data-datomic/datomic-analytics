@@ -1,0 +1,55 @@
+# Template file for 'mupdf'
+pkgname=mupdf
+version=1.8
+revision=2
+wrksrc="${pkgname}-${version}-source"
+hostmakedepends="pkg-config zlib-devel libcurl-devel freetype-devel
+ libjpeg-turbo-devel jbig2dec-devel libXext-devel libXcursor-devel
+ libXrandr-devel libXinerama-devel MesaLib-devel libopenjpeg2-devel"
+makedepends="${hostmakedepends}"
+depends="desktop-file-utils"
+short_desc="Lightweight PDF and XPS viewer"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://mupdf.com"
+distfiles="http://mupdf.com/downloads/mupdf-${version}-source.tar.gz"
+checksum=a2a3c64d8b24920f87cf4ea9339a25abf7388496440f13b37482d1403c33c206
+
+pre_configure() {
+	rm -rf thirdparty/{curl,freetype,jpeg,zlib,jbig2dec,openjpeg}
+}
+do_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		export CFLAGS="-fPIC"
+		unset LDFLAGS
+		make CC=cc LD=ld AR=ar build=release generate
+	fi
+}
+do_build() {
+	CFLAGS+=" -fPIC"
+	if [ "$CROSS_BUILD" ]; then
+		make CROSSCOMPILE=yes CURL_LIBS='-lcurl -lpthread' build=release
+	else
+		make CURL_LIBS='-lcurl -lpthread' build=release
+	fi
+}
+do_install() {
+	make build=release prefix=${DESTDIR}/usr install
+
+	mv ${DESTDIR}/usr/bin/mupdf-x11-curl ${DESTDIR}/usr/bin/mupdf
+	rm ${DESTDIR}/usr/bin/mupdf-x11
+
+	vinstall build/release/libmujs.a 644 usr/lib
+
+	vinstall ${FILESDIR}/mupdf.xpm 644 usr/share/pixmaps
+	vinstall ${FILESDIR}/mupdf.desktop 644 usr/share/applications
+}
+
+mupdf-devel_package() {
+	short_desc+=" - development files"
+	depends="libjpeg-turbo-devel jbig2dec-devel libopenjpeg2-devel"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib
+	}
+}

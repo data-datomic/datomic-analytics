@@ -1,0 +1,63 @@
+# Template file for 'maxima'
+pkgname=maxima
+version=5.37.3
+revision=1
+build_style=gnu-configure
+configure_args="$(vopt_enable clisp) $(vopt_enable sbcl)"
+hostmakedepends="python perl emacs"
+makedepends="$(vopt_if clisp clisp) $(vopt_if sbcl sbcl) readline-devel"
+depends="$(vopt_if clisp clisp) $(vopt_if sbcl sbcl)"
+short_desc="Computer Algebra System"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://maxima.sourceforge.net/"
+license="GPL-2"
+distfiles="${SOURCEFORGE_SITE}/maxima/maxima-${version}.tar.gz"
+checksum=8bd5dcd672f37ea752385475fc64f8c87dfa29bbe34766cbcb87b1f63dfb5934
+
+build_options="clisp sbcl"
+desc_option_clisp="Build with CLISP"
+desc_option_sbcl="Build with SBCL"
+build_options_default="clisp"
+vopt_conflict clisp sbcl
+
+post_configure() {
+	sed -i 's/(sb-ext:save-lisp-and-die "\$@")/(sb-ext:save-lisp-and-die "$@" :compression 9)/' src/Makefile
+}
+post_install() {
+	vmkdir usr/share/doc
+	ln -sf ../maxima/${version}/doc ${DESTDIR}/usr/share/doc/maxima
+}
+
+maxima-src_package() {
+	noarch=yes
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - source files"
+	pkg_install() {
+		vmove usr/share/maxima/${version}/src
+	}
+}
+maxima-emacs_package() {
+	noarch=yes
+	short_desc+=" - Emacs interface"
+	depends="${sourcepkg}-${version}_${revision} virtual?emacs"
+	pkg_install() {
+		vmove usr/share/maxima/${version}/emacs
+		vmkdir usr/share/emacs/site-lisp
+		ln -sf /usr/share/maxima/${version}/emacs \
+			${PKGDESTDIR}/usr/share/emacs/site-lisp/maxima
+	}
+}
+xmaxima_package() {
+	noarch=yes
+	short_desc+=" - Tk interface"
+	depends="${sourcepkg}-${version}_${revision} tk"
+	pkg_install() {
+		vmove usr/bin/xmaxima
+		vmove usr/share/maxima/${version}/xmaxima
+		vmove usr/share/info/xmaxima.info
+		vinstall ${FILESDIR}/maxima.desktop 644 usr/share/applications
+		vmkdir usr/share/pixmaps
+		ln -sf /usr/share/maxima/${version}/xmaxima/maxima-new.png \
+			${PKGDESTDIR}/usr/share/pixmaps/maxima
+	}
+}

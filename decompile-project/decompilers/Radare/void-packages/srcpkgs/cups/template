@@ -1,0 +1,115 @@
+# Template file for 'cups'
+pkgname=cups
+version=2.1.2
+revision=1
+patch_args="-Np1"
+short_desc="Common Unix Printing System"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.cups.org/"
+license="GPL-2"
+distfiles="http://www.cups.org/software/${version}/cups-${version}-source.tar.gz"
+checksum=1d42a79d12cb1d1148a13f967afaf71e4f0caac8a97c8b2be6c97588572c7b34
+
+hostmakedepends="automake pkg-config poppler-utils gnutls-devel avahi-libs-devel"
+makedepends="acl-devel libjpeg-turbo-devel libpng-devel tiff-devel
+ gnutls-devel pam-devel poppler-devel libusb-devel avahi-libs-devel
+ libpaper-devel"
+depends="xdg-utils"
+conf_files="/etc/pam.d/cups /etc/cups/*.conf"
+make_dirs="
+	/usr/lib/cups/driver	0755 root root
+	/var/log/cups 		0750 root root
+	/var/cache/cups/rss 	0750 cups lp
+	/var/spool/cups 	0755 cups lp
+	/etc/cups/ssl 		0700 cups lp"
+
+# Package build options
+system_accounts="cups"
+cups_pgroup="lp"
+cups_homedir="/var/spool/cups"
+
+pre_configure() {
+	aclocal -I config-scripts
+	autoconf -I config-scripts
+}
+do_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		CC=cc AR= RANLIB= CFLAGS=-Os LDFLAGS= ./configure
+		make -C cups libcups.a
+		make -C man mantohtml
+		mkdir cross-tools
+		cp man/mantohtml cross-tools
+		make clean
+	fi
+	./configure ${configure_args} --sbindir=/usr/bin --libdir=/usr/lib \
+		--enable-acl --enable-dbus --enable-raw-printing \
+		--enable-threads --with-logdir=/var/log/cups \
+		--with-docdir=/usr/share/cups/doc --disable-gssapi \
+		--with-cups-user=cups --with-cups-group=lp --enable-relro \
+		--enable-libpaper --enable-avahi --enable-pam --enable-ssl \
+		--with-menudir=/usr/share/applications --with-xinetd=/etc/xinetd.d \
+		--with-optim="${CFLAGS}" --without-systemd \
+		--without-perl --without-php --without-python
+}
+do_build() {
+	# Do not run genstrings binary in cross builds.
+	if [ "$CROSS_BUILD" ]; then
+		sed -e '/.\/genstrings.*/d' -i ppdc/Makefile
+		sed -e "s,./mantohtml,${wrksrc}/cross-tools/mantohtml,g" -i man/Makefile
+	fi
+	make ${makejobs}
+}
+do_install() {
+	make BUILDROOT=${DESTDIR} install
+	# Remove sysvinit scripts.
+	rm -rf ${DESTDIR}/etc/rc.d
+	rm -rf ${DESTDIR}/etc/init.d
+
+	# compress some driver files, adopted from Fedora
+	find ${DESTDIR}/usr/share/cups/model -name "*.ppd"|xargs gzip -n9f
+	# install some more configuration files that will get filled by cupsd
+	for f in printers classes client subscriptions; do
+		touch ${DESTDIR}/etc/cups/${f}.conf
+	done
+
+	echo "# see 'man client.conf'" >> ${DESTDIR}/etc/cups/client.conf
+	echo "ServerName /var/run/cups/cups.sock" >> ${DESTDIR}/etc/cups/client.conf
+	echo "# alternative: ServerName hostname-or-ip-address[:port] of a remote server" >> \
+		${DESTDIR}/etc/cups/client.conf
+	# fix .desktop file
+	sed -i 's|^Exec=htmlview http://localhost:631/|Exec=xdg-open http://localhost:631/|g' \
+		${DESTDIR}/usr/share/applications/cups.desktop
+	# Install pam file
+	vinstall ${FILESDIR}/cups.pam 644 etc/pam.d cups
+
+	# Remove files provided by cups-filters.
+	rm -f ${DESTDIR}/usr/share/cups/banners/*
+	rm -f ${DESTDIR}/usr/share/cups/data/testprint
+	# comment out all conversion rules which use any of the removed filters
+	perl -p -i -e 's:^(.*\s+bannertops\s*)$:#\1:' \
+		${DESTDIR}/usr/share/cups/mime/mime.convs
+	# comment out unnecessary PageLogFormat entry
+	sed -i -e 's:PageLogFormat:#PageLogFormat:' ${DESTDIR}/etc/cups/cupsd.conf*
+
+	# runit service
+	vsv cupsd
+}
+
+libcups_package() {
+	short_desc+=" - client runtime shared libraries"
+	conf_files="/etc/cups/client.conf"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+		vmove etc/cups/client.conf
+		vmove usr/share/man/man5/client.conf.5
+	}
+}
+cups-devel_package() {
+	depends="zlib-devel libcups>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/bin/cups-config
+		vmove "usr/lib/*.so"
+	}
+}

@@ -1,0 +1,24 @@
+# Template file for 'libisofs'
+pkgname=libisofs
+version=1.4.2
+revision=1
+build_style=gnu-configure
+configure_args="--enable-libacl --enable-xattr"
+makedepends="acl-devel zlib-devel"
+short_desc="Library to create ISO9660 images"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.libburnia-project.org"
+license="GPL-2"
+distfiles="http://files.libburnia-project.org/releases/$pkgname-$version.tar.gz"
+checksum=d5e7f3ea613a78924dde979f699427b1c6b85ba4540d275aa67945b4a70fb3ab
+
+libisofs-devel_package() {
+	depends="${makedepends} libisofs>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.so
+		vmove usr/lib/*.a
+	}
+}

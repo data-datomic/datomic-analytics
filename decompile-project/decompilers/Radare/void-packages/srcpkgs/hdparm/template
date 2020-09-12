@@ -1,0 +1,12 @@
+# Template file for 'hdparm'
+pkgname=hdparm
+version=9.48
+revision=1
+build_style=gnu-makefile
+make_install_args="exec_prefix=/usr sbindir=/usr/bin"
+short_desc="Utility to access IDE device parameters"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://sourceforge.net/projects/hdparm/"
+license="BSD"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=ce97b4a71cb04146f54cf6f69787e7f97ddfda9836dc803b459d3b3df3a4fbee

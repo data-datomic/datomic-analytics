@@ -1,0 +1,41 @@
+# Template file for 'mpv'
+pkgname=mpv
+version=0.14.0
+revision=1
+short_desc="Video player based on MPlayer/mplayer2"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://mpv.io"
+build_style=waf
+configure_args="--confdir=/etc/mpv --docdir=/usr/share/examples/mpv
+ --enable-cdda --enable-libmpv-shared --disable-oss-audio --disable-sdl2"
+hostmakedepends="pkg-config python-docutils perl"
+makedepends="
+ ffmpeg-devel libass-devel lcms2-devel libXinerama-devel lua52-devel v4l-utils-devel
+ libXv-devel libxkbcommon-devel libva-glx-devel libvdpau-devel alsa-lib-devel
+ pulseaudio-devel libbluray-devel libcdio-paranoia-devel libdvdread-devel
+ MesaLib-devel harfbuzz-devel libXScrnSaver-devel jack-devel libdvdnav-devel
+ wayland-devel libuuid-devel libguess-devel libXrandr-devel samba-devel"
+depends="desktop-file-utils hicolor-icon-theme"
+conf_files="/etc/mpv/encoding-profiles.conf"
+distfiles="https://github.com/mpv-player/${pkgname}/archive/v${version}.tar.gz"
+checksum=042937f483603f0c3d1dec11e8f0045e8c27f19eee46ea64d81a3cdf01e51233
+
+if [ -z "$CROSS_BUILD" ]; then
+	configure_args+=" --enable-zsh-comp"
+fi
+
+pre_configure() {
+	python bootstrap.py
+	sed -i 's,/usr/local/etc/mpv.conf,/etc/mpv/mpv.conf,' etc/example.conf
+}
+
+mpv-devel_package() {
+	depends="mpv>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

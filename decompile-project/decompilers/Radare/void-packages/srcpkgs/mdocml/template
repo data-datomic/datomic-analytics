@@ -1,0 +1,50 @@
+# Template file for 'mdocml'
+pkgname=mdocml
+version=1.13.3
+revision=6
+build_style=configure
+makedepends="sqlite-devel"
+provides="man-0_1"
+conf_files="/etc/man.conf"
+short_desc="The mandoc UNIX manpage compiler toolset"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="ISC"
+homepage="http://mdocml.bsd.lv"
+distfiles="${homepage}/snapshots/mdocml-$version.tar.gz"
+checksum=23ccab4800d50bf4c327979af5d4aa1a6a2dc490789cb67c4c3ac1bd40b8cad8
+
+alternatives="
+ man:man:/usr/bin/mandoc
+ man:whatis:/usr/bin/mandoc
+ man:apropos:/usr/bin/mandoc
+ man:man.1:/usr/share/man/man1/mandoc-man.1
+ man:whatis.1:/usr/share/man/man1/mandoc-whatis.1
+ man:apropos.1:/usr/share/man/man1/mandoc-apropos.1"
+
+pre_configure() {
+	sed -i 's,PREFIX=.*,PREFIX=/usr,g' configure
+	sed -i 's,${PREFIX}/man,${PREFIX}/share/man,g' configure
+	sed -i "s,/usr/local,${XBPS_CROSS_BASE}/usr,g" configure
+	sed -i 's/\[\[:<:\]\]%s\[\[:>:\]\]/\\\\<%s\\\\>/' mansearch.c
+}
+pre_build() {
+	sed -i "s,CFLAGS.* ,& ${CFLAGS} ,g" Makefile.local
+}
+post_install() {
+	# Rename mans for alternatives
+	for f in apropos man whatis; do
+		mv ${DESTDIR}/usr/share/man/man1/{$f,mandoc-$f}.1
+	done
+	# Use symlinks.
+	rm -f ${DESTDIR}/usr/bin/{apropos,man,whatis}
+	rm -f ${DESTDIR}/usr/sbin/makewhatis
+	ln -sfr ${DESTDIR}/usr/bin/mandoc ${DESTDIR}/usr/bin/makewhatis
+	# man(1) configuration file
+	vconf ${FILESDIR}/man.conf
+	# remove devel stuff.
+	rm -rf ${DESTDIR}/usr/{include,lib}
+	# remove conflicting file
+	rm -f ${DESTDIR}/usr/share/man/man7/roff.7
+	# Daily cron job to generate man db
+	vinstall ${FILESDIR}/makewhatis.cron.daily 755 etc/cron.daily makewhatis
+}

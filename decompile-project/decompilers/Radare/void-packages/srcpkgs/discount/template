@@ -1,0 +1,21 @@
+# Template file for 'discount'
+pkgname=discount
+version=2.1.8a
+revision=1
+build_style=configure
+configure_script="./configure.sh"
+configure_args="--prefix=/usr"
+short_desc="C implementation of John Gruber's Markdown"
+maintainer="necrophcodr <necrophcodr@necrophcodr.me>"
+license="3-clause-BSD"
+homepage="http://www.pell.portland.or.us/~orc/Code/discount"
+distfiles="${homepage}/${pkgname}-${version}.tar.bz2"
+checksum=c01502f4eedba8163dcd30c613ba5ee238a068f75291be127856261727e03526
+
+discount-devel_package() {
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib
+	}
+}

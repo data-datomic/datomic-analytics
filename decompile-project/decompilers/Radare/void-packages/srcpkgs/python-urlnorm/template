@@ -1,0 +1,22 @@
+# Template file for 'python-urlnorm'
+pkgname=python-urlnorm
+version=1.1.3
+revision=2
+noarch=yes
+wrksrc="urlnorm-${version}"
+build_style=python-module
+python_versions="2.7"
+pycompile_module="urlnorm"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python"
+short_desc="Python2 module for normalizing URLs"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="MIT"
+homepage="https://github.com/jehiah/urlnorm"
+distfiles="${PYPI_SITE}/u/urlnorm/urlnorm-${version}.tar.gz"
+checksum=c9ea4ed056716df565ecbc34bc2b024970368a91e496009089cb54abea010059
+
+post_install() {
+	sed -n '/^__license__/,/^"""/{/"""$/d;p}' urlnorm.py > LICENSE
+	vlicense LICENSE
+}

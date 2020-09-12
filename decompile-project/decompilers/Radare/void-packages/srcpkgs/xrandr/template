@@ -1,0 +1,13 @@
+# Template build file for 'xrandr'.
+pkgname=xrandr
+version=1.4.3
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="libXrandr-devel"
+short_desc="Primitive command line interface to RandR extension"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://xorg.freedesktop.org"
+license="MIT"
+distfiles="${XORG_SITE}/app/$pkgname-$version.tar.bz2"
+checksum=7154ac3486b86923692f2d6cdb2991a2ee72bc32af2c4379a6f1c068f204be1b

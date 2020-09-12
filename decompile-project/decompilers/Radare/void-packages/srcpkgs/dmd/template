@@ -1,0 +1,76 @@
+# Template file for 'dmd'
+pkgname=dmd
+version=2.066.0
+revision=2
+wrksrc="dmd2"
+short_desc="The Digital Mars D compiler"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.digitalmars.com/d/2.0/"
+license="GPL-2"
+distfiles="http://ftp.digitalmars.com/dmd.${version}.zip"
+checksum=f13db9ed3bdc8740deb5903991e9e499fac708c8a1759050f1bfae624528df20
+
+if [ "$XBPS_TARGET_MACHINE" = "x86_64" ]; then
+	_archbits=64
+elif [ "$XBPS_TARGET_MACHINE" = "i686" ]; then
+	_archbits=32
+fi
+
+only_for_archs="i686 x86_64"
+conf_files="/etc/dmd.conf"
+
+hostmakedepends="unzip"
+depends="libphobos>=${version} gcc"
+
+do_build() {
+	cd src
+
+	cd dmd
+	make ${makejobs} -f posix.mak MODEL=${_archbits}
+
+	cd ../druntime
+	make ${makejobs} -f posix.mak MODEL=${_archbits} DMD=../dmd/dmd
+
+	cd ../phobos
+	make ${makejobs} -f posix.mak MODEL=${_archbits} DMD=../dmd/dmd
+}
+
+do_install() {
+	vinstall src/dmd/dmd 755 usr/bin
+	vinstall ${FILESDIR}/dmd.conf 644 etc
+
+	vinstall man/man1/dmd.1 644 usr/share/man/man1
+	vinstall man/man1/rdmd.1 644 usr/share/man/man1
+	vinstall man/man5/dmd.conf.5 644 usr/share/man/man5
+
+	vmkdir usr/share/d/samples
+	cp -r samples/d/* ${DESTDIR}/usr/share/d/samples/
+
+	find ${DESTDIR}/usr/share/d/samples -type f | xargs chmod 0644
+
+	for f in ddemangle dman dumpobj obj2asm rdmd; do
+		vinstall linux/bin${_archbits}/${f} 755 usr/bin
+	done
+}
+
+libphobos_package() {
+	conflicts="ldc>=0"
+	short_desc="The phobos D standard library for DMD"
+	license="Boost License"
+	pkg_install() {
+		vinstall ${wrksrc}/src/druntime/lib/libdruntime-linux${_archbits}.a 644 usr/lib libdruntime.a
+		vinstall ${wrksrc}/src/phobos/generated/linux/release/$_archbits/libphobos2.a 644 usr/lib libphobos2.a
+
+		vmkdir usr/include/d
+		cp -r ${wrksrc}/src/phobos/{*.d,etc,std} ${PKGDESTDIR}/usr/include/d
+
+		vmkdir usr/include/d/druntime
+		cp -r ${wrksrc}/src/druntime/import ${PKGDESTDIR}/usr/include/d/druntime
+
+		vmkdir usr/share/doc/d/
+		cp -r ${wrksrc}/html ${PKGDESTDIR}/usr/share/doc/d/
+		find ${PKGDESTDIR}/usr/share/doc/d -type f | xargs chmod 0644
+
+		vinstall ${wrksrc}/src/druntime/LICENSE 644 usr/share/licenses/libphobos
+	}
+}

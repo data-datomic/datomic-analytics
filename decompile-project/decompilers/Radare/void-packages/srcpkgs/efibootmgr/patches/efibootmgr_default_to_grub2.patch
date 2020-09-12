@@ -1,0 +1,24 @@
+--- src/efibootmgr/efibootmgr.c
++++ src/efibootmgr/efibootmgr.c
+@@ -985,8 +985,8 @@ usage()
+ 	printf("\t     --ip-port <local>,<remote>	set local and remote IP ports\n");
+ 	printf("\t     --ip-origin { {dhcp|static} | { static|stateless|stateful} }\n");
+ #endif
+-	printf("\t-l | --loader name     (defaults to \\EFI\\redhat\\grub.efi)\n");
+-	printf("\t-L | --label label     Boot manager display label (defaults to \"Linux\")\n");
++	printf("\t-l | --loader name     (defaults to \\EFI\\void\\grubx64.efi)\n");
++	printf("\t-L | --label label     Boot manager display label (defaults to \"Void Linux (GRUB2)\")\n");
+ 	printf("\t-n | --bootnext XXXX   set BootNext to XXXX (hex)\n");
+ 	printf("\t-N | --delete-bootnext delete BootNext\n");
+ 	printf("\t-o | --bootorder XXXX,YYYY,ZZZZ,...     explicitly set BootOrder (hex)\n");
+@@ -1012,8 +1012,8 @@ set_default_opts()
+ 	opts.active          = -1;   /* Don't set it */
+ 	opts.timeout         = -1;   /* Don't set it */
+ 	opts.edd10_devicenum = 0x80;
+-	opts.loader          = "\\EFI\\redhat\\grub.efi";
+-	opts.label           = (unsigned char *)"Linux";
++	opts.loader          = "\\EFI\\void\\grubx64.efi";
++	opts.label           = (unsigned char *)"Void Linux (GRUB2)";
+ 	opts.disk            = "/dev/sda";
+ 	opts.part            = 1;
+ }

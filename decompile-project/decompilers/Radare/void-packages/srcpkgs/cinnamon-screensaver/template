@@ -1,0 +1,25 @@
+# Template file for 'cinnamon-screensaver'
+pkgname=cinnamon-screensaver
+version=2.8.0
+revision=1
+short_desc="The Cinnamon screensaver"
+build_style=gnu-configure
+configure_args="--disable-static --disable-schemas-compile --with-mit-ext"
+hostmakedepends="automake libtool gnome-common pkg-config gobject-introspection
+ gettext-devel glib-devel intltool"
+makedepends="dbus-glib-devel libgnomekbd-devel cinnamon-desktop-devel
+ libXxf86misc-devel pam-devel webkit2gtk-devel"
+depends="cinnamon-translations desktop-file-utils hicolor-icon-theme"
+conf_files="/etc/pam.d/${pkgname}"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://cinnamon.linuxmint.com/"
+distfiles="https://github.com/linuxmint/${pkgname}/archive/${version}.tar.gz"
+checksum=595c787bdc9d3a7189d603fe065475e39ac09f957de2da8423b685ade1441036
+
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+post_install() {
+	vinstall ${FILESDIR}/${pkgname}.pam 644 etc/pam.d ${pkgname}
+}

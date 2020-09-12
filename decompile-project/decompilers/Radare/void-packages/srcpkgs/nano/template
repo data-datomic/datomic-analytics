@@ -1,0 +1,16 @@
+# Template file for 'nano'
+pkgname=nano
+version=2.5.0
+revision=1
+build_style=gnu-configure
+makedepends="file-devel zlib-devel ncurses-devel"
+short_desc="The GNU nano editor"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.nano-editor.org/"
+license="GPL-3"
+distfiles="http://www.nano-editor.org/dist/v${version%.*}/$pkgname-$version.tar.gz"
+checksum=ff323e6fef74caf0a924304841c07ac65ec30db99dc5c1f8272b4c536a5c89ee
+
+post_install() {
+	vsconf doc/nanorc.sample
+}

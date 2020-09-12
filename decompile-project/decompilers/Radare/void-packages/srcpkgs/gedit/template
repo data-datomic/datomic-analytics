@@ -1,0 +1,33 @@
+# Template file for 'gedit'
+pkgname=gedit
+version=3.18.2
+revision=1
+build_style=gnu-configure
+build_options="gir"
+configure_args="--disable-schemas-compile --enable-zeitgeist
+ --enable-python --enable-gvfs-metadata $(vopt_enable gir introspection)"
+hostmakedepends="pkg-config intltool itstool gnome-doc-utils
+ $(vopt_if gir gobject-introspection)"
+makedepends="
+ gtksourceview-devel libpeas-devel enchant-devel python-gobject-devel
+ gsettings-desktop-schemas-devel zeitgeist-devel iso-codes"
+depends="zeitgeist hicolor-icon-theme desktop-file-utils iso-codes"
+short_desc="A text editor for GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=856e451aec29ee45980011de57cadfe89c3cbc53968f6cc865f8efe0bd0d49b1
+
+gedit-devel_package() {
+	depends="gtksourceview-devel>=3.16 libpeas-devel>=1.9"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/share/gtk-doc
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gedit/gir-1.0
+		fi
+	}
+}

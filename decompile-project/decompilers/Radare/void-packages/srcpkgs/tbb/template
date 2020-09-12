@@ -1,0 +1,48 @@
+# Template file for 'tbb'
+pkgname=tbb
+version=4.4.20151115
+revision=1
+_lv="${version%.*}"
+_lv="${_lv//.}"
+_rv="${version##*.}"
+wrksrc="$pkgname${_lv}_${_rv}oss"
+build_style=gnu-makefile
+short_desc="Intel Threading Building Blocks"
+maintainer="Andrea Brancaleoni <miwaxe@gmail.com>"
+license="GPL-2"
+homepage="http://www.threadingbuildingblocks.org"
+distfiles="https://www.threadingbuildingblocks.org/sites/default/files/software_releases/source/tbb${_lv}_${_rv}oss_src.tgz"
+checksum=3dd5c4fc85c18f49307d3cde4ce937bda230679f7fe2906112e5c8dee4cc77bb
+
+only_for_archs="i686-musl x86_64-musl armv7l-musl aarch64-musl i686 x86_64 armv7l aarch64"
+
+post_extract() {
+	sed -i 's|CPLUS = g..|CPLUS = $(CXX)|g' build/linux.gcc.inc
+	sed -i 's|CONLY = gcc|CONLY = $(CC)|g' build/linux.gcc.inc
+	if [ "$CROSS_BUILD" ]; then
+		sed -i '/-m64/d' build/linux.gcc.inc
+		sed -i '/-mrtm/d' build/linux.gcc.inc
+	fi
+	case "$XBPS_TARGET_MACHINE" in
+		*-musl)
+			sed -e "s@#define MALLOC_UNIXLIKE_OVERLOAD_ENABLED __linux__@@" \
+			  -i src/tbbmalloc/proxy.h
+		;;
+	esac
+}
+
+do_install() {
+	vmkdir usr/lib
+	vcopy build/linux_*/*.so* usr/lib
+	vmkdir usr/include/tbb
+	vcopy include/tbb/* usr/include/tbb
+}
+
+tbb-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+	}
+}

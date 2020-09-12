@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+  <!-- Section -->
+  <section id="editProject">
+    <h2>Editing "{{ project.project_name }}"</h2>
+
+    <form id="new-project-form" method="post" action="#">{% csrf_token %}
+      <div class="row uniform">
+        <div class="6u 12u$(xsmall)">
+          <input @keyup="validateForm();" v-model="projectName" disabled="disabled" type="text" name="demo-name" id="demo-name" value="" placeholder="Name"/>
+        </div>
+        <div class="6u$ 12u$(xsmall)">
+          <div class="select-wrapper">
+            <select @change="validateForm" v-model="projectCategory" name="demo-category" id="demo-category">
+              <option value="">- Select a category -</option>
+              {% for category in categories %}
+                <option value="{{ category.name }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="12u">
+          <input @keyup="validateForm" v-model="projectDesc" type="text" value="" placeholder="Description"/>
+        </div>
+
+        <!-- Break -->
+        <div class="12u$">
+          <div @keyup="validateForm" v-model="projectSource" id="editor"></div>
+        </div>
+
+        <!-- Break -->
+        <div class="12u$">
+          <p v-model="errorMsg">${errorMsg}</p>
+          <ul class="actions">
+            <li><input @click="updateProject" v-bind:class="{ disabled: !isValid }" type="button" value="Update Project" class="special"/></li>
+            <li><input type="button" value="Beautify" class="beautify-content special"/></li>
+            <li><input type="button" class="delete-button special" value="Delete Project"/></li>
+            <li><input type="button" class="cancel-button" value="Cancel"/></li>
+
+          </ul>
+        </div>
+      </div>
+    </form>
+
+  </section>
+
+{% endblock %}
+
+{% block extrascripts %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify.min.js"></script>
+  <script>
+
+      var app = new Vue({
+          el: '#editProject',
+          delimiters: ['${', '}'],
+          data: {
+              isValid: false,
+              projectName: "{{ project.project_name | escapejs }}",
+              projectSlug: "{{ project.project_slug | escapejs }}",
+              projectCategory: "{{ project.category.name | escapejs }}",
+              projectSource: "{{ project.project_source | escapejs }}",
+              projectDesc: "{{ project.description | escapejs }}",
+              errorMsg: ""
+          },
+          methods: {
+              validateForm: function(){
+                  this.isValid = this.projectName && this.projectCategory && this.projectSource && this.projectDesc;
+              },
+              updateProject: function(){
+                  this.isValid = false;
+                  var that = this;
+                  var payload = {
+                      "category": this.projectCategory,
+                      "source": this.projectSource,
+                      "description" : this.projectDesc
+                  }
+
+                  $.post("/api/update/{{ project.owner.nickname }}/{{ project.project_slug }}/", JSON.stringify(payload), function (data) {
+                      if (data.success) {
+                          window.location = "/@{{ project.owner.nickname }}/{{ project.project_slug }}"
+                      }
+                  }, "json")
+                      .error(function(error){
+                        debugger;
+                      })
+                      .always(function () {
+                          that.isValid = true
+                      })
+
+              }
+          },
+          watch: {
+              projectName: function(val, oldval){
+                  if (val.match(/[^a-zA-Z0-9\-\s]/gi)){
+                      this.projectName = this.projectName.replace(/[^a-zA-Z0-9\-\s]/gi, '')
+                  }
+                  this.projectSlug = this.projectName.replace(/\s/gi, '-').toLowerCase()
+              }
+          }
+      })
+
+      $('.cancel-button').click(function(){
+          window.history.back()
+      })
+
+      $('.delete-button').click(function(){
+          if(confirm("Are you sure you want to remove the project '" + app.projectName + "'? THIS CAN NOT BE UNDONE!")){
+              $.ajax({
+                  url: "/api/update/{{ project.owner.nickname }}/{{ project.project_slug }}/",
+                  type: 'DELETE',
+                  success: function(result) {
+                      window.location = "/@{{ project.owner.nickname }}/"
+                  }
+              });
+          };
+      })
+
+
+      $('.beautify-content').click(function(e){
+          e.preventDefault();
+          var session = editor.getSession();
+          session.setValue(js_beautify(session.getValue()));
+      })
+
+      var beautify = ace.require("ace/ext/beautify");
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/monokai");
+      editor.getSession().setMode("ace/mode/javascript");
+      editor.setShowPrintMargin(false);
+
+      editor.on('change', function(e){
+          app.projectSource = editor.getSession().getValue()
+          app.validateForm()
+      })
+
+      if (app.projectSource){
+          editor.getSession().setValue(app.projectSource);
+      }
+
+
+  $(document).ready(function(){
+
+    var heightUpdateFunction = function() {
+
+        // http://stackoverflow.com/questions/11584061/
+        var newHeight =
+                  editor.getSession().getScreenLength()
+                  * editor.renderer.lineHeight
+                  + editor.renderer.scrollBar.getWidth();
+
+        $('#editor').height(newHeight.toString() + "px");
+        $('#editor-section').height(newHeight.toString() + "px");
+
+        // This call is required for the editor to fix all of
+        // its inner structure for adapting to a change in size
+        editor.resize();
+    };
+
+    // Set initial size to match initial content
+    heightUpdateFunction();
+
+    // Whenever a change happens inside the ACE editor, update
+    // the size again
+    editor.getSession().on('change', heightUpdateFunction);
+})
+
+  </script>
+  <style>
+  #editor {
+      min-height: 16rem;
+  }
+  </style>
+{% endblock %}

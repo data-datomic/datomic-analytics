@@ -1,0 +1,57 @@
+# Template file for 'python-atspi'
+pkgname=python-atspi
+version=2.18.0
+revision=1
+noarch=yes
+nocross=yes
+wrksrc="pyatspi-${version}"
+build_style=gnu-configure
+python_versions="2.7 3.4"
+hostmakedepends="pkg-config"
+makedepends="at-spi2-core-devel python-gobject-devel"
+depends="${makedepends//-devel/}"
+replaces="pyatspi>=0"
+pycompile_module="pyatspi"
+short_desc="Python2 bindings for AT-SPI"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org/"
+license="GPL-2"
+distfiles="${GNOME_SITE}/pyatspi/${version%.*}/pyatspi-${version}.tar.xz"
+checksum=f86f03ad05d0502cd60fe8b98f746f74ce3bc208e9f3798f6a2130b3c5f4ab46
+
+do_configure() {
+	mkdir ${wrksrc}/python2-build
+	cd ${wrksrc}/python2-build
+	../configure ${configure_args} --with-python=/usr/bin/python
+
+	mkdir ${wrksrc}/python3.4-build
+	cd ${wrksrc}/python3.4-build
+	../configure ${configure_args} --with-python=/usr/bin/python3.4
+}
+
+do_build() {
+	cd ${wrksrc}/python2-build
+	make ${makejobs}
+
+	cd ${wrksrc}/python3.4-build
+	make ${makejobs}
+}
+
+do_install() {
+	cd ${wrksrc}/python2-build
+	make DESTDIR=${DESTDIR} install
+
+	cd ${wrksrc}/python3.4-build
+	make DESTDIR=${DESTDIR} install
+}
+
+python3.4-atspi_package() {
+	noarch=yes
+	depends="at-spi2-core>=2.10 python3.4-gobject>=3.10"
+	pycompile_version="3.4"
+	pycompile_module="pyatspi"
+	short_desc="${short_desc//Python2/Python3.4}"
+	pkg_install() {
+		vmove /usr/lib/python3.4
+	}
+}

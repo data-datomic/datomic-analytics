@@ -1,0 +1,39 @@
+# Template file for 'erlang'
+pkgname=erlang
+version=18.2.1
+revision=1
+wrksrc=otp_src_${version}
+build_style=gnu-configure
+configure_args="--enable-smp-support"
+hostmakedepends="perl libxslt"
+makedepends="ncurses-devel unixodbc-devel libressl-devel zlib-devel
+ $(vopt_if x11 'wxGTK-devel glu-devel')"
+short_desc="Concurrent functional programming language developed by Ericsson"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="Apache-2.0"
+homepage="http://www.erlang.org/"
+distfiles="http://www.erlang.org/download/otp_src_${version}.tar.gz
+ http://www.erlang.org/download/otp_doc_man_${version}.tar.gz"
+checksum="82d76ebfeeda5db64ea5b0f1a04aa0e9ac63380b278722e0e6052249bd3fe39a
+ a58005ccd64853e8c79631a3c4c057dd6f92f581d97d00845a0aea817c33afa0"
+
+build_options="x11"
+
+pre_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		# Build the bootstrap compiler for the host platform.
+		env - PATH=/usr/bin:/usr/sbin ./configure --enable-bootstrap-only
+		env - PATH=/usr/bin:/usr/sbin HOME=$HOME make ${makejobs}
+		configure_args+=" --build=$(erts/autoconf/config.guess)"
+		export erl_xcomp_sysroot=/usr/${XBPS_CROSS_TRIPLET}
+	fi
+}
+
+post_install() {
+	vmkdir usr/share/man
+	vmkdir usr/lib/erlang/man
+	vcopy ../man/man1 usr/share/man
+	vcopy ../man/man3 usr/lib/erlang/man
+	vcopy ../man/man4 usr/lib/erlang/man
+	vcopy ../man/man7 usr/lib/erlang/man
+}

@@ -1,0 +1,14 @@
+# Template file for 'iana-etc'
+pkgname=iana-etc
+version=2.30
+revision=4
+bootstrap=yes
+noarch="yes"
+build_style=gnu-makefile
+make_install_target="PREFIX=/ install"
+short_desc="Unix /etc/services and /etc/protocols files"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://sethwklein.net/iana-etc.html"
+license="OSL-3.0"
+distfiles="http://sethwklein.net/$pkgname-$version.tar.bz2"
+checksum=b9a6874fb20012836efef75452ef2acae624022d680feeb1994d73facba3f20d

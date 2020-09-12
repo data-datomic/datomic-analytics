@@ -1,0 +1,30 @@
+# Template file for 'void-repo-nonfree'
+pkgname=void-repo-nonfree
+version=7
+revision=1
+noarch=yes
+build_style=meta
+short_desc="Void Linux drop-in file for the nonfree repository"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Public Domain"
+homepage="http://www.voidlinux.eu"
+
+do_install() {
+	vmkdir usr/share/xbps.d
+	echo "repository=http://repo.voidlinux.eu/current/nonfree" > \
+		${DESTDIR}/usr/share/xbps.d/10-repository-nonfree.conf
+	echo "repository=http://repo.voidlinux.eu/current/debug" > \
+		${DESTDIR}/usr/share/xbps.d/20-repository-debug.conf
+
+	case "$XBPS_TARGET_MACHINE" in
+		*-musl) sed -i 's,repo.voidlinux.eu,muslrepo.voidlinux.eu,g' ${DESTDIR}/usr/share/xbps.d/*.conf;;
+	esac
+}
+
+void-repo-debug_package() {
+	noarch=yes
+	short_desc="${short_desc/nonfree/debug}"
+	pkg_install() {
+		vmove usr/share/xbps.d/20-repository-debug.conf
+	}
+}

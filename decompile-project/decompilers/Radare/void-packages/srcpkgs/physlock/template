@@ -1,0 +1,17 @@
+# Template file for 'physlock'
+pkgname=physlock
+version=0.5
+revision=1
+build_style=gnu-makefile
+short_desc="Lightweight linux console locking tool"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="GPL-2"
+homepage="https://github.com/muennich/physlock"
+distfiles="${homepage}/archive/v${version}.tar.gz"
+checksum=395873abe9bfb3879df796bd9d857be024c4ca01c5b6e83cfd3253647b558782
+
+pre_build() {
+	sed -i Makefile \
+		-e 's/^CFLAGS\s*=/override CFLAGS +=/' \
+		-e 's|-o root -g root||'
+}

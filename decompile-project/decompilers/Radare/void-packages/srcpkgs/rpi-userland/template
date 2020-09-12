@@ -1,0 +1,61 @@
+# Template file for 'rpi-firmware'
+_githash="cfa3df1420a1839eb4a1da12e744a4beb8e7e7b6"
+_gitshort="${_githash:0:7}"
+
+pkgname=rpi-userland
+version=20151218
+revision=1
+wrksrc="userland-${_githash}"
+build_style=cmake
+hostmakedepends="cmake"
+short_desc="Raspberry Pi GPU userland libraries and utilities (git ${_gitshort})"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="3-clause-BSD"
+homepage="https://github.com/raspberrypi/userland"
+distfiles="https://github.com/raspberrypi/userland/archive/${_githash}.tar.gz"
+checksum=3840ad2ee366ac86373e7a0794518862d15fb16eacc2b6189a3816fbd33941cb
+
+LDFLAGS="-Wl,--no-as-needed"
+
+only_for_archs="armv6l armv6l-musl armv7l armv7l-musl"
+
+shlib_provides="
+ libvcsm.so
+ libvcos.so
+ libvchiq_arm.so
+ libopenmaxil.so
+ libmmal_vc_client.so
+ libmmal_util.so
+ libmmal_core.so
+ libmmal_components.so
+ libmmal.so
+ libdebug_sym.so
+ libcontainers.so
+ libbcm_host.so
+ libWFC.so
+ libOpenVG.so
+ libGLESv2.so
+ libEGL.so"
+
+post_install() {
+	vmkdir usr/lib/pkgconfig
+	vcopy ${FILESDIR}/*.pc usr/lib/pkgconfig
+	rm -rf ${DESTDIR}/etc
+	rm -rf ${DESTDIR}/opt/vc/share
+
+	vmkdir etc/ld.so.conf.d
+	echo "/opt/vc/lib" > ${DESTDIR}/etc/ld.so.conf.d/${pkgname}.conf
+}
+
+rpi-userland-devel_package() {
+	provides="rpi-firmware-pcfiles-1_1"
+	replaces="rpi-firmware-pcfiles>=0"
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove opt/vc/include
+		vmove opt/vc/src
+		vmove opt/vc/lib/*.a
+		vmove usr/lib/pkgconfig
+	}
+}

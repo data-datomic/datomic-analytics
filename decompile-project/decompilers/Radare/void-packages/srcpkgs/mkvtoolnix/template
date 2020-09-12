@@ -1,0 +1,26 @@
+# Template file for 'mkvtoolnix'
+pkgname=mkvtoolnix
+version=8.6.1
+revision=1
+build_style=gnu-configure
+configure_args="--without-curl"
+hostmakedepends="autoconf pkg-config ruby"
+makedepends="libebml-devel libmatroska-devel boost-devel libvorbis-devel
+ libflac-devel file-devel qt5-devel qt5-tools-devel"
+short_desc="Create, alter and inspect Matroska videos"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-2"
+homepage="https://www.bunkus.org/videotools/mkvtoolnix/"
+distfiles="${homepage}/sources/${pkgname}-${version}.tar.xz"
+checksum=815d8355b6a83af01c957543cee8716f1dad53e03b2ecf58b821099cd3c8fa77
+nocross=yes
+
+pre_configure() {
+	./autogen.sh
+}
+do_build() {
+	./drake ${makejobs}
+}
+do_install() {
+	./drake DESTDIR=${DESTDIR} install
+}

@@ -1,0 +1,15 @@
+# Template file for 'rage-player'
+pkgname=rage-player
+version=0.1.4
+revision=1
+wrksrc="rage-${version}"
+build_style=gnu-configure
+hostmakedepends="pkg-config elementary-devel"
+makedepends="elementary-devel"
+depends="desktop-file-utils"
+short_desc="Video and Audio player written with Enlightenment Foundation Libraries"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="https://www.enlightenment.org/p.php?p=about/rage"
+distfiles="http://download.enlightenment.org/rel/apps/rage/rage-${version}.tar.gz"
+checksum=ef55b15f4b90a48e21bc2a7a3c5037aee8ba4d97ad58283efed2849919b24382

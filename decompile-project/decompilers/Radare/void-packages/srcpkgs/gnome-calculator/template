@@ -1,0 +1,16 @@
+# Template file for 'gnome-calculator'
+pkgname=gnome-calculator
+version=3.18.2
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool itstool glib-devel gnome-doc-utils"
+makedepends="
+ libxml2-devel gtk+3-devel gsettings-desktop-schemas-devel
+ gtksourceview-devel mpfr-devel"
+depends="gsettings-desktop-schemas>=3.12 hicolor-icon-theme desktop-file-utils"
+short_desc="The GNOME calculator"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=c86c5857409ce1d01896904e97ccf0a1a880f3dcf428a524e5c0fec27b274d64

@@ -1,0 +1,25 @@
+# Template build file for 'libXfixes'.
+pkgname=libXfixes
+version=5.0.1
+revision=4
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="xproto xextproto fixesproto libX11-devel"
+short_desc="Xfixes library and extension of X RandR from modular X.org"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="${XORG_SITE}"
+license="MIT"
+distfiles="${XORG_SITE}/lib/$pkgname-$version.tar.bz2"
+checksum=63bec085084fa3caaee5180490dd871f1eb2020ba9e9b39a30f93693ffc34767
+
+libXfixes-devel_package() {
+	depends="xproto fixesproto libX11-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

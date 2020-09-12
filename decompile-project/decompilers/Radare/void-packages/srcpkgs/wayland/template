@@ -1,0 +1,41 @@
+# Template file for 'wayland'.
+pkgname=wayland
+version=1.9.0
+revision=1
+build_style=gnu-configure
+configure_args="--disable-documentation --disable-static"
+hostmakedepends="automake libtool pkg-config flex"
+makedepends="libfl-devel libffi-devel expat-devel"
+short_desc="Wayland protocol compositor"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://wayland.freedesktop.org/"
+license="MIT"
+distfiles="http://wayland.freedesktop.org/releases/wayland-${version}.tar.xz"
+checksum=9c8770720aa0034479735f58a4dc4ca9b172ecfede28f5134312e135b7301efa
+
+pre_configure() {
+	autoreconf -fi
+}
+post_install() {
+	vlicense COPYING
+}
+
+if [ "$CROSS_BUILD" ]; then
+	hostmakedepends+=" wayland-devel"
+	post_configure() {
+		# Use host wayland-scanner
+		sed -e '/$(AM_V_GEN)/s,$(wayland_scanner),wayland-scanner,g' -i Makefile.in
+	}
+fi
+
+wayland-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin
+		vmove usr/include
+		vmove usr/share
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

@@ -1,0 +1,24 @@
+# Template file for 'optipng'
+pkgname=optipng
+version=0.7.5
+revision=3
+hostmakedepends="pkg-config"
+makedepends="zlib-devel libpng-devel"
+short_desc="Advanced PNG Optimizer"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="zlib"
+homepage="http://optipng.sourceforge.net/"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=74e54b798b012dff8993fb8d90185ca83f18cfa4935f4a93b0bcfc33c849619d
+
+do_configure() {
+	./configure -prefix=/usr -mandir=/usr/share/man -with-system-libpng -with-system-zlib
+}
+
+do_build() {
+	make LD="$CC" ${makejobs}
+}
+
+do_install() {
+	make LD="$CC" DESTDIR=$DESTDIR install
+}

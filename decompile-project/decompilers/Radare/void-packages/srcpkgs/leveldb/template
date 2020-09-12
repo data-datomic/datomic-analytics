@@ -1,0 +1,40 @@
+# Template file for 'leveldb'
+pkgname=leveldb
+version=1.18
+revision=2
+build_style=gnu-makefile
+short_desc="A fast and lightweight key/value database library by Google"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+homepage="https://github.com/google/leveldb"
+distfiles="${homepage}/archive/v${version}.tar.gz"
+checksum=4aa1a7479bc567b95a59ac6fb79eba49f61884d6fd400f20b7af147d54c5cee5
+
+do_install() {
+	vmkdir usr/lib
+	vmkdir usr/include/leveldb
+	vmkdir usr/share/doc/leveldb
+
+	# libraries
+	vinstall libleveldb.so.${version} 755 usr/lib
+	cp -P libleveldb.so{,.1} ${DESTDIR}/usr/lib
+
+	# headers
+	install -m644 include/leveldb/* ${DESTDIR}/usr/include/leveldb
+
+	# documentation
+	cp -r doc/* ${DESTDIR}/usr/share/doc/${pkgname}
+
+	# license
+	vlicense LICENSE
+}
+
+leveldb-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/share/doc
+		vmove usr/lib/*.so
+	}
+}

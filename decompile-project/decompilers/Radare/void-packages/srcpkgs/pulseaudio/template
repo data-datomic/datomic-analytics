@@ -1,0 +1,66 @@
+# Template file for 'pulseaudio'
+pkgname=pulseaudio
+version=7.1
+revision=3
+build_style=gnu-configure
+configure_args="--disable-oss-output --disable-oss-wrapper --disable-tcpwrap
+ --enable-jack --disable-lirc --disable-hal-compat --disable-gconf --enable-orc
+ --with-database=tdb --with-udev-rules-dir=/usr/lib/udev/rules.d --disable-bluez4
+ --disable-esound --disable-gtk3 --enable-bluez5 --disable-bluez5-ofono-headset
+ --disable-systemd --disable-systemd-journal
+ --with-bash-completion-dir=/usr/share/bash-completion/completions"
+hostmakedepends="automake libtool pkg-config intltool gettext-devel orc-devel"
+makedepends="
+ zlib-devel libltdl-devel libglib-devel libudev-devel speex-devel libXi-devel
+ libXtst-devel xcb-util-devel libsndfile-devel libasyncns-devel
+ dbus-devel tdb-devel libcap-devel avahi-libs-devel libressl-devel
+ webrtc-audio-processing-devel json-c-devel orc-devel jack-devel fftw-devel
+ libcap-progs sbc-devel libxcb-devel libXtst-devel libSM-devel"
+depends="rtkit"
+conf_files="
+	/etc/pulse/system.pa
+	/etc/pulse/daemon.conf
+	/etc/pulse/client.conf
+	/etc/pulse/default.pa"
+short_desc="A featureful, general-purpose sound server"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.freedesktop.org/wiki/Software/PulseAudio"
+license="LGPL-2"
+system_groups="pulse-access"
+system_accounts="pulse"
+pulse_groups="audio"
+pulse_homedir="/var/run/pulse"
+distfiles="${FREEDESKTOP_SITE}/${pkgname}/releases/${pkgname}-${version}.tar.xz"
+checksum=e667514a28328f92aceea754a224a0150dddfe7e9a71b4c6d31489220153b9d9
+
+pre_configure() {
+	NOCONFIGURE=1 ./bootstrap.sh
+}
+post_install() {
+	rm -f ${DESTDIR}/etc/dbus-1/system.d/pulseaudio-system.conf
+	vsv pulseaudio
+}
+
+libpulseaudio_package() {
+	shlib_provides="libpulsecommon-7.1.so"
+	short_desc+=" - shared libraries"
+	pkg_install() {
+		vmove "usr/lib/libpulse.so.*"
+		vmove "usr/lib/libpulse-simple.so.*"
+		vmove "usr/lib/libpulse-mainloop-glib.so.*"
+		vmove usr/lib/pulseaudio
+	}
+}
+pulseaudio-devel_package() {
+	depends="libasyncns-devel dbus-devel libXtst-devel libpulseaudio>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/cmake
+		vmove usr/lib/libpulse.so
+		vmove usr/lib/libpulse-simple.so
+		vmove usr/lib/libpulse-mainloop-glib.so
+		vmove usr/share/vala
+	}
+}

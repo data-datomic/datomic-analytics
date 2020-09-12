@@ -1,0 +1,34 @@
+# Template file for 'cargo'
+pkgname=cargo
+version=0.7.0
+revision=1
+_githash_installer=c37d3747da75c280237dc2d6b925078e69555499
+build_style=gnu-configure
+hostmakedepends="rust python curl cmake pkg-config"
+makedepends="libressl-devel zlib-devel"
+depends="rust"
+short_desc="Rust package manager"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="MIT, Apache-2.0"
+homepage="https://crates.io/"
+distfiles="https://github.com/rust-lang/${pkgname}/archive/${version}.tar.gz
+ https://github.com/rust-lang/rust-installer/archive/${_githash_installer}.tar.gz"
+checksum="b1067d710e64b66a197294df2fa3dd4fb1d645171eaa517b93d42678bb687338
+ 6326434c225d25c6bfd28ff8bbc3108e331ae65e89a5c38dac8a2c8ffa09732b"
+nocross=yes
+
+post_extract() {
+	rm -rf src/rust-installer
+	mv ../rust-installer-${_githash_installer} src/rust-installer
+	sed -i 's,/etc/bash_completion.d,/share/bash-completion/completions,g' Makefile.in
+}
+pre_configure() {
+	configure_args+=" --host=${XBPS_TRIPLET/-pc-/-unknown-} --build=${XBPS_TRIPLET/-pc-/-unknown-}"
+	sed -i '/not recognized/s/err/warn/' configure
+}
+post_install() {
+	rm -rf ${DESTDIR}/usr/lib/rustlib ${DESTDIR}/usr/share/doc/cargo
+	vlicense LICENSE-APACHE
+	vlicense LICENSE-MIT
+	vlicense LICENSE-THIRD-PARTY
+}

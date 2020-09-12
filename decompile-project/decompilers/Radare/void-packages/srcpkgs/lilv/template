@@ -1,0 +1,45 @@
+# Template file for 'lilv'
+pkgname=lilv
+version=0.20.0
+revision=1
+build_style=waf
+configure_args="--dyn-manifest"
+hostmakedepends="pkg-config python"
+makedepends="python-devel serd-devel sord-devel sratom-devel lv2"
+short_desc="A simple yet powerful C API for using LV2 plugins"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="ISC"
+homepage="http://drobilla.net/software/lilv/"
+distfiles="http://download.drobilla.net/${pkgname}-${version}.tar.bz2"
+checksum=428a39f1265d44c55f2604829a12ade0ea13e1a1022ff937ca2a9ad227bd422a
+
+post_install() {
+	vmkdir usr/share/bash-completion/completions
+	mv ${DESTDIR}/usr/etc/bash_completion.d/* ${DESTDIR}/usr/share/bash-completion/completions
+}
+
+liblilv_package() {
+	short_desc+=" - Runtime library"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+		chmod 755 ${PKGDESTDIR}/usr/lib/*.so*
+	}
+}
+
+lilv-bash-completion_package() {
+	depends="bash-completion lilv"
+	short_desc+=" - Bash completion for Lilv"
+	pkg_install() {
+		vmove usr/share/bash-completion
+	}
+}
+
+lilv-devel_package() {
+	depends="sord-devel liblilv>=${version}_${revision}"
+	short_desc+=" - Development files"
+	pkg_install() {
+        	vmove usr/include
+        	vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

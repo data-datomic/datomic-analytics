@@ -1,0 +1,27 @@
+# Template file for 'imapfilter'
+pkgname=imapfilter
+version=2.6.4
+revision=1
+build_style=gnu-makefile
+hostmakedepends="lua-devel"
+makedepends="pcre-devel lua-devel libressl-devel"
+short_desc="Mail filtering utility"
+maintainer="lemmi <lemmi@nerd2nerd.org>"
+license="MIT"
+homepage="https://github.com/lefcha/imapfilter"
+distfiles="https://github.com/lefcha/imapfilter/archive/v${version}.tar.gz"
+checksum=ab29faab15a5b9ac616bfca65114c5067a3a26b7b32e2a70c32eb12ac1f16c1e
+
+post_configure() {
+	sed -i \
+		-e '/^MANDIR/s:/man:/share/man:' \
+		-e '/^PREFIX/s:PREFIX = /usr/local:PREFIX = /usr:' \
+		-e '/^CFLAGS/s/CFLAGS = /override CFLAGS += /' \
+		-e 's/$(CC)/$(CC) $(CFLAGS)/' \
+		src/Makefile
+}
+post_install() {
+	vsconf samples/config.lua
+	vsconf samples/extend.lua
+	vlicense LICENSE
+}

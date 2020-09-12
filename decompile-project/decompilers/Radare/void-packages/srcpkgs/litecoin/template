@@ -1,0 +1,28 @@
+# Template file for 'litecoin'
+pkgname=litecoin
+version=0.10.2.2
+revision=1
+wrksrc="${pkgname}-${version}"
+build_style=gnu-configure
+configure_args="--with-incompatible-bdb --with-gui=qt5 --disable-static --disable-tests
+ --with-libressl"
+hostmakedepends="automake libtool pkg-config yasm"
+makedepends="zlib-devel db-devel libressl-devel boost-devel
+ qt5-tools-devel miniupnpc-devel protobuf-devel"
+short_desc="Peer-to-peer Internet currency based on scrypt cryptography"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="MIT"
+homepage="http://www.litecoin.org/"
+distfiles="https://github.com/litecoin-project/litecoin/archive/v${version}.tar.gz"
+checksum=952c84b181323db17a8fa23217f59b576ad3ebad92c158b3a7c29d458a1130dc
+
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+post_install() {
+	rm -rf ${DESTDIR}/usr/include
+	vsconf contrib/debian/examples/bitcoin.conf
+	vman contrib/debian/manpages/bitcoind.1 litecoin-bitcoind.1
+	vman contrib/debian/manpages/bitcoin.conf.5 litecoin-bitcoin.conf.5
+	vlicense COPYING
+}

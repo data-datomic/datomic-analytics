@@ -1,0 +1,38 @@
+
+struct _PROCESSOR_POWER_STATE {
+	struct _PPM_IDLE_STATES	*IdleStates;
+	uint64_t	IdleTimeLast;
+	uint64_t	IdleTimeTotal;
+	uint64_t	IdleTimeEntry;
+	struct _PROC_IDLE_ACCOUNTING	*IdleAccounting;
+	struct _PROC_HYPERVISOR_STATE	Hypervisor;
+	uint32_t	PerfHistoryTotal;
+	uint8_t	ThermalConstraint;
+	uint8_t	PerfHistoryCount;
+	uint8_t	PerfHistorySlot;
+	uint8_t	Reserved;
+	uint32_t	LastSysTime;
+	uint32_t	WmiDispatchPtr;
+	int32_t	WmiInterfaceEnabled;
+	uint8_t	__padding0__;
+	uint8_t	__padding1__;
+	uint8_t	__padding2__;
+	uint8_t	__padding3__;
+	struct _PPM_FFH_THROTTLE_STATE_INFO	FFHThrottleStateInfo;
+	struct _KDPC	PerfActionDpc;
+	int32_t	PerfActionMask;
+	uint8_t	__padding0__;
+	uint8_t	__padding1__;
+	uint8_t	__padding2__;
+	uint8_t	__padding3__;
+	struct _PROC_IDLE_SNAP	IdleCheck;
+	struct _PROC_IDLE_SNAP	PerfCheck;
+	struct _PROC_PERF_DOMAIN	*Domain;
+	struct _PROC_PERF_CONSTRAINT	*PerfConstraint;
+	struct _PROC_PERF_LOAD	*Load;
+	struct _PROC_HISTORY_ENTRY	*PerfHistory;
+	uint32_t	Utility;
+	uint32_t	OverUtilizedHistory;
+	uint32_t	AffinityCount;
+	uint32_t	AffinityHistory;
+}__attribute__((packed));

@@ -1,0 +1,30 @@
+
+struct _DRIVER_OBJECT {
+	int16_t	Type;
+	int16_t	Size;
+	uint8_t	__padding0__;
+	uint8_t	__padding1__;
+	uint8_t	__padding2__;
+	uint8_t	__padding3__;
+	struct _DEVICE_OBJECT	*DeviceObject;
+	uint32_t	Flags;
+	uint8_t	__padding0__;
+	uint8_t	__padding1__;
+	uint8_t	__padding2__;
+	uint8_t	__padding3__;
+	void	*DriverStart;
+	uint32_t	DriverSize;
+	uint8_t	__padding0__;
+	uint8_t	__padding1__;
+	uint8_t	__padding2__;
+	uint8_t	__padding3__;
+	void	*DriverSection;
+	struct _DRIVER_EXTENSION	*DriverExtension;
+	struct _UNICODE_STRING	DriverName;
+	struct _UNICODE_STRING	*HardwareDatabase;
+	struct _FAST_IO_DISPATCH	*FastIoDispatch;
+	struct long	*DriverInit;
+	void	*DriverStartIo;
+	void	*DriverUnload;
+	struct long	*MajorFunction[28];
+}__attribute__((packed));

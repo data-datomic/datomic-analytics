@@ -1,0 +1,132 @@
+# Template file for 'ffmpeg'
+pkgname=ffmpeg
+version=2.8.4
+revision=1
+short_desc="Decoding, encoding and streaming software"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.ffmpeg.org"
+distfiles="${homepage}/releases/ffmpeg-${version}.tar.bz2"
+checksum=83cc8136a7845546062a43cda9ae3cf0a02f43ef5e434d2f997f055231a75f8e
+
+hostmakedepends="pkg-config perl yasm"
+makedepends="zlib-devel bzip2-devel freetype-devel alsa-lib-devel libXfixes-devel
+ libXext-devel libXvMC-devel faac-devel faad2-devel lame-devel libtheora-devel
+ gnutls-devel libvorbis-devel x264-devel xvidcore-devel jack-devel SDL-devel
+ libcdio-paranoia-devel libvpx-devel librtmp-devel freetype-devel libmodplug-devel
+ speex-devel celt-devel harfbuzz-devel libass-devel opus-devel pulseaudio-devel
+ ocl-icd-devel $(vopt_if x265 x265-devel) $(vopt_if vaapi libva-devel)
+ $(vopt_if vdpau libvdpau-devel) $(vopt_if v4l2 v4l-utils-devel)"
+
+build_options="x265 v4l2 vaapi vdpau"
+build_options_default="v4l2"
+
+case "$XBPS_TARGET_MACHINE" in
+	i686*|x86_64*) build_options_default+=" x265 vaapi vdpau";;
+esac
+
+do_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		case "$XBPS_TARGET_MACHINE" in
+			arm*) _arch="arm";;
+			mips*) _arch="mips";;
+			*) _arch="$XBPS_TARGET_MACHINE";;
+		esac
+
+		_args+=" --enable-cross-compile
+			--sysroot=$XBPS_CROSS_BASE
+			--cross-prefix=${XBPS_CROSS_TRIPLET}-
+			--target-os=linux --arch=${_arch}"
+	fi
+
+	./configure --prefix=/usr --disable-debug --enable-gpl --enable-gnutls \
+		--enable-libcdio --enable-version3 --enable-runtime-cpudetect \
+		--enable-libmp3lame --enable-libvorbis --enable-libxvid \
+		--enable-libx264 --enable-libvpx --enable-libtheora \
+		--enable-shared --enable-static --enable-x11grab --enable-librtmp \
+		--enable-libpulse --enable-libfreetype --enable-libmodplug \
+		--enable-libspeex --enable-libcelt --enable-libass \
+		--disable-libopencore_amrnb --disable-libopencore_amrwb \
+		--disable-libschroedinger --disable-libopenjpeg \
+		--enable-postproc --enable-opencl ${_args} \
+		$(vopt_if x265 '--enable-libx265' '--disable-libx265') \
+		$(vopt_if v4l2 '--enable-libv4l2' '--disable-libv4l2') \
+		$(vopt_enable vaapi) $(vopt_enable vdpau)
+}
+do_build() {
+	rm ${XBPS_WRAPPERDIR}/strip
+	make ${makejobs}
+	make doc/ff{mpeg,play,server}.1
+}
+do_install() {
+	make DESTDIR=${DESTDIR} install install-man
+}
+
+libavcodec_package() {
+	short_desc="FFmpeg codec library"
+	pkg_install() {
+		vmove "usr/lib/libavcodec.so.*"
+	}
+}
+libavdevice_package() {
+	short_desc="FFmpeg device handling library"
+	pkg_install() {
+		vmove "usr/lib/libavdevice.so.*"
+	}
+}
+libavformat_package() {
+	short_desc="FFmpeg file format library"
+	pkg_install() {
+		vmove "usr/lib/libavformat.so.*"
+	}
+}
+libavutil_package() {
+	short_desc="FFmpeg utility library"
+	pkg_install() {
+		vmove "usr/lib/libavutil.so.*"
+	}
+}
+libavfilter_package() {
+	short_desc="FFmpeg audio/video filter library"
+	pkg_install() {
+		vmove "usr/lib/libavfilter.so.*"
+	}
+}
+libpostproc_package() {
+	short_desc="FFmpeg video postprocessing library"
+	pkg_install() {
+		vmove "usr/lib/libpostproc.so.*"
+	}
+}
+libswscale_package() {
+	short_desc="FFmpeg video scaling library"
+	pkg_install() {
+		vmove "usr/lib/libswscale.so.*"
+	}
+}
+libswresample_package() {
+	short_desc="FFmpeg video resampling library"
+	pkg_install() {
+		vmove "usr/lib/libswresample.so.*"
+	}
+}
+ffmpeg-devel_package() {
+	depends="
+		libavcodec>=${version}_${revision}
+		libavdevice>=${version}_${revision}
+		libavformat>=${version}_${revision}
+		libavutil>=${version}_${revision}
+		libavfilter>=${version}_${revision}
+		libpostproc>=${version}_${revision}
+		libswscale>=${version}_${revision}
+		libswresample>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/share/ffmpeg/examples
+		vmove usr/share/man/man3
+	}
+}

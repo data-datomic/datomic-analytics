@@ -1,0 +1,51 @@
+# Template file for 'dhcp'
+pkgname=dhcp
+version=4.3.2
+revision=5
+build_style=gnu-configure
+hostmakedepends="perl"
+conf_files="/etc/dhcpd.conf"
+short_desc="Server from the Internet Software Consortium's implementation of DHCP"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="ISC"
+homepage="https://www.isc.org/software/dhcp"
+distfiles="http://ftp.isc.org/isc/dhcp/${version}/dhcp-${version}.tar.gz"
+checksum=6246c9b358759f6cdcc45104caaf76e732a211dbbbbf64a21f499c8db1298165
+
+pre_configure() {
+	local _args=" --sbindir=/usr/bin --enable-paranoia
+		--with-srv-lease-file=/var/lib/dhcp/dhcpd.leases
+		--with-srv6-lease-file=/var/lib/dhcp/dhcpd6.leases
+		--with-cli-lease-file=/var/lib/dhclient/dhclient.leases
+		--with-cli6-lease-file=/var/lib/dhclient/dhclient6.leases"
+	local cargs="$(echo $configure_args | tr '\n' ' ')"
+
+	# patching bind Makefile to patch with a cross fix while building (WTF?!)
+	sed -i "s#./configure#patch -p0 < $FILESDIR/003_cross_fix.patch \&\& ./configure --with-randomdev=/dev/urandom $cargs#" bind/Makefile
+
+	# set real configure_args
+	export configure_args+="${_args}"
+}
+post_install() {
+	mv ${DESTDIR}/etc/dhclient.conf.example ${DESTDIR}/etc/dhclient.conf
+	mv ${DESTDIR}/etc/dhcpd.conf.example ${DESTDIR}/etc/dhcpd.conf
+	sed -i "s/^/#/" $DESTDIR/etc/dhclient.conf $DESTDIR/etc/dhcpd.conf
+	vsv dhcpd4
+	vsv dhcpd6
+	# Remove development stuff, useless...
+	rm -rf ${DESTDIR}/usr/include ${DESTDIR}/usr/lib ${DESTDIR}/usr/share/man/man3
+}
+
+dhclient_package() {
+	short_desc="Client from the Internet Software Consortium's implementation of DHCP"
+	conf_files="/etc/dhclient.conf"
+	make_dirs="/var/lib/dhclient 0755 root root"
+	pkg_install() {
+		vmove etc/dhclient.conf
+		vmove usr/bin/dhclient
+		vmove usr/share/man/man5/dhclient*
+		vmove usr/share/man/man8/dhclient*
+		vbin client/scripts/linux dhclient-script
+		vsv dhclient
+	}
+}

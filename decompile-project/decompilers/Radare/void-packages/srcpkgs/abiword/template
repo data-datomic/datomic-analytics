@@ -1,0 +1,34 @@
+# Template file for 'abiword'
+pkgname=abiword
+version=3.0.1
+revision=3
+build_style=gnu-configure
+configure_args="--enable-plugins --enable-clipart --enable-templates"
+hostmakedepends="automake libtool flex pkg-config"
+makedepends="libjpeg-turbo-devel libpng-devel fribidi-devel libgsf-devel
+ enchant-devel gtk+3-devel librsvg-devel wv-devel boost-devel libxslt-devel
+ libwmf-devel libchamplain-devel redland-devel libical-devel
+ libgcrypt-devel goffice-devel"
+depends="hicolor-icon-theme desktop-file-utils"
+short_desc="Free word processing program similar to Microsoft(R) Word"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.abisource.com/"
+distfiles="${homepage}/downloads/${pkgname}/${version}/source/${pkgname}-${version}.tar.gz"
+checksum=e094f6fbf0afc5c5538b4894888e7c346f8ee8f49c9d24821dd696d0734865c6
+
+libabiword_package() {
+	short_desc+=" - Runtime library"
+	pkg_install() {
+		vmove "usr/lib/*.so*"
+	}
+}
+abiword-devel_package() {
+	depends="fribidi-devel libgsf-devel wv-devel enchant-devel gtk-devel
+		librsvg-devel libabiword>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+	}
+}

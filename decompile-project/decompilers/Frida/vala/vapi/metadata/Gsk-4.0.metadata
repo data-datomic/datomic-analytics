@@ -1,0 +1,10 @@
+*.ref unowned
+*.unref destroys_instance=false
+
+Renderer
+	// Factory method
+	.new_for_surface symbol_type="function" name="for_surface"
+BorderNode
+	.peek_colors symbol_type="method" instance_idx=0
+	.peek_outline symbol_type="method" instance_idx=0
+	.peek_widths symbol_type="method" instance_idx=0 array

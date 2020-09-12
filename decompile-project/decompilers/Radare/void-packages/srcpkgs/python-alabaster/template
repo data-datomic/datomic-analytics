@@ -1,0 +1,28 @@
+# Template file for 'python-alabaster'
+pkgname=python-alabaster
+version=0.7.7
+revision=1
+noarch=yes
+wrksrc="alabaster-${version}"
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python"
+pycompile_module="alabaster"
+short_desc="Configurable sidebar-enabled Sphinx theme (Python2)"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="https://github.com/bitprophet/alabaster"
+license="BSD"
+distfiles="${PYPI_SITE}/a/alabaster/alabaster-${version}.tar.gz"
+checksum=f416a84e0d0ddbc288f6b8f2c276d10b40ca1238562cd9ed5a751292ec647b71
+
+python3.4-alabaster_package() {
+	noarch=yes
+	depends="python3.4"
+	pycompile_version="3.4"
+	pycompile_module="alabaster"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

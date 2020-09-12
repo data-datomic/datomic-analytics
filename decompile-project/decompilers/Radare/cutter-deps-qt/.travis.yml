@@ -1,0 +1,47 @@
+
+language: c
+dist: xenial
+cache: ccache
+
+matrix:
+  include:
+  - os: linux
+    env: DEPLOY_FILE=cutter-deps-qt-linux.tar.gz
+#  - os: osx
+#    env: DEPLOY_FILE=cutter-deps-qt-macos.tar.gz
+#    osx_image: xcode10.3
+
+addons:
+  homebrew:
+    packages:
+    - ccache
+    update: true
+
+  apt:
+    update: true
+    packages:
+    - libxcb1-dev
+    - libxkbcommon-dev
+    - libxkbcommon-x11-dev
+    - libgtk-3-dev
+    - libgl1-mesa-dev
+    - libglu1-mesa-dev
+
+install:
+#- if [ "$TRAVIS_OS_NAME" == "macos" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi # for ccache
+- if [ "$TRAVIS_OS_NAME" == "windows" ]; then choco install -y make visualstudio2017-workload-vctools; fi
+- if [ "$TRAVIS_OS_NAME" == "windows" ]; then source vc-env.sh; fi
+
+script: 
+- echo "PATH=$PATH"
+- make
+
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: FQHU+nmwzo8ADZz/x3FiwuAEg2p1j708NbGzc2QzIPGinWqqD/wYCu0u8iRZ6PycgO95okVvZ0CIctr7R8FUvH37J2xhcS9V0w6988A0BZxr9zYXnq+XoR2Ko88Arque3baVboH89Q1++s9R5k47TXFNvLQbZNmUgUAppnl1oRnnwK0XYOeNwoFUKEzhbLoKUOisBZTlkojDka9+tG9Vb1gLhB/iaWHitrhKS2F0oOicUZySJQ/eUPcCvDUvfp/pyiTPYOP5ObK4SRtLwuvZ0F3ZHcW+xQ43MZ9Yy5RNBSmYihwKqGzpx7jf8+xElzFYRyT7+dva3m5/Ka1oS+bRWeQP584tqxHyIL8dsO0rd//oaJet/X6Zt8herSp9V92IO2NfiafafJKb/jSxFCAviloZxYzCmL9Bc4WyXEtQ6r5KDSQ+k/lGoakzyUDWld8Kd3JlkbfPXvUoj15zWlSqIPE51k7qZxVLfAN2o8HuWG6XtjbCrcotS61W7YJxeD3CKg7h1gFX3U/npEcXkLIFUTeSDEqbrTs8rpo6SRzS6OCGUOBo0XsT2BuWrGcZrJYFSDI6Zr/rMDhlPSBy1kQcSGSboRNVG9obZc4exYhz7tCIv87w6FSA8TR+C2hDo5iYqcj/YirsZqNe2re4LOr6Pl0EPwAW+r/Z6hUsLQMO6Dw=
+  file: "${DEPLOY_FILE}"
+  on:
+    tags: true
+    repo: radareorg/cutter-deps-qt

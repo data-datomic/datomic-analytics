@@ -1,0 +1,20 @@
+itay_cohen:
+    name: Itay Cohen
+    twitter: https://twitter.com/megabeets_
+    github: https://github.com/itayc0hen
+    website: https://www.megabeets.net
+    bio: Itay Cohen (aka Megabeets) is a security researcher and a reverse engineer. He is a maintainer of Cutter and a core member of radare2.
+    image: /assets/images/blog/authors/megabeets.png
+  
+cutter:
+    name: Cutter Team
+    twitter: https://twitter.com/r2gui
+    github: https://github.com/radareorg/cutter
+    website: https://cutter.re
+    bio: The team behind Cutter.
+    image: /assets/images/blog/authors/cutter.png
+
+nirmal_manoj:
+    name: Nirmal Manoj
+    bio: Nirmal Manoj is a CS undergraduate student at IIIT Hyderabad, India. He was a GSoC 2020 student who worked on improving the decompiler widget.
+    image: /assets/images/blog/authors/nirmal_manoj.png

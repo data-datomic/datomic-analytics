@@ -1,0 +1,14 @@
+# Template file for 'splint'
+pkgname=splint
+version=3.1.2
+revision=3
+build_style=gnu-configure
+hostmakedepends="flex"
+makedepends="libfl-devel"
+short_desc="Secure Programming Lint"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.splint.org"
+license="GPL-2"
+distfiles="http://www.splint.org/downloads/$pkgname-$version.src.tgz"
+checksum=c78db643df663313e3fa9d565118391825dd937617819c6efc7966cdf444fb0a
+disable_parallel_build=yes

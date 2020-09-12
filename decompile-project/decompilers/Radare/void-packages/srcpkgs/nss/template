@@ -1,0 +1,117 @@
+# Template file for 'nss'
+pkgname=nss
+version=3.21
+revision=1
+hostmakedepends="perl"
+makedepends="zlib-devel nspr-devel sqlite-devel"
+depends="nspr>=4.11"
+short_desc="Mozilla Network Security Services"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.mozilla.org/projects/security/pki/nss/"
+license="MPL-2.0, GPL-2, LGPL-2.1"
+distfiles="${MOZILLA_SITE}/security/nss/releases/NSS_${version//\./_}_RTM/src/nss-${version}.tar.gz"
+checksum=3f7a5b027d7cdd5c0e4ff7544da33fdc6f56c2f8c27fff02938fd4a6fbe87239
+
+do_build() {
+	# Respect LDFLAGS
+	sed -e 's/\$(MKSHLIB) -o/\$(MKSHLIB) \$(LDFLAGS) -o/g' -i nss/coreconf/rules.mk
+
+	export LIBRUNPATH=
+	export BUILD_OPT=1
+	export NSS_USE_SYSTEM_SQLITE=1
+	export NSS_ENABLE_ECC=1
+
+	case "$XBPS_MACHINE" in
+		aarch64*|x86_64*) _use64="USE_64=1";;
+	esac
+
+	cd nss
+	# Build nsinstall for host.
+	make ${_use64} -C coreconf
+
+	if [ "$CROSS_BUILD" ]; then
+		case "$XBPS_TARGET_MACHINE" in
+			arm*) _ARCH="arm";;
+			mips*) _ARCH="mips";;
+			*) msg_error "$pkgver: unknown target machine\n";;
+		esac
+		# ... and then copy it to $wrksrc.
+		find ${wrksrc} -type f -name nsinstall -exec cp {} ${wrksrc} \;
+		make clean
+
+		export NSPR_INCLUDE_DIR=${XBPS_CROSS_BASE}/usr/include/nspr
+		export NSPR_LIB_DIR=${XBPS_CROSS_BASE}/usr/lib
+		export XCFLAGS="${CFLAGS}"
+
+		make CROSS_COMPILE=1 OS_TEST="${_ARCH}" NSINSTALL="${wrksrc}/nsinstall" \
+			CC="$CC" CCC="$CXX" RANLIB="$RANLIB" -C lib/dbm
+		make CROSS_COMPILE=1 OS_TEST="${_ARCH}" NSINSTALL="${wrksrc}/nsinstall" \
+			CC="$CC" CCC="$CXX" RANLIB="$RANLIB"
+	else
+		# native build
+		export NSPR_INCLUDE_DIR=/usr/include/nspr
+		export NSPR_LIB_DIR=/usr/lib
+		export XCFLAGS="${CFLAGS}"
+
+		make ${_use64} -C lib/dbm
+		make ${_use64}
+	fi
+}
+
+do_install() {
+	vmkdir usr/lib/pkgconfig
+	vmkdir usr/bin
+	vmkdir usr/include/nss
+
+	NSS_VMAJOR=$(grep "#define.*NSS_VMAJOR" nss/lib/nss/nss.h | awk '{print $3}')
+	NSS_VMINOR=$(grep "#define.*NSS_VMINOR" nss/lib/nss/nss.h | awk '{print $3}')
+	NSS_VPATCH=$(grep "#define.*NSS_VPATCH" nss/lib/nss/nss.h | awk '{print $3}')
+
+	sed ${FILESDIR}/nss.pc.in \
+		-e "s,%libdir%,/usr/lib,g" \
+		-e "s,%prefix%,/usr,g" \
+		-e "s,%exec_prefix%,/usr/bin,g" \
+		-e "s,%includedir%,/usr/include/nss,g" \
+		-e "s,%NSPR_VERSION%,${version},g" \
+		-e "s,%NSS_VERSION%,${version},g" > \
+		${DESTDIR}/usr/lib/pkgconfig/nss.pc
+
+	ln -sf nss.pc ${DESTDIR}/usr/lib/pkgconfig/mozilla-nss.pc
+	chmod 644 ${DESTDIR}/usr/lib/pkgconfig/*.pc
+
+	sed ${FILESDIR}/nss-config.in \
+		-e "s,@libdir@,/usr/lib,g" \
+		-e "s,@prefix@,/usr/bin,g" \
+		-e "s,@exec_prefix@,/usr/bin,g" \
+		-e "s,@includedir@,/usr/include/nss,g" \
+		-e "s,@MOD_MAJOR_VERSION@,${NSS_VMAJOR},g" \
+		-e "s,@MOD_MINOR_VERSION@,${NSS_VMINOR},g" \
+		-e "s,@MOD_PATCH_VERSION@,${NSS_VPATCH},g" \
+		> ${DESTDIR}/usr/bin/nss-config
+	chmod 755 ${DESTDIR}/usr/bin/nss-config
+
+	for f in libsoftokn3.so libfreebl3.so libnss3.so libnssutil3.so \
+		libssl3.so libsmime3.so libnssckbi.so libnssdbm3.so; do
+		install -m755 dist/*.OBJ/lib/${f} ${DESTDIR}/usr/lib
+	done
+
+	install -m644 dist/*.OBJ/lib/libcrmf.a ${DESTDIR}/usr/lib
+
+	for f in certutil cmsutil crlutil modutil pk12util shlibsign \
+		signtool signver ssltap; do
+		install -m755 dist/*.OBJ/bin/${f} ${DESTDIR}/usr/bin
+	done
+
+	install -m644 dist/public/nss/*.h ${DESTDIR}/usr/include/nss
+}
+
+nss-devel_package() {
+	depends="nspr-devel>=4.10 nss>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin/nss-config
+		vmove usr/lib/pkgconfig
+		vmove usr/include
+		vmove "usr/lib/*.a"
+	}
+}

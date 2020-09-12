@@ -1,0 +1,23 @@
+# Template file for 'mcelog'
+pkgname=mcelog
+version=128
+revision=1
+conf_files="/etc/mcelog/mcelog.conf"
+only_for_archs="i686 i686-musl x86_64 x86_64-musl"
+short_desc="Decode kernel machine check log on x86 machines"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="GPL-2"
+homepage="http://www.mcelog.org/"
+distfiles="https://github.com/andikleen/${pkgname}/archive/v${version}.tar.gz"
+checksum=a13e9098f93c0d026d4a70d825fc7860ad24bbb88a1bf303b17a15aeaeb38adc
+
+do_build() {
+	make CC=$CC CFLAGS="$CFLAGS $LDFLAGS" ${makejobs}
+}
+do_install() {
+	vmkdir usr/share/man/man5
+	vmkdir usr/share/man/man8
+	make PREFIX=/usr DESTDIR=${DESTDIR} install
+	mv ${DESTDIR}/usr/sbin ${DESTDIR}/usr/bin
+	vsv mcelog
+}

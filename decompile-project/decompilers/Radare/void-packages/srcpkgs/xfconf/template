@@ -1,0 +1,26 @@
+# Template file for 'xfconf'
+pkgname=xfconf
+version=4.12.0
+revision=1
+build_options="perl"
+build_style=gnu-configure
+configure_args="$(vopt_enable perl perl-bindings)"
+hostmakedepends="pkg-config intltool"
+makedepends="dbus-glib-devel libxfce4util-devel $(vopt_if perl 'perl-ExtUtils-Depends perl-ExtUtils-PkgConfig perl-Glib')"
+short_desc="Xfce hierarchical (tree-like) configuration system"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2, LGPL-2.1"
+homepage="http://xfce.org"
+distfiles="http://archive.xfce.org/src/xfce/xfconf/${version%.*}/$pkgname-$version.tar.bz2"
+checksum=9910eaea8405336415d4d7f3056403f8c67bc23ba0dce251eac35205c603b156
+
+xfconf-devel_package() {
+	depends="dbus-glib-devel xfconf>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/share/gtk-doc
+	}
+}

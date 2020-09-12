@@ -1,0 +1,21 @@
+# Template file for 'chroot-gawk'
+pkgname=chroot-gawk
+version=4.0.0
+revision=5
+wrksrc="gawk-${version}"
+build_style=gnu-configure
+configure_args="--disable-nls --without-readline ac_cv_libsigsegv=/bin/false"
+short_desc="The GNU awk utility -- for xbps-src use"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.gnu.org/directory/GNU/gawk.html"
+distfiles="${GNU_SITE}/gawk/gawk-$version.tar.xz"
+checksum=abbef4dbab9db0f159c71b941fd93fd1dcb995f5e8a23396d1c2390801c46edf
+
+bootstrap=yes
+provides="awk-0_1"
+replaces="awk>=0"
+
+post_install() {
+	rm -rf ${DESTDIR}/usr/share
+}

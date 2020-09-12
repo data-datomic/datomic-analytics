@@ -1,0 +1,48 @@
+# Template file for 'elfutils'
+pkgname=elfutils
+version=0.164
+revision=1
+build_style=gnu-configure
+configure_args="--program-prefix=eu-"
+hostmakedepends="automake libtool"
+makedepends="zlib-devel bzip2-devel liblzma-devel"
+short_desc="Utilities to handle ELF object files"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="https://fedorahosted.org/elfutils/"
+distfiles="https://fedorahosted.org/releases/e/l/${pkgname}/${version}/${pkgname}-${version}.tar.bz2"
+checksum=9683c025928a12d06b7fe812928aa6235249e22d197d086f7084606a48165900
+
+# Suppress certain warnings to not fail for -Werror
+CFLAGS="-Wno-unused-result -Wno-format-nonliteral"
+
+case "$XBPS_TARGET_MACHINE" in
+	*-musl) makedepends+=" argp-standalone musl-fts-devel musl-obstack" ;;
+esac
+
+post_extract() {
+	case "$XBPS_TARGET_MACHINE" in
+		*-musl) cp ${FILESDIR}/error.h lib
+			cp ${FILESDIR}/error.h src
+	esac
+}
+
+pre_configure() {
+	autoreconf -if
+}
+
+libelf_package() {
+	short_desc+=" - runtime library"
+	pkg_install() {
+		vmove "usr/lib/*.so*"
+		vmove usr/lib/elfutils
+	}
+}
+elfutils-devel_package() {
+	depends="libelf>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+	}
+}

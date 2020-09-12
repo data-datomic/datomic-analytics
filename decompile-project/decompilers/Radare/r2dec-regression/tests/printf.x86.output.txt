@@ -1,0 +1,20 @@
+    ; assembly                                   | /* r2dec pseudo code output */
+                                                 | /* testsuite @ 0x0 */
+                                                 | #include <stdint.h>
+                                                 |  
+    ; (fcn) sym.main ()                          | int32_t main (int32_t argc, char ** argv) {
+                                                 |     char ** local_10h;
+                                                 |     int32_t local_4h;
+                                                 |     rdi = argc;
+                                                 |     rsi = argv;
+    0x00001139 push rbp                          |     
+    0x0000113a mov rbp, rsp                      |     
+    0x0000113d sub rsp, 0x10                     |     
+    0x00001141 mov dword [rbp - 4], edi          |     local_4h = edi;
+    0x00001144 mov qword [rbp - 0x10], rsi       |     local_10h = rsi;
+    0x00001148 lea rdi, [rip + 0xeb5]            |     
+    0x0000114f call 0x1030                       |     puts ("hello world");
+    0x00001154 mov eax, 0                        |     eax = 0;
+    0x00001159 leave                             |     
+    0x0000115a ret                               |     return eax;
+                                                 | }

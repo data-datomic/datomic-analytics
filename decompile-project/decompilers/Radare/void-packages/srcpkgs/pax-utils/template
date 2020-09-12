@@ -1,0 +1,14 @@
+# Template file for 'pax-utils'
+pkgname=pax-utils
+version=1.1.4
+revision=1
+build_style=gnu-configure
+configure_args="--with-caps"
+hostmakedepends="pkg-config"
+makedepends="libcap-devel"
+short_desc="PaX aware and related utilities for ELF binaries"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="GPL-2"
+homepage="https://wiki.gentoo.org/wiki/Hardened/PaX_Utilities"
+distfiles="http://distfiles.gentoo.org/distfiles/${pkgname}-${version}.tar.xz"
+checksum=796860fbd48c5f811e699e8492dc1110459bad0a62efa8d346b74a4f6f556414

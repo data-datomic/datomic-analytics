@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/esmify undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/esmify",
+    "repo": "https://github.com/frida/esmify",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/esmify",
+    "startTime": "2020-09-12T11:02:15.009Z",
+    "endTime": "2020-09-12T11:02:16.438Z",
+    "childProcessPid": 27392,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--esmify--27392"
+}

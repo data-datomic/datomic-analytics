@@ -1,0 +1,15 @@
+# Template build file for 'perl-DBI'.
+pkgname=perl-DBI
+version=1.634
+revision=1
+wrksrc="DBI-${version}"
+build_style=perl-module
+hostmakedepends="perl"
+makedepends="${hostmakedepends}"
+depends="${makedepends}"
+short_desc="Database independent interface for Perl"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://search.cpan.org/dist/DBI"
+license="Artistic, GPL-1"
+distfiles="${CPAN_SITE}/DBI/DBI-$version.tar.gz"
+checksum=250712f385864818abfba409420d16d9ee61f1cc73ac85159d054a5ee86d1450

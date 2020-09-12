@@ -1,0 +1,29 @@
+# Template file for 'gnome-shell'
+pkgname=gnome-shell
+version=3.18.3
+revision=1
+build_style=gnu-configure
+configure_args="--disable-schemas-compile --disable-systemd LDFLAGS="
+hostmakedepends="
+ pkg-config intltool gnome-doc-utils $(vopt_if gir gobject-introspection) python3.4"
+makedepends="
+ evolution-data-server gnome-desktop-devel
+ json-glib-devel startup-notification-devel network-manager-applet-devel
+ clutter-devel gnome-bluetooth-devel mutter-devel
+ gjs-devel telepathy-logger-devel libcanberra-devel polkit-devel libcroco-devel
+ pulseaudio-devel libgudev-devel gst-plugins-base1-devel
+ caribou-devel gir-freedesktop gnome-control-center-devel
+ folks-devel gnome-menus-devel"
+depends="caribou>=0.4.12 pulseaudio glxinfo desktop-file-utils
+ gir-freedesktop gnome-control-center>=3.16 ConsoleKit2 upower"
+short_desc="GNOME core user interface"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://live.gnome.org/GnomeShell"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=8517baf8606f970ebf38222411eb7563cab2ae5efbfb088954ce23705b67519b
+
+build_options="gir"
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default+=" gir"
+fi

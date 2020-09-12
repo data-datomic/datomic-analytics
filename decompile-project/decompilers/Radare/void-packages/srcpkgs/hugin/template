@@ -1,0 +1,26 @@
+# Template file for 'hugin'
+pkgname=hugin
+version=2015.0.0
+revision=2
+build_style=cmake
+configure_args="-DwxWidgets_CONFIG_EXECUTABLE=/usr/bin/wx-config-3.0"
+pycompile_module="hpi.py hsi.py"
+pycompile_dirs="usr/share/hugin/data/plugins usr/share/hugin/data/plugins-templates"
+maintainer="Dominik Honnef <dominik@honnef.co>"
+hostmakedepends="cmake pkg-config exiftool swig"
+makedepends="wxWidgets-devel tiff-devel libpng-devel libopenexr-devel libgomp-devel
+ exiv2-devel libfreeglut-devel libpano13-devel boost-devel vigra-devel sqlite-devel
+ lensfun-devel python-devel glew-devel libXmu-devel libXi-devel glu-devel"
+depends="exiftool"
+license="GPL-2"
+homepage="http://hugin.sourceforge.net/"
+short_desc="An easy to use panoramic imaging toolchain"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}/${pkgname}-${version%.*}/${pkgname}-${version}.tar.bz2"
+checksum=2cd93c110be95d439f9e68653f3738d059a26f5c28973f75475ef59cbaa2cbbd
+
+pre_configure() {
+	sed -i '/<sys\/sysctl.h>/d' src/hugin_base/hugin_utils/platform.cpp
+	sed -i 's|-O3||g' src/celeste/CMakeLists.txt
+	# Fix compiling against lensfun-0.3.0
+	sed '/LF_DIST_MODEL_FOV1/d' -i src/hugin_base/lensdb/LensDB.cpp
+}

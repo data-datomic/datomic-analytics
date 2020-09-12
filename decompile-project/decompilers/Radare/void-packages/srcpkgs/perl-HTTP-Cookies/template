@@ -1,0 +1,16 @@
+# Template build file for 'perl-HTTP-Cookies'.
+pkgname=perl-HTTP-Cookies
+version=6.01
+revision=4
+wrksrc="${pkgname/perl-/}-${version}"
+build_style=perl-module
+hostmakedepends="perl"
+makedepends="perl-HTTP-Message"
+depends="${makedepends}"
+noarch="yes"
+short_desc="HTTP::Cookies - HTTP cookie jars"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://search.cpan.org/dist/HTTP-Cookies"
+license="Artistic, GPL-1"
+distfiles="${CPAN_SITE}/HTTP/HTTP-Cookies-$version.tar.gz"
+checksum=f5d3ade383ce6389d80cb0d0356b643af80435bb036afd8edce335215ec5eb20

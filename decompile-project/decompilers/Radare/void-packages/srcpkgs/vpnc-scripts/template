@@ -1,0 +1,15 @@
+# Template file for 'vpnc-scripts'
+pkgname=vpnc-scripts
+version=20150318
+revision=1
+noarch=yes
+short_desc="Network configuration scripts for VPNC and OpenConnect"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="GPL-2"
+homepage="http://www.infradead.org/openconnect/vpnc-script.html"
+distfiles="ftp://ftp.infradead.org/pub/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=0b9f932096b078195ccdd5d67260d9058756ba338938b63598b2f9194064a696
+
+do_install() {
+	vinstall vpnc-script 755 usr/libexec/vpnc-scripts
+}

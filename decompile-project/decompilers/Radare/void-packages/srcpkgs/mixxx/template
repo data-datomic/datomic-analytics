@@ -1,0 +1,37 @@
+# Template file for 'mixxx'
+pkgname=mixxx
+version=1.11.0
+revision=4
+hostmakedepends="scons pkg-config"
+makedepends="qt-devel portaudio-devel libusb-devel libmad-devel protobuf-devel
+ libid3tag-devel libvorbis-devel libflac-devel glu-devel taglib-devel
+ libsndfile-devel portmidi-devel vamp-plugin-sdk-devel faad2-devel
+ libmp4v2-devel"
+depends="qt-plugin-sqlite"
+short_desc="Open source digital DJing software that allows mixing music"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+homepage="http://www.mixxx.org"
+license="GPL-2"
+distfiles="http://downloads.mixxx.org/${pkgname}-${version}/${pkgname}-${version}-src.tar.gz"
+checksum="00961b5d6c1e6d6686d76e55de474b943bbeff4e59b163dddd3d9940dc1b0331"
+_scons_args="qtdir=/usr/include shoutcast=0 faad=1 tuned=0 prefix=/usr"
+
+do_build() {
+	if [ "$XBPS_TARGET_MACHINE" = "i686" ]; then
+		export CFLAGS+=" -msse"
+		export CXXFLAGS+=" -msse"
+	fi
+	sed -i \
+		-e 's/branch_name = .*/branch_name = "mixxx"/' \
+		-e 's/bazaar_revision = .*/bazaar_revision = "'$version'"/' \
+		src/SConscript
+
+	scons ${makejobs} ${_scons_args}
+}
+do_install() {
+	if [ "$XBPS_TARGET_MACHINE" = "i686" ]; then
+		export CFLAGS+=" -msse"
+		export CXXFLAGS+=" -msse"
+	fi
+	scons ${_scons_args} install_root=${DESTDIR}/usr install
+}

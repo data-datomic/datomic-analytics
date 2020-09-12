@@ -1,0 +1,15 @@
+# Template build file for 'perl-Test-Exception'.
+pkgname=perl-Test-Exception
+version=0.41
+revision=1
+wrksrc="${pkgname#*-}-${version}"
+build_style=perl-module
+hostmakedepends="perl perl-Sub-Uplevel"
+depends="${hostmakedepends}"
+noarch=yes
+short_desc='Test::Exception - Provides modules for testing exception based code.'
+maintainer="Enguerrand de Rochefort <voidlinux@rochefort.de>"
+homepage="http://search.cpan.org/dist/Test-Exception/"
+license="Artistic, GPL-1"
+distfiles="$CPAN_SITE/Test/Test-Exception-${version}.tar.gz"
+checksum=30ce34dcb9ed8be81c5917d1b35006fee6141bb085d6bbd973235358d9995b8e

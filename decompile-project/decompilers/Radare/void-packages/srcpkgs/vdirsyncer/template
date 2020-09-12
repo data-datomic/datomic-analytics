@@ -1,0 +1,27 @@
+# Template file for 'vdirsyncer'
+pkgname=vdirsyncer
+version=0.7.5
+revision=1
+noarch=yes
+build_style=python-module
+hostmakedepends="python-setuptools"
+depends="python-atomicwrites python-click python-click-log python-click-threading
+ python-lxml python-setuptools python-requests-toolbelt"
+pycompile_module="vdirsyncer"
+short_desc="Synchronize calendars and addressbooks"
+maintainer="Oliver Kiddle <okiddle@yahoo.co.uk>"
+license="MIT"
+homepage="https://vdirsyncer.readthedocs.org/"
+distfiles="${PYPI_SITE}/v/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=3f51c1fabac7f231327deb098998185cbd77564dc1bfc29f4bc8d89226c96a37
+
+pre_build() {
+	sed -e '/use_scm_version/,/setuptools_scm/ d' \
+		-e "/author=/ a\
+		version='${version}'," \
+		-i setup.py
+}
+post_install() {
+	vsconf config.example
+	vlicense LICENSE
+}

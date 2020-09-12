@@ -1,0 +1,38 @@
+# Template file for 'openimageio'
+pkgname=openimageio
+version=1.5.22
+revision=1
+wrksrc=oiio-Release-${version}
+build_style=cmake
+configure_args="-DUSE_OPENGL=0 -DUSE_QT=0 -DUSE_PYTHON=0 -DOIIO_BUILD_TESTS=0"
+case "$XBPS_TARGET_MACHINE" in
+	i686*|x86_64*) configure_args+=" -DUSE_SIMD=sse2" ;;
+esac
+hostmakedepends="cmake pkg-config"
+makedepends="boost-devel giflib-devel libraw-devel libopenjpeg-devel libwebp-devel
+ libjpeg-turbo-devel tiff-devel libpng-devel libopenexr-devel freetype-devel
+ ffmpeg-devel opencolorio-devel"
+short_desc="Library for reading and writing images"
+maintainer="lemmi <lemmi@nerd2nerd.org>"
+license="BSD"
+homepage="https://sites.google.com/site/openimageio/home"
+distfiles="https://github.com/OpenImageIO/oiio/archive/Release-${version}.tar.gz"
+checksum=48e30ad5dc3745b9dc04a2cf7a372c605a0b07a7b0140980ff8c062df4dcdea4
+nocross=yes # -> ilmbase
+
+pre_build() {
+	find ${wrksrc} -type f -exec sed -i "{}" -e "s;<sys/poll\.h>;<poll.h>;g" \;
+}
+
+post_install() {
+	vlicense LICENSE
+}
+
+openimageio-devel_package() {
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+	}
+}

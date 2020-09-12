@@ -1,0 +1,33 @@
+# Template file for 'libpeas'
+pkgname=libpeas
+version=1.16.0
+revision=1
+build_style=gnu-configure
+configure_args="--without-demo --disable-demo"
+hostmakedepends="pkg-config intltool gobject-introspection glib-devel"
+makedepends="vala-devel libgirepository-devel gtk+3-devel python-gobject-devel"
+depends="python-gobject hicolor-icon-theme gjs>=1.38"
+short_desc="Gobject-based plugins engine"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gtk.org/"
+license="GPL-2"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=b093008ecd65f7d55c80517589509698ff15ad41f664b11a3eb88ff461b1454e
+
+post_install() {
+	# Remove demo.
+	rm -rf ${DESTDIR}/usr/bin ${DESTDIR}/usr/lib/peas-demo
+}
+
+libpeas-devel_package() {
+	depends="libglib-devel gtk+3-devel>=3.8 libgirepository-devel
+		${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gir-1.0
+		vmove usr/share/gtk-doc
+	}
+}

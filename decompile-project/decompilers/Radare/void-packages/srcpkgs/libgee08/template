@@ -1,0 +1,37 @@
+# Template file for 'libgee08'
+pkgname=libgee08
+version=0.18.0
+wrksrc="libgee-${version}"
+revision=1
+build_style=gnu-configure
+configure_args="--disable-static $(vopt_enable gir instrospection)"
+hostmakedepends="pkg-config intltool $(vopt_if gir 'vala-devel gobject-introspection')"
+makedepends="libglib-devel"
+short_desc="GObject collection library (0.8.x API)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://live.gnome.org/Libgee"
+distfiles="${GNOME_SITE}/libgee/${version%.*}/libgee-${version}.tar.xz"
+checksum=4ad99ef937d071b4883c061df40bfe233f7649d50c354cf81235f180b4244399
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+libgee08-devel_package() {
+	depends="libglib-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+			vmove usr/share/vala
+		fi
+	}
+}

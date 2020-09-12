@@ -1,0 +1,26 @@
+# Template file for 'mopidy'
+pkgname=mopidy
+version=1.1.1
+revision=1
+wrksrc="Mopidy-$version"
+noarch=yes
+build_style=python-module
+pycompile_module=mopidy
+hostmakedepends="python-setuptools"
+depends="gst-python gst-plugins-good1 gst-plugins-ugly1 gst-plugins-bad1 python-tornado python-pykka python-setuptools"
+conf_files="/etc/mopidy.conf"
+system_accounts="mopidy"
+mopidy_homedir="/var/lib/mopidy/"
+mopidy_groups="audio"
+make_dirs="/var/lib/mopidy 0755 mopidy mopidy"
+short_desc="Music server for MPD, Spotify, SoundClound and others"
+maintainer="allan <mail@may.mooo.com>"
+license="Apache-2.0"
+homepage="http://www.mopidy.com"
+distfiles="${PYPI_SITE}/M/Mopidy/Mopidy-${version}.tar.gz"
+checksum=823e1ba8781a107c69e8c1cd8fad9be81dc003c946e9d54fe41cadaad3a0e78e
+
+post_install() {
+	vconf $FILESDIR/mopidy.conf
+	vsv mopidy
+}

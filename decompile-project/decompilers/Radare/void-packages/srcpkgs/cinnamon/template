@@ -1,0 +1,60 @@
+# Template file for 'cinnamon'
+pkgname=cinnamon
+version=2.8.6
+revision=1
+wrksrc="Cinnamon-${version}"
+short_desc="GNOME3 fork of Linux Mint with GNOME2 aspect"
+build_style=gnu-configure
+configure_args="--disable-static --disable-schemas-compile
+ --enable-compile-warnings=no LDFLAGS="
+hostmakedepends="automake libtool gnome-common pkg-config gobject-introspection
+ gettext-devel glib-devel intltool xmlto docbook-xml gtk-doc git"
+makedepends="cjs-devel clutter-gtk-devel cinnamon-menus-devel gstreamer1-devel
+ muffin-devel webkitgtk-devel libgnomekbd-devel polkit-devel libcanberra-devel
+ startup-notification-devel pulseaudio-devel dbus-glib-devel GConf-devel
+ libgnome-keyring-devel NetworkManager-devel libcroco-devel gtk+3-devel"
+depends="
+ accountsservice caribou cinnamon-settings-daemon>=${version%.*} cinnamon-session>=${version%.*} muffin>=${version%.*}
+ cinnamon-control-center>=${version%.*} cinnamon-screensaver>=${version%.*} cinnamon-translations>=${version%.*} nemo>=${version%.*}
+ gnome-themes-standard gnome-themes-standard-metacity gnome-backgrounds network-manager-applet
+ python-cairo python-dbus python-pam python-pexpect python-inotify python-lxml python-Pillow
+ polkit-gnome upower0"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://cinnamon.linuxmint.com/"
+distfiles="https://github.com/linuxmint/${pkgname}/archive/${version}.tar.gz"
+checksum=c262ae64320d4db8bffdfa7f05ab5a82449e96035b35dd8fb9353741323cb9a2
+
+pycompile_dirs="
+ /usr/share/cinnamon/cinnamon-slideshow
+ /usr/share/cinnamon/cinnamon-settings-users
+ /usr/share/cinnamon/cinnamon-settings
+ /usr/share/cinnamon/cinnamon-screensaver-lock-dialog
+ /usr/share/cinnamon/cinnamon-menu-editor
+ /usr/share/cinnamon/cinnamon-looking-glass
+ /usr/share/cinnamon/cinnamon-json-makepot
+ /usr/share/cinnamon/cinnamon-desktop-editor"
+
+pre_configure() {
+	# Add polkit agent to required components
+	sed -i 's/RequiredComponents=\(.*\)$/RequiredComponents=\1polkit-gnome-authentication-agent-1;/' files/usr/share/cinnamon-session/sessions/cinnamon*.session
+
+	# fix for the python2 PAM module
+	sed -i 's:import PAM:import pam:' files/usr/share/cinnamon/cinnamon-settings/modules/cs_user.py
+
+	# Use pkexec instead of gksu
+	sed -i 's/gksu/pkexec/' files/usr/bin/cinnamon-settings-users
+
+	# Check for the cc-panel path, not for the unneeded binary
+	sed -i 's|/usr/bin/cinnamon-control-center|/usr/lib/cinnamon-control-center-1/panels|' files/usr/bin/cinnamon-settings
+
+	# Cinnamon has no upstream backgrounds, use GNOME backgrounds instead
+	sed -i 's|/usr/share/cinnamon-background-properties|/usr/share/gnome-background-properties|' \
+		files/usr/share/cinnamon/cinnamon-settings/modules/cs_backgrounds.py
+
+	# Fix selected background color in Cinnamon Settings for Adwaita theme
+	sed -i 's/@selected_bg_color;/@theme_selected_bg_color;/' \
+		files/usr/share/cinnamon/cinnamon-settings/cinnamon-settings.py
+
+	NOCONFIGURE=1 ./autogen.sh
+}

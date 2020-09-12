@@ -1,0 +1,31 @@
+# Template file for 'allegro4'.
+pkgname=allegro4
+version=4.4.2
+revision=4
+wrksrc="allegro-${version}"
+build_style=cmake
+configure_args="-DWANT_DOCS=OFF"
+hostmakedepends="pkg-config cmake"
+makedepends="zlib-devel alsa-lib-devel jack-devel libXpm-devel libXxf86vm-devel
+ libXxf86dga-devel libXcursor-devel libvorbis-devel libpng-devel glu-devel"
+# libGL.so is dlopen()ed.
+depends="libGL"
+short_desc="Portable library mainly aimed at video game and multimedia programming"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Allegro License (MIT alike)"
+homepage="http://alleg.sourceforge.net/"
+distfiles="${SOURCEFORGE_SITE}/alleg/allegro-$version.tar.gz"
+checksum=1b21e7577dbfada02d85ca4510bd22fedaa6ce76fde7f4838c7c1276eb840fdc
+nocross=yes
+
+allegro4-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/bin/allegro-config
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+	}
+}

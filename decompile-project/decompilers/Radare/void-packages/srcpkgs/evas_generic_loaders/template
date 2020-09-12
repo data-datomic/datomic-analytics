@@ -1,0 +1,29 @@
+# Template file for 'evas_generic_loaders'
+pkgname=evas_generic_loaders
+version=1.16.0
+revision=2
+build_style=gnu-configure
+configure_args="$(vopt_enable gstreamer) $(vopt_enable pdf poppler)
+ $(vopt_enable ps spectre) $(vopt_enable svg) $(vopt_enable raw libraw)"
+hostmakedepends="pkg-config"
+makedepends="efl-devel
+ $(vopt_if gstreamer gst-plugins-base1-devel)
+ $(vopt_if pdf poppler-devel)
+ $(vopt_if ps libspectre-devel)
+ $(vopt_if svg librsvg-devel)
+ $(vopt_if raw libraw-devel)"
+depends="efl>=${version}"
+homepage="http://enlightenment.org"
+short_desc="Additional generic loaders for Evas"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+distfiles="http://download.enlightenment.org/rel/libs/${pkgname}/${pkgname}-${version}.tar.xz"
+checksum=d5799c212c36286b954c111bbd2d87950b0c96c5ad0ace8ebcad9918f38883c6
+
+build_options="gstreamer pdf ps raw svg"
+build_options_default="gstreamer pdf raw svg"
+# XXX disable ps option in cross mode.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default+=" ps"
+fi
+

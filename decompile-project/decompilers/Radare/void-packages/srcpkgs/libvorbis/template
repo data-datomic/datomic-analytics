@@ -1,0 +1,29 @@
+# Template file for 'libvorbis'.
+pkgname=libvorbis
+version=1.3.5
+revision=1
+build_style=gnu-configure
+hostmakedepends="automake libtool pkg-config"
+makedepends="libogg-devel"
+short_desc="The Vorbis General Audio Compression Codec"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+homepage="http://www.xiph.org/vorbis/"
+distfiles="http://downloads.xiph.org/releases/vorbis/${pkgname}-${version}.tar.gz"
+checksum=6efbcecdd3e5dfbf090341b485da9d176eb250d893e3eb378c428a2db38301ce
+
+pre_configure() {
+	autoreconf -fi -I m4
+}
+
+libvorbis-devel_package() {
+	depends="libogg-devel libvorbis>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

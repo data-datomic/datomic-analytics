@@ -1,0 +1,5 @@
+gopath/
+bin/
+radare2-regressions/
+radare2-regressions
+exported/

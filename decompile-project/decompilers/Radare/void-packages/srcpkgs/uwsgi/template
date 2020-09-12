@@ -1,0 +1,75 @@
+# Template file for 'uwsgi'
+pkgname=uwsgi
+version=2.0.11.2
+revision=1
+hostmakedepends="python python3.4"
+makedepends="python-devel python3.4-devel"
+short_desc="Fast, self-healing application container server"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+license="GPL-2"
+homepage="http://projects.unbit.it/uwsgi"
+distfiles="http://projects.unbit.it/downloads/uwsgi-$version.tar.gz"
+checksum=0b889b0b4d2dd3f6625df28cb0b86ec44a68d074ede2d0dfad0b91e88914885c
+
+_libdir=usr/lib/uwsgi
+
+subpackages="uwsgi-python uwsgi-python3.4"
+case "$XBPS_TARGET_MACHINE" in
+	armv[67]l-musl) subpackages="uwsgi-python"
+esac
+
+pre_configure() {
+	sed -e "s|uc.get('plugin_dir')|'.'|" \
+		-i uwsgiconfig.py
+	sed -e "s|\(plugin_dir =\).*|\1 /$_libdir|" \
+		-i buildconf/base.ini
+}
+
+do_build() {
+	local _cflags="$CFLAGS"
+	local _ldflags="$LDFLAGS"
+
+	python uwsgiconfig.py --build core
+
+	if [ -n "$CROSS_BUILD" ]; then
+		_cflags="$CFLAGS -I${XBPS_CROSS_BASE}/include/python2.7
+			-I${XBPS_CROSS_BASE}/usr/include"
+		_ldflags="$LDFLAGS -L${XBPS_CROSS_BASE}/lib/python2.7
+			-L${XBPS_CROSS_BASE}/usr/lib"
+	fi
+	CFLAGS="$_cflags" LDFLAGS="$_ldflags" python uwsgiconfig.py \
+		--plugin plugins/python core python
+
+	if [ -n "$CROSS_BUILD" ]; then
+		_cflags="$CFLAGS -I${XBPS_CROSS_BASE}/include/python3.4m
+			-I${XBPS_CROSS_BASE}/usr/include"
+		_ldflags="$LDFLAGS -L${XBPS_CROSS_BASE}/lib/python3.4m
+			-L${XBPS_CROSS_BASE}/usr/lib"
+	fi
+	case "$subpackages" in
+		*uwsgi-python3.4*)
+			CFLAGS="$_cflags" LDFLAGS="$_ldflags" python3.4 uwsgiconfig.py \
+				--plugin plugins/python core python3
+			;;
+	esac
+}
+
+do_install() {
+	mkdir -p $PKGDESTDIR/usr/bin $PKGDESTDIR/$_libdir
+	cp uwsgi $PKGDESTDIR/usr/bin
+	cp *_plugin.so $PKGDESTDIR/$_libdir
+}
+
+uwsgi-python_package() {
+	short_desc="$short_desc (Python2 plugin)"
+	pkg_install() {
+		vmove $_libdir/python_plugin.so
+	}
+}
+
+uwsgi-python3.4_package() {
+	short_desc="$short_desc (Python3.4 plugin)"
+	pkg_install() {
+		vmove $_libdir/python3_plugin.so
+	}
+}

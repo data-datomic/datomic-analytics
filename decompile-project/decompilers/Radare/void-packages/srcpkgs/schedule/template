@@ -1,0 +1,29 @@
+# Template file for 'schedule'
+pkgname=schedule
+version=7.2.0
+revision=1
+noarch=yes
+hostmakedepends="perl"
+depends="perl"
+short_desc="Framework to schedule jobs in a multiuser multitasking environment"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="BSD"
+homepage="https://github.com/vaeth/schedule/"
+distfiles="https://github.com/vaeth/schedule/archive/v${version}.tar.gz"
+checksum=8da9d1769d18553803d9e1eacde024382ea57210004fcc6bf80c48baedb453b2
+
+do_install() {
+	for bin in bin/*; do
+		vbin $bin
+	done
+	vdoc README
+	pod2man -n schedule lib/Schedule/Client/Scheduleman.pm >schedule.1
+	pod2man -n schedule-server lib/Schedule/Server/Serverman.pm >schedule-server.1
+	pod2man -n schedule-tmux lib/Schedule/Client/Tmuxman.pm >schedule-tmux.1
+	vman schedule.1
+	vman schedule-server.1
+	vman schedule-tmux.1
+	vmkdir usr/share/${pkgname}
+	vcopy "lib/*" usr/share/${pkgname}
+	vinstall zsh/_schedule 0644 usr/share/zsh/site-functions
+}

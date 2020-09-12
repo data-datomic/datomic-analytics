@@ -1,0 +1,22 @@
+# Template file for 'scantailor'
+pkgname=scantailor
+version=0.9.11.1.20151014
+revision=1
+_gitrev=0e8b89a2240ad6e65a8e7ff7ebfeed5df6686d96
+wrksrc=${pkgname}-${_gitrev}
+build_style=cmake
+hostmakedepends="cmake qt-devel qt-qmake pkg-config"
+makedepends="libpng-devel tiff-devel boost-devel qt-devel libXrender-devel"
+short_desc="Interactive post-processing for scans"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-3"
+homepage="http://scantailor.org/"
+distfiles="http://github.com/${pkgname}/${pkgname}/archive/${_gitrev}.tar.gz>${pkgname}-${version}_${revision}.tar.gz"
+checksum=623043fdbfac249d991650305fd907e81274f6ea8e4781eaf42bae61f554666f
+
+post_install() {
+	vinstall resources/icons/appicon-about.png 644 \
+		usr/share/pixmaps ${pkgname}.png
+	vinstall ${FILESDIR}/${pkgname}.desktop 644 \
+		usr/share/applications
+}

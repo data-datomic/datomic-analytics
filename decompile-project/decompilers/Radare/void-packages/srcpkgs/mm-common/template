@@ -1,0 +1,14 @@
+# Template file for 'mm-common'
+pkgname=mm-common
+version=0.9.8
+revision=1
+noarch=yes
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool itstool"
+depends="automake libtool intltool pkg-config gtk-doc gettext-devel glib-devel yelp-tools"
+short_desc="Common development macros for GTK+ C++"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2"
+homepage="http://gtkmm.org/"
+distfiles="http://download.gnome.org/sources/mm-common/${version%.*}/$pkgname-$version.tar.xz"
+checksum=c9ab5fd3872fbe245fbc35347acf4a95063111f81d54c43df3af662dad0a03d5

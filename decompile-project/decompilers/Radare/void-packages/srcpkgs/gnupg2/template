@@ -1,0 +1,32 @@
+# Template file for 'gnupg2'
+pkgname=gnupg2
+version=2.1.10
+revision=1
+wrksrc="gnupg-${version}"
+build_style=gnu-configure
+configure_args="--sbindir=/usr/bin
+ --with-libgcrypt-prefix=${XBPS_CROSS_BASE}
+ --with-ksba-prefix=${XBPS_CROSS_BASE}
+ --with-npth-prefix=${XBPS_CROSS_BASE}
+ --with-libassuan-prefix=${XBPS_CROSS_BASE}"
+hostmakedepends="pkg-config"
+makedepends="zlib-devel libldap-devel libcurl-devel readline-devel
+ libusb-compat-devel libgpg-error-devel libgcrypt-devel libassuan-devel
+ libksba-devel npth-devel gnutls-devel bzip2-devel"
+depends="pinentry"
+short_desc="The GNU Privacy Guard (2.x)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://www.gnupg.org/"
+distfiles="ftp://ftp.gnupg.org/gcrypt/gnupg/gnupg-${version}.tar.bz2"
+checksum=93bd58d81771a4fa488566e5d2e13b1fd7afc86789401eb41731882abfd26cf9
+
+post_install() {
+	# remove conflicts with gnupg 1.
+	rm ${DESTDIR}/usr/share/man/man7/gnupg.7
+
+	vmkdir usr/share/examples
+	mv ${DESTDIR}/usr/share/doc/gnupg/examples ${DESTDIR}/usr/share/examples/gnupg2
+
+	rm -rf ${DESTDIR}/usr/share/doc/gnupg
+}

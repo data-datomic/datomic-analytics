@@ -1,0 +1,32 @@
+# Template file for 'pupper'
+pkgname=puppet
+version=4.2.2
+revision=1
+noarch=yes
+build_style=ruby-module
+hostmakedepends="ruby facter hiera"
+makedepends="facter-devel"
+depends="ruby>=2.2<2.3 facter hiera"
+short_desc="Server automation framework and application"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Apache-2.0"
+homepage="http://puppetlabs.com/facter"
+distfiles="http://downloads.puppetlabs.com/$pkgname/$pkgname-$version.tar.gz"
+checksum=2d34cda2c65c885ba16e6644edd7733d55e6a0e1011a1f0f7fe80b411affc348
+
+system_accounts="puppet"
+puppet_homedir="/var/lib/puppet"
+conf_files="
+ /etc/puppetlabs/puppet/puppet.conf
+ /etc/puppetlabs/puppet/auth.conf"
+
+post_install() {
+	vlicense LICENSE
+	vsv puppet
+	vsv puppetmaster
+	# vim and emacs
+	vinstall ext/vim/ftdetect/$pkgname.vim 644 usr/share/vim/vimfiles/ftdetect
+	vinstall ext/vim/syntax/$pkgname.vim 644 usr/share/vim/vimfiles/syntax
+	vinstall ext/emacs/$pkgname-mode.el 644 usr/share/emacs/site-lisp
+	vinstall ext/emacs/$pkgname-mode-init.el 644 usr/share/emacs/site-lisp/site-start.d
+}

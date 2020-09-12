@@ -1,0 +1,95 @@
+# Template file for 'poppler'
+#
+# THIS PKG MUST BE SYNCHRONIZED WITH "srcpkgs/poppler-qt{4,5}".
+#
+pkgname=poppler
+version=0.38.0
+revision=1
+build_style=gnu-configure
+configure_args="--enable-zlib --enable-libcurl --enable-libjpeg
+ --enable-libtiff --disable-libopenjpeg --enable-cairo-output
+ --enable-xpdf-headers --disable-poppler-qt4 --disable-poppler-qt5
+ --disable-gtk-test $(vopt_enable gir introspection)"
+hostmakedepends="automake libtool pkg-config glib-devel gettext-devel"
+makedepends="libpng-devel libglib-devel cairo-devel tiff-devel lcms2-devel
+ libcurl-devel $(vopt_if gir gobject-introspection)"
+depends="poppler-data"
+short_desc="PDF rendering library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://poppler.freedesktop.org"
+distfiles="${homepage}/$pkgname-$version.tar.xz"
+checksum=6f0c0d49c8346d7c0cfe6348124e7f19cc901b5d35c9cd89944aac6e454e8a8b
+
+# Package build options
+build_options="gir"
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+pre_configure() {
+	autoreconf -fi
+}
+
+poppler-cpp-devel_package() {
+	depends="libstdc++-devel zlib-devel poppler-devel-${version}_${revision} poppler-cpp-${version}_${revision}"
+	short_desc+=" - C++ bindings (development files)"
+	pkg_install() {
+		vmove usr/include/poppler/cpp
+		vmove usr/lib/libpoppler-cpp.a
+		vmove usr/lib/libpoppler-cpp.so
+		vmove usr/lib/pkgconfig/poppler-cpp.pc
+	}
+}
+poppler-cpp_package() {
+	short_desc+=" - C++ bindings"
+	pkg_install() {
+		vmove "usr/lib/libpoppler-cpp.so.*"
+	}
+}
+poppler-devel_package() {
+	depends="libglib-devel poppler-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove "usr/include/poppler/*.h"
+		vmove usr/include/poppler/splash
+		vmove usr/include/poppler/fofi
+		vmove usr/include/poppler/goo
+		vmove usr/lib/libpoppler.a
+		vmove usr/lib/libpoppler.so
+		vmove usr/lib/pkgconfig/poppler.pc
+		vmove usr/lib/pkgconfig/poppler-splash.pc
+		vmove usr/share/gtk-doc
+	}
+}
+poppler-glib-devel_package() {
+	depends="poppler-devel-${version}_${revision} poppler-glib-${version}_${revision}"
+	short_desc+=" - GLib bindings (development files)"
+	pkg_install() {
+		vmove usr/include/poppler/glib
+		vmove usr/lib/libpoppler-glib.a
+		vmove usr/lib/libpoppler-glib.so
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+		vmove usr/lib/pkgconfig/poppler-cairo.pc
+		vmove usr/lib/pkgconfig/poppler-glib.pc
+	}
+}
+poppler-glib_package() {
+	short_desc+=" - GLib bindings"
+	pkg_install() {
+		vmove "usr/lib/libpoppler-glib.so.*"
+		if [ "$build_option_gir" ]; then
+			vmove usr/lib/girepository-1.0
+		fi
+	}
+}
+poppler-utils_package() {
+	short_desc+=" - utilities"
+	pkg_install() {
+		vmove usr/bin
+		vmove usr/share/man
+	}
+}

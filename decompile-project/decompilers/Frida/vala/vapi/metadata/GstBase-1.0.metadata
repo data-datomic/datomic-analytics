@@ -1,0 +1,25 @@
+* parent="Gst.Base"
+Base* name="Base(.+)"
+BASE_* name="BASE_(.+)"
+
+*.ref unowned
+
+PushSrc
+  .create.buf out unowned=false
+  .alloc.buf out unowned=false
+
+// Fields
+ByteWriter struct=false
+  .new* skip=false
+
+// Non-boxed types
+BitReader struct=false
+ByteReader struct=false
+
+Adapter
+  .map skip
+  .take skip
+
+// Backwards compatibility
+Adapter
+  .copy skip=false

@@ -1,0 +1,43 @@
+# Template file for 'sabnzbd'
+pkgname=sabnzbd
+version=0.7.20
+revision=1
+wrksrc="SABnzbd-${version}"
+depends="par2cmdline python-cheetah python-configobj python-feedparser python-gntp python-openssl python-yenc unzip"
+maintainer="Dominik Honnef <dominik@honnef.co>"
+# sabnzbd itself is GPL, but it bundles libraries that are covered by
+# BSD, LGPL-2 and MIT. In combination, that makes this package GPL.
+license="GPL"
+homepage="http://sabnzbd.org/"
+short_desc="SABnzbd is an Open Source Binary Newsreader written in Python"
+distfiles="${SOURCEFORGE_SITE}/sabnzbdplus/SABnzbd-${version}-src.tar.gz"
+checksum=20b3a4613a0ecdede4fdfeb628ae806e458ac1a6fb684306328dd4ed1faf8742
+
+noarch=yes
+pycompile_dirs="/usr/share/sabnzbd"
+
+pre_install() {
+	rm -rf gntp sabnzbd/utils/{feedparser,configobj}.py
+	rm -f licenses/License-{feedparser,configobj,gntp,Python}.txt
+	rm -rf solaris
+
+	# sabnzbd bundles a heavily modified version of cherrypy. It's
+	# uncertain what base version they use, or where each individual
+	# patch came from, so using upstream cherrypy isn't an option.
+
+	# sabnzbd also bundles a variety of small libraries, some of which
+	# haven't been maintained since 2006. There may be no point to
+	# packaging them separately.
+}
+
+do_install() {
+	vmkdir usr/share/licenses/${pkgname}
+	mv licenses/* ${DESTDIR}/usr/share/licenses/${pkgname}
+	mv COPYRIGHT.txt ${DESTDIR}/usr/share/licenses/${pkgname}
+	rmdir licenses
+
+	vmkdir usr/share/sabnzbd
+	mv * ${DESTDIR}/usr/share/sabnzbd/
+
+	vinstall ${FILESDIR}/sabnzbd 0755 usr/bin/
+}

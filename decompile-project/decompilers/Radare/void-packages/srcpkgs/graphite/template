@@ -1,0 +1,26 @@
+# Template file for 'graphite'
+pkgname=graphite
+version=1.2.4
+revision=1
+wrksrc="${pkgname}2-${version}"
+build_style=cmake
+configure_args="-DGRAPHITE2_COMPARE_RENDERER=OFF"
+hostmakedepends="cmake pkg-config"
+makedepends="freetype-devel"
+short_desc="Reimplementation of the SIL Graphite text processing engine"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://projects.palaso.org/projects/graphitedev"
+license="LGPL-2.1, GPL-2, BSD"
+distfiles="${SOURCEFORGE_SITE}/silgraphite/graphite2-${version}.tgz"
+checksum=4bc3d5168029bcc0aa00eb2c973269d29407be2796ff56f9c80e10736bd8b003
+
+graphite-devel_package() {
+	depends="${sourcepkg}-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}

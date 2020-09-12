@@ -1,0 +1,56 @@
+# Template file for 'libvpx'
+pkgname=libvpx
+version=1.4.0
+revision=2
+hostmakedepends="perl yasm"
+short_desc="The VP8/VP9 Codecs"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.webmproject.org"
+license="BSD"
+distfiles="http://storage.googleapis.com/downloads.webmproject.org/releases/webm/libvpx-${version}.tar.bz2"
+checksum=f582d9b2d60a592a4a3d8c32965ca2d2167e9ade38c6c30bac8801ff66a118e4
+
+do_configure() {
+	export LD="$CC"
+
+	if [ "$CROSS_BUILD" ]; then
+		case "$XBPS_TARGET_MACHINE" in
+			armv6*) _cross="--target=armv6-linux-gcc";;
+			armv7*) _cross="--target=armv7-linux-gcc";;
+			*) _cross="--target=generic-gnu";;
+		esac
+	fi
+	CFLAGS+=" -fPIC"
+
+	./configure --enable-vp8 --enable-vp9 \
+		--enable-runtime-cpu-detect --enable-shared \
+		--enable-postproc --enable-pic --disable-install-docs \
+		--disable-install-srcs --as=yasm ${_cross}
+}
+do_build() {
+	make ${makejobs}
+}
+
+do_install() {
+	make DIST_DIR=${DESTDIR}/usr install
+
+	vinstall LICENSE 644 usr/share/licenses/${pkgname}
+}
+
+libvpx-tools_package() {
+	short_desc+=" - tools"
+	pkg_install() {
+		vmove usr/bin
+	}
+}
+
+libvpx-devel_package() {
+	depends="libvpx>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+	}
+}

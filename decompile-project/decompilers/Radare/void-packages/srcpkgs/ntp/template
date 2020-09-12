@@ -1,0 +1,47 @@
+# Template file for 'ntp'
+pkgname=ntp
+version=4.2.8p4
+revision=3
+build_style=gnu-configure
+configure_args="--with-crypto --enable-linuxcap --enable-ipv6 --enable-ntp-signd
+ --enable-all-clocks ol_cv_pthread_select_yields=yes"
+hostmakedepends="pkg-config bison perl"
+makedepends="libedit-devel libressl-devel libcap-devel libevent-devel pps-tools-devel"
+short_desc="The Network Time Protocol daemon and utilities"
+license="BSD"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.ntp.org/"
+distfiles="http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-${version}.tar.gz"
+checksum=0d6961572548d2c4af96f58f763e22ac620f5afef717384ddc317a0e365cfdb9
+
+make_dirs="/var/db/ntpd 0755 ntpd ntpd"
+conf_files="/etc/ntp.conf"
+system_accounts="ntpd"
+ntpd_homedir="/var/db/ntpd"
+provides="ntp-daemon-0_1"
+alternatives="
+ ntpd:ntpd:/usr/bin/isc-ntpd
+ ntpd:ntpd.8:/usr/share/man/man8/isc-ntpd.8
+ ntpd:ntpd:/etc/sv/isc-ntpd"
+
+post_install() {
+	# Rename files for alternatives.
+	vmkdir usr/share/man/man8
+	mv ${DESTDIR}/usr/bin/{ntpd,isc-ntpd}
+	mv ${DESTDIR}/usr/share/man/man1/ntpd.1 \
+		${DESTDIR}/usr/share/man/man8/isc-ntpd.8
+	vconf ${FILESDIR}/ntp.conf
+	vsv isc-ntpd
+	rm -r ${DESTDIR}/usr/share/doc
+}
+
+ntp-perl_package() {
+	depends="ntp>=$version perl"
+	noarch=yes
+	short_desc+=" - perl scripts"
+	pkg_install() {
+		vmove usr/bin/ntp-wait
+		vmove usr/bin/ntptrace
+		vmove usr/share/ntp/lib
+	}
+}

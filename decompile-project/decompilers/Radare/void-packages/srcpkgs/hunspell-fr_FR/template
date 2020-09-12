@@ -1,0 +1,59 @@
+# Template file for 'hunspell-fr_FR'
+pkgname=hunspell-fr_FR
+version=5.5
+revision=1
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+homepage="http://www.dicollecte.org/home.php?prj=fr"
+license="MPL-1.1"
+hostmakedepends="unzip"
+short_desc="French dictionary for hunspell"
+distfiles="http://www.dicollecte.org/download/fr/hunspell-french-dictionaries-v${version}.zip"
+checksum=3dd3ab81cf4cf828a7b1e39ea1a6ef37f634160eb1dab787fa211d5fd3dab9a9
+create_wrksrc=yes
+noarch=yes
+
+do_install() {
+	_variant="classique"
+	vinstall fr-${_variant}.aff 644 /usr/share/hunspell fr_FR.aff
+	vinstall fr-${_variant}.dic 644 /usr/share/hunspell fr_FR.dic
+	vdoc README_dict_fr.txt
+}
+
+hunspell-fr_FR-moderne_package() {
+	_variant="moderne"
+	short_desc+=" - Moderne Variant"
+	provides="${sourcepkg}-${version}_${revision}"
+	replaces="${sourcepkg}>=0"
+	noarch=yes
+	pkg_install() {
+		vinstall ${wrksrc}/fr-${_variant}.aff 644 /usr/share/hunspell fr_FR.aff
+		vinstall ${wrksrc}/fr-${_variant}.dic 644 /usr/share/hunspell fr_FR.dic
+		vdoc ${wrksrc}/README_dict_fr.txt
+	}
+}
+
+hunspell-fr_FR-reforme1990_package() {
+	_variant="reforme1990"
+	short_desc+=" - Reforme 1990 Variant"
+	provides="${sourcepkg}-${version}_${revision}"
+	replaces="${sourcepkg}>=0"
+	noarch=yes
+	pkg_install() {
+		vinstall ${wrksrc}/fr-${_variant}.aff 644 /usr/share/hunspell fr_FR.aff
+		vinstall ${wrksrc}/fr-${_variant}.dic 644 /usr/share/hunspell fr_FR.dic
+		vdoc ${wrksrc}/README_dict_fr.txt
+	}
+}
+
+hunspell-fr_FR-toutesvariantes_package() {
+	_variant="toutesvariantes"
+	short_desc+=" - All variant in one file"
+	provides="${sourcepkg}-${version}_${revision}"
+	replaces="${sourcepkg}>=0"
+	noarch=yes
+	pkg_install() {
+		vinstall ${wrksrc}/fr-${_variant}.aff 644 /usr/share/hunspell fr_FR.aff
+		vinstall ${wrksrc}/fr-${_variant}.dic 644 /usr/share/hunspell fr_FR.dic
+		vdoc ${wrksrc}/README_dict_fr.txt
+	}
+}

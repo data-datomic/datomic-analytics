@@ -1,0 +1,17 @@
+# Template file for 'ghi'
+pkgname=ghi
+version=1.0.3
+revision=1
+noarch=yes
+depends="ruby"
+short_desc="GitHub command line interface"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="MIT"
+homepage="https://github.com/stephencelis/ghi"
+distfiles="https://github.com/stephencelis/${pkgname}/archive/${version}.tar.gz"
+checksum=98ddf904bfd78d7363986b75ecea294933c8b98d9c1d2828419fddcaeadc0fdd
+
+do_install() {
+	vbin ghi
+	vman man/ghi.1
+}

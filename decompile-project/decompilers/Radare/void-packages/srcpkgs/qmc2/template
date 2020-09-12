@@ -1,0 +1,79 @@
+# Template file for 'qmc2'
+pkgname=qmc2
+version=0.58
+revision=1
+wrksrc=${pkgname}
+build_style=gnu-makefile
+make_build_args="PREFIX=/usr DATADIR=/usr/share MAN_DIR=/usr/share/man TARGET=qmc2-mame"
+make_install_args="${make_build_args}"
+hostmakedepends="rsync unzip"
+makedepends="SDL2-devel qt5-multimedia-devel qt5-script-devel qt5-svg-devel
+ qt5-webkit-devel qt5-xmlpatterns-devel qt5-x11extras-devel"
+depends="rsync ${pkgname}-data mame qmc2-flyers qmc2-snapshots"
+conf_files="/etc/${pkgname}/${pkgname}.ini"
+short_desc="Qt M.A.M.E. Catalog/Launcher II"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-2"
+homepage="http://qmc2.arcadehits.net/wordpress/"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}/${version}/${pkgname}-${version}.tar.bz2"
+checksum=1c3d60096f2635eb653cb59d5b6ef8c946fbf7e7d1662a0c68e79617044c02c3
+
+pre_build() {
+	# Replace sdl-config with sdl2-config
+	sed -e "s;sdl-config;sdl2-config;g" -i ${wrksrc}/scripts/sdl-version.sh
+	# Replace obsolete -sdlmame suffix
+	sed -e "s;-sdlmame;-mame;g" -i ${wrksrc}/Makefile
+}
+do_build() {
+	# Print configuration info
+	make ${make_build_args} config
+	make ${makejobs} qchdman
+	make ${make_build_args} ${makejobs}
+}
+do_install() {
+	# Install /usr/bin/qmc2-mame and /etc/qmc2/qmc2.ini
+	vbin qmc2-mame
+	vmkdir etc/${pkgname}
+	sed ${wrksrc}/inst/qmc2.ini.template \
+		-e "s;DATADIR;/usr/share;" \
+		> ${DESTDIR}/etc/${pkgname}/${pkgname}.ini
+
+	# Install qmc2 desktop file
+	vmkdir usr/share/applications
+	sed ${wrksrc}/inst/qmc2.desktop.template \
+		-e "s;DATADIR;/usr/share;" \
+		-e "s;EMULATOR;MAME;" \
+		-e "s;TARGET;qmc2-mame;" \
+		-e "s;EMUICO;mame.png;" \
+		-e "s;GENERICNAME;$short_desc;" \
+		> ${DESTDIR}/usr/share/applications/qmc2-mame.desktop
+
+	# Install translations
+	vmkdir usr/share/${pkgname}/lng
+	for qm in $(find ${wrksrc}/data/lng -name "*.qm"); do
+		vinstall $qm 644 ${DESTDIR}/usr/share/${pkgname}/lng
+	done
+
+	# Install qchdman and img
+	vbin ${wrksrc}/tools/qchdman/qchdman
+	vmkdir usr/share/${pkgname}
+	cp -aR ${wrksrc}/data/img ${DESTDIR}/usr/share/${pkgname}
+
+	# Install qchdman desktop file
+	vmkdir usr/share/applications
+	sed ${wrksrc}/inst/qchdman.desktop.template \
+		-e "s;DATADIR;/usr/share;" \
+		> ${DESTDIR}/usr/share/applications/qchdman.desktop
+}
+qmc2-data_package() {
+	noarch=yes
+	short_desc+=" - data files"
+	pkg_install() {
+		local ddir
+		vmove usr/share/qmc2
+		for ddir in opt img doc prv fly ico cat cab ctl \
+			mrq ttl sws swn gmn js; do
+			cp -aR data/$ddir ${PKGDESTDIR}/usr/share/qmc2
+		done
+	}
+}

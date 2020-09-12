@@ -1,0 +1,14 @@
+# Template file for 'valabind'
+pkgname=valabind
+version=0.9.2
+revision=2
+build_style=gnu-makefile
+hostmakedepends="pkg-config vala-devel"
+makedepends="vala-devel glib-devel"
+depends="vala-devel>=0.26"
+short_desc="Tool to transform vala source files to swig, GIR or GEAR"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-3"
+homepage="http://radare.org"
+distfiles="${homepage}/get/${pkgname}-${version}.tar.gz"
+checksum=9639f993f7bf2957bf79207974ecdb5374e5e502dcfc021986b4981d313116db

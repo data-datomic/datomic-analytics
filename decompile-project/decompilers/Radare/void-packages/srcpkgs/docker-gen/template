@@ -1,0 +1,17 @@
+# Template file for 'docker-gen'
+pkgname=docker-gen
+version=0.4.3
+revision=1
+build_style=go
+hostmakedepends="git"
+short_desc="Generate files from docker container meta-data"
+go_import_path="github.com/jwilder/docker-gen"
+maintainer="Andrea Brancaleoni <miwaxe@gmail.com>"
+license="MIT"
+homepage="https://$go_import_path"
+distfiles="$homepage/archive/$version.tar.gz"
+checksum=9e71243c144343a4453fb8091fbb20d2f52b03e8f40ec22c7a81d01964653a73
+
+post_install() {
+	vlicense LICENSE
+}

@@ -1,0 +1,28 @@
+# Template file for 'rarian'
+pkgname=rarian
+version=0.8.1
+revision=5
+build_style=gnu-configure
+hostmakedepends="pkg-config libxslt"
+depends="bash"
+short_desc="Documentation metadata library"
+homepage="http://rarian.freedesktop.org/"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/0.8/$pkgname-$version.tar.bz2"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+checksum=aafe886d46e467eb3414e91fa9e42955bd4b618c3e19c42c773026b205a84577
+
+post_install() {
+	touch -f ${DESTDIR}/var/lib/rarian/.empty_on_purpose
+}
+
+rarian-devel_package() {
+	depends="rarian>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+	}
+}

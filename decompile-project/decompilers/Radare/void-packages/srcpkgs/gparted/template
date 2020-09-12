@@ -1,0 +1,23 @@
+# Template file for 'gparted'
+pkgname=gparted
+version=0.24.0
+revision=1
+build_style=gnu-configure
+configure_args="--enable-libparted-dmraid --sbindir=/usr/bin"
+hostmakedepends="pkg-config intltool gnome-doc-utils"
+makedepends="libuuid-devel libparted-devel gtkmm2-devel gnome-doc-utils"
+depends="hicolor-icon-theme desktop-file-utils"
+short_desc="Gnome Partition Editor"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://gparted.sourceforge.net"
+license="GPL-2"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/$pkgname-$version.tar.bz2"
+checksum=02398ab33894a59b0bd8707e598c46d8bb56f1413cd54de48eed61e2920ecd60
+
+pre_configure() {
+	sed -i "s:@gksuprog@ @installdir@/gparted %f:@installdir@/gparted-pkexec %f:g" gparted.desktop.in.in
+}
+post_install() {
+	vinstall ${FILESDIR}/org.void.pkexec.gparted.policy 644 /usr/share/polkit-1/actions
+	vbin ${FILESDIR}/gparted-pkexec
+}

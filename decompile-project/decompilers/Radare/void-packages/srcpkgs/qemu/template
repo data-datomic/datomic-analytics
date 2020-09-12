@@ -1,0 +1,76 @@
+# Template file for 'qemu'
+pkgname=qemu
+version=2.5.0
+revision=1
+short_desc="Open Source Processor Emulator"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://qemu.org"
+license="GPL-2, LGPL-2.1"
+distfiles="http://wiki.qemu.org/download/qemu-${version}.tar.bz2"
+checksum=3443887401619fe33bfa5d900a4f2d6a79425ae2b7e43d5b8c36eb7a683772d4
+
+nostrip=yes
+hostmakedepends="pkg-config perl python automake libtool flex"
+makedepends="libpng-devel libjpeg-turbo-devel pixman-devel snappy-devel
+ libuuid-devel libX11-devel alsa-lib-devel libaio-devel gnutls-devel
+ libsasl-devel libglib-devel ncurses-devel libseccomp-devel nss-devel
+ libcurl-devel xfsprogs-devel libcap-ng-devel libcap-devel vde2-devel usbredir-devel
+ libbluetooth-devel libssh2-devel libusb-devel pulseaudio-devel libnfs-devel
+ $(vopt_if sdl SDL-devel) $(vopt_if sdl2 SDL2-devel) $(vopt_if gtk gtk+-devel)
+ $(vopt_if spice spice-devel)"
+
+build_options="gtk sdl sdl2 spice"
+build_options_default="sdl"
+desc_option_gtk="Enable GTK display and use it by default"
+desc_option_sdl="Use SDL (1.x) video output"
+desc_option_sdl2="Use SDL (2.x) video output"
+desc_option_spice="Enable support for SPICE"
+vopt_conflict "sdl" "sdl2"
+
+case "$XBPS_TARGET_MACHINE" in
+	i686*|x86_64*) build_options_default+=" spice";;
+esac
+
+do_configure() {
+	local args=
+
+	sed -e 's,-rpath /usr/local/lib,,g' -i configure
+
+	# XXX remove this when kernel headers are updated to 3.16.
+	export CFLAGS+=" -D_LINUX_XATTR_H"
+
+	if [ "$CROSS_BUILD" ]; then
+		args+=" --cross-prefix=${XBPS_CROSS_TRIPLET}-"
+		export LIBTOOL=libtool
+	fi
+
+	./configure --prefix=/usr --sysconfdir=/etc --libexecdir=/usr/libexec \
+		--enable-kvm --audio-drv-list=alsa,sdl,pa --disable-xen --enable-tpm \
+		--enable-vhost-net --enable-vnc-png --enable-virtfs \
+		--enable-libusb --disable-glusterfs --enable-snappy --enable-usb-redir \
+		--enable-pie --localstatedir=/var $(vopt_enable spice) \
+		$(vopt_if sdl "--with-sdlabi=1.2") \
+		$(vopt_if sdl2 "--with-sdlabi=2.0") \
+		$(vopt_enable gtk) ${args}
+}
+do_build() {
+	# Remove our strip(1) wrapper... E2BIG.
+	rm -f ${XBPS_WRAPPERDIR}/strip
+
+	if [ "$CROSS_BUILD" ]; then
+		# XXX libtool execs cc and ar.
+		mkdir -p ${wrksrc}/cross
+		ln -sf /usr/bin/${XBPS_CROSS_TRIPLET}-gcc ${wrksrc}/cross/cc
+		ln -sf /usr/bin/${XBPS_CROSS_TRIPLET}-ar ${wrksrc}/cross/ar
+		export PATH=${wrksrc}/cross:$PATH
+	fi
+	make ${makejobs}
+}
+do_install() {
+	# Remove our strip(1) wrapper... E2BIG.
+	rm -f ${XBPS_WRAPPERDIR}/strip
+
+	make DESTDIR=${DESTDIR} install
+	# qemu-bridge-helper must be setuid for non privileged users.
+	chmod u+s ${DESTDIR}/usr/libexec/qemu-bridge-helper
+}

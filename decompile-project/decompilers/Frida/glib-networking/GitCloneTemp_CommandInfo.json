@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/glib-networking undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/glib-networking",
+    "repo": "https://github.com/frida/glib-networking",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/glib-networking",
+    "startTime": "2020-09-12T11:03:43.080Z",
+    "endTime": "2020-09-12T11:03:44.588Z",
+    "childProcessPid": 27722,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--glib-networking--27722"
+}

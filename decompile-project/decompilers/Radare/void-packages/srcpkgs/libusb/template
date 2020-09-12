@@ -1,0 +1,25 @@
+# Template file for 'libusb'
+pkgname=libusb
+version=1.0.20
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="libudev-devel"
+short_desc="A library which allows userspace access to USB devices"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://libusb.info"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/$pkgname-$version.tar.bz2"
+checksum=cb057190ba0a961768224e4dc6883104c6f945b2bf2ef90d7da39e7c1834f7ff
+disable_parallel_build=yes
+
+libusb-devel_package() {
+	depends="libusb>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+	}
+}

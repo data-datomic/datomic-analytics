@@ -1,0 +1,90 @@
+# Template file for 'efl'
+pkgname=efl
+version=1.16.1
+revision=1
+build_style=gnu-configure
+configure_args="CXX= --enable-multisense --enable-image-loader-webp
+ --disable-systemd $(vopt_enable framebuffer fb) $(vopt_enable pulseaudio)
+ $(vopt_enable harfbuzz)"
+hostmakedepends="pkg-config"
+makedepends="libressl-devel glib-devel libjpeg-turbo-devel fontconfig-devel
+ fribidi-devel giflib-devel libpng-devel tiff-devel libwebp-devel
+ gst-plugins-base1-devel avahi-libs-devel libudev-devel bullet-devel
+ alsa-lib-devel libsndfile-devel libmount-devel LuaJIT-devel
+ $(vopt_if harfbuzz harfbuzz-devel) $(vopt_if pulseaudio pulseaudio-devel)"
+homepage="http://enlightenment.org"
+short_desc="Enlightenment Foundation Libraries"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+distfiles="http://download.enlightenment.org/rel/libs/efl/efl-${version}.tar.gz"
+checksum=acdff08f72f62bb838f2412de29d0828f9884c30033a3e873902709c78a06198
+
+if [ "$CROSS_BUILD" ]; then
+	hostmakedepends+="  automake gettext-devel libtool efl-devel"
+	configure_args+=" --with-eolian-cxx=/usr/bin/eolian_cxx"
+	configure_args+=" --with-eolian-gen=/usr/bin/eolian_gen"
+	configure_args+=" --with-bin-edje-cc=/usr/bin/edje_cc"
+	configure_args+=" --with-bin-elua=/usr/bin/elua"
+	pre_configure() {
+		autoreconf -fi
+	}
+fi
+
+# Package build options
+build_options="framebuffer gles2 harfbuzz opengl pulseaudio wayland x11"
+# Enable harfbuzz, pulseaudio, wayland and x11 by default.
+build_options_default="harfbuzz pulseaudio x11 wayland"
+
+case "$XBPS_TARGET_MACHINE" in
+	i686*|x86_64*)
+		# Enable gles2 by default on x86.
+		build_options_default+=" opengl"
+		;;
+	armv6l*)
+		# Disable neon.
+		configure_args+=" --disable-neon"
+		;;
+	armv7l*)
+		# XXX disable neon... the code is utterly broken.
+		configure_args+=" --disable-neon"
+		;;
+esac
+
+if [ "$build_option_opengl" ]; then
+	configure_args+=" --with-opengl=full"
+	makedepends+=" MesaLib-devel"
+elif [ "$build_option_gles2" ]; then
+	configure_args+=" --with-opengl=es"
+	makedepends+=" MesaLib-devel"
+else
+	configure_args+=" --with-opengl=none"
+fi
+
+if [ "$build_option_wayland" ]; then
+	configure_args+=" --enable-egl --enable-wayland --enable-wayland-ivi-shell"
+	makedepends+=" libxkbcommon-devel wayland-devel libinput-devel"
+else
+	configure_args+=" --disable-egl --disable-wayland"
+fi
+
+if [ "$build_option_x11" ]; then
+	configure_args+=" --with-x --enable-xinput22 --with-x11=xlib"
+	makedepends+=" libXcomposite-devel libXcursor-devel libXp-devel"
+	makedepends+=" libXrandr-devel libXScrnSaver-devel"
+	makedepends+=" libXdamage-devel libXrender-devel libXi-devel libXinerama-devel"
+	makedepends+=" xcb-util-devel xcb-util-keysyms-devel xcb-util-image-devel"
+	makedepends+=" xcb-util-renderutil-devel xcb-util-wm-devel printproto"
+else
+	configure_args+=" --without-x --with-x11=none"
+fi
+
+efl-devel_package() {
+	short_desc+=" - development files"
+	depends="${makedepends} efl>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+		vmove usr/lib/cmake
+		vmove usr/lib/pkgconfig
+	}
+}

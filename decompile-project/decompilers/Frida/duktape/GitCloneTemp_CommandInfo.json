@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/duktape undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/duktape",
+    "repo": "https://github.com/frida/duktape",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/duktape",
+    "startTime": "2020-09-12T11:01:47.115Z",
+    "endTime": "2020-09-12T11:02:15.007Z",
+    "childProcessPid": 27300,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--duktape--27300"
+}

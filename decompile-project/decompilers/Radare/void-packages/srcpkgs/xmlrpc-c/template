@@ -1,0 +1,40 @@
+# Template file for 'xmlrpc-c'
+pkgname=xmlrpc-c
+version=1.25.30
+revision=2
+build_style=gnu-configure
+configure_args="--enable-libxml2-backend --enable-cplusplus --disable-cgi-server
+ --disable-libwww-client --disable-wininet-client"
+hostmakedepends="pkg-config python"
+makedepends="libcurl-devel libxml2-devel"
+short_desc="XML-RPC for C and C++"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="BSD"
+homepage="http://xmlrpc-c.sourceforge.net/"
+distfiles="${SOURCEFORGE_SITE}/$pkgname/$pkgname-$version.tgz"
+checksum=8ae6ed4ec57d50ed132b1150fc5258346eef3e291501a564f14fa97586902f98
+
+CFLAGS="-fPIC"
+disable_parallel_build=yes
+
+pre_configure() {
+	sed 's,XMLRPC_ABYSS_EXPORTED,XMLRPC_DLLEXPORT,g' -i include/xmlrpc-c/abyss.h
+}
+post_configure() {
+	case "$XBPS_TARGET_MACHINE" in
+		*-musl) # Enable linux-gnu configuration for shlibs
+			sed -e "s;linux-gnu;linux-musl;g" -i ${wrksrc}/config.mk
+	esac
+}
+
+xmlrpc-c-devel_package() {
+	short_desc+=" - development files"
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		local shlib
+		vmove usr/bin
+		vmove usr/include
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+	}
+}

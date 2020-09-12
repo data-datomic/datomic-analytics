@@ -1,0 +1,57 @@
+# Template file for 'totem'
+pkgname=totem
+version=3.18.1
+revision=2
+short_desc="A GNOME integrated movie player based on Gstreamer"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="LGPL-2, GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=d7816eae9606846c44fd508902eae10bdaed28e6d4f621531990d473184107a2
+
+build_style=gnu-configure
+configure_args="--disable-static --disable-schemas-compile
+ --disable-python --enable-nautilus"
+
+hostmakedepends="pkg-config intltool gnome-doc-utils
+ itstool $(vopt_if gir gobject-introspection)"
+
+# XXX missing lirc plugin.
+makedepends="
+ gnutls-devel gst-plugins-base1-devel totem-pl-parser-devel
+ evolution-data-server-devel dbus-glib-devel zeitgeist-devel
+ clutter-gst3-devel clutter-gtk-devel libSM-devel
+ libpeas-devel libXtst-devel grilo-devel libepc-devel vala-devel
+ gst-plugins-bad1-devel gsettings-desktop-schemas-devel
+ nautilus-devel gst-plugins-ugly1 gst-plugins-good1
+ gnome-desktop-devel"
+depends="grilo-plugins>=0.2.12 hicolor-icon-theme desktop-file-utils
+ gst-libav gst-plugins-ugly1 gst-plugins-good1"
+
+# XXX xulrunner plugin.
+# XXX reenable python plugin if pylint pkg exists.
+#pycompile_dirs="usr/lib/totem/plugins"
+
+build_options="gir"
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+libtotem_package() {
+	short_desc+=" - runtime library"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+		vmove usr/lib/girepository-1.0
+	}
+}
+totem-devel_package() {
+	depends="gtk+3-devel totem-pl-parser-devel libtotem>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/share/gir-1.0
+		vmove usr/share/gtk-doc
+		vmove "usr/lib/*.so"
+	}
+}

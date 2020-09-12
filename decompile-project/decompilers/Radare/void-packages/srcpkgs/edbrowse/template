@@ -1,0 +1,25 @@
+# Template file for 'edbrowse'
+pkgname=edbrowse
+version=3.6.0.1
+revision=1
+hostmakedepends="cmake pkg-config perl"
+build_style="cmake"
+makedepends="mozjs24-devel libressl-devel pcre-devel libcurl-devel
+ readline-devel libtidy5-devel"
+short_desc="Line-oriented text editor, web browser and mail client similar to ed(1)"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="GPL-3"
+homepage="http://edbrowse.org/"
+distfiles="https://github.com/CMB/${pkgname}/archive/v${version}.tar.gz"
+checksum=5baacf6b31df469347e9754b638927a53d7a91fb0827f9308dac2f0bce3a7bfc
+
+do_install() {
+	vbin build/edbrowse
+	vbin build/edbrowse-js
+	vsconf doc/sample.ebrc
+	vman doc/man-edbrowse-debian.1 edbrowse.1
+	vdoc doc/usersguide.html
+	vdoc README
+	vdoc CHANGES
+	vlicense COPYING
+}

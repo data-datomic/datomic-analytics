@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/geoshark undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/geoshark",
+    "repo": "https://github.com/frida/geoshark",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/geoshark",
+    "startTime": "2020-09-12T11:03:06.311Z",
+    "endTime": "2020-09-12T11:03:06.924Z",
+    "childProcessPid": 27658,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--geoshark--27658"
+}

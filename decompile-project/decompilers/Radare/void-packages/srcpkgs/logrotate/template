@@ -1,0 +1,23 @@
+# Template file for 'logrotate'
+pkgname=logrotate
+version=3.9.1
+revision=2
+build_style=gnu-configure
+configure_args="--sbindir=/usr/bin"
+hostmakedepends="automake libtool"
+makedepends="acl-devel popt-devel"
+conf_files="/etc/logrotate.conf"
+short_desc="Log file rotation and periodic maintenance"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://fedorahosted.org/logrotate/"
+license="GPL-2"
+distfiles="https://fedorahosted.org/releases/l/o/$pkgname/${pkgname}-${version}.tar.gz"
+checksum=022769e3288c80981559a8421703c88e8438b447235e36dd3c8e97cd94c52545
+
+pre_configure() {
+	./autogen.sh
+}
+post_install() {
+	vconf ${FILESDIR}/logrotate.conf
+	vinstall ${FILESDIR}/logrotate.cron-daily 744 etc/cron.daily logrotate
+}

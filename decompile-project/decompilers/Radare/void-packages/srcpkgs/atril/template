@@ -1,0 +1,43 @@
+# Template file for 'atril'
+pkgname=atril
+version=1.12.2
+revision=1
+build_style=gnu-configure
+build_options="gir"
+configure_args="--with-gtk=3.0 --disable-schemas-compile --enable-djvu
+ --enable-dvi --enable-t1lib --enable-pixbuf --enable-comics --enable-xps
+ --disable-static $(vopt_enable gir introspection)"
+hostmakedepends="pkg-config intltool itstool glib-devel
+ $(vopt_if gir gobject-introspection)"
+makedepends="gtk+3-devel dbus-glib-devel libnotify-devel libunique-devel
+ libcaja-devel djvulibre-devel libspectre-devel libSM-devel mate-desktop-devel
+ poppler-glib-devel zlib-devel libxml2-devel libsecret-devel libgxps-devel
+ tiff-devel mate-icon-theme"
+depends="dconf dbus mate-desktop mate-icon-theme"
+short_desc="Simply a document viewer for MATE"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://mate-desktop.org"
+distfiles="http://pub.mate-desktop.org/releases/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=47cd22969d4ff6ef860a310a57f77f1fcc0c5674113a72ee507d2b1b5c780226
+
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+libatril_package() {
+	short_desc+=" - runtime library"
+	pkg_install() {
+		vmove usr/lib/*.so.*
+	}
+}
+libatril-devel_package() {
+	short_desc+=" - development files"
+	depends="libatril>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+		vmove usr/share/gtk-doc
+	}
+}

@@ -1,0 +1,13 @@
+# Template file for 'lightsoff'
+pkgname=lightsoff
+version=3.18.0
+revision=1
+build_style=gnu-configure
+hostmakedepends="glib intltool itstool pkg-config"
+makedepends="clutter-gtk-devel gtk+3-devel librsvg-devel"
+short_desc="GNOME puzzlle game where you turn off lights"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-2"
+homepage="https://wiki.gnome.org/Apps/Lightsoff"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=cd5126dae4506363d9196ce8ba083a769d9f8c287fb0008db53cecf6cdc55d61

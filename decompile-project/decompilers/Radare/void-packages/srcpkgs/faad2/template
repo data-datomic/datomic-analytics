@@ -1,0 +1,30 @@
+# Template file for 'faad2'
+pkgname=faad2
+version=2.7
+revision=8
+build_style=gnu-configure
+make_install_args="manmdir=/usr/share/man/man1"
+short_desc="AAC decoding library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.audiocoding.com/"
+license="Freeware, GPL-2"
+distfiles="${SOURCEFORGE_SITE}/faac/$pkgname-$version.tar.bz2"
+checksum=14561b5d6bc457e825bfd3921ae50a6648f377a9396eaf16d4b057b39a3f63b5
+
+CFLAGS="-fPIC"
+
+post_install() {
+	vinstall common/mp4ff/mp4ff_int_types.h 644 usr/include
+	mv ${DESTDIR}/usr/share/man/man1/faad.man \
+		${DESTDIR}/usr/share/man/man1/faad.1
+}
+
+faad2-devel_package() {
+	depends="faad2>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

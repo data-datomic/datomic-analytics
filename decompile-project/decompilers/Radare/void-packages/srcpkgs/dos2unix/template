@@ -1,0 +1,21 @@
+# Template file for 'dos2unix'
+pkgname=dos2unix
+version=7.3.2
+revision=1
+maintainer="Dominik Honnef <dominik@honnef.co>"
+license="2-clause-BSD"
+homepage="http://waterlan.home.xs4all.nl/dos2unix.html"
+short_desc="Text file format converter"
+distfiles="http://waterlan.home.xs4all.nl/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=c7e8ee0bb3e001cc25a4a908d9a81ac52d124133d6a524a59f995bc90d438689
+
+do_build() {
+	make prefix=${DESTDIR}/usr
+}
+
+do_install() {
+	make prefix=${DESTDIR}/usr install
+	rm -rf ${DESTDIR}/usr/share/doc/${pkgname}-${version}
+
+	vlicense COPYING.txt
+}

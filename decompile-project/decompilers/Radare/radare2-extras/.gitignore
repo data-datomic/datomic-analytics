@@ -1,0 +1,23 @@
+### C ###
+# Object files
+*.o
+*.so
+*.exe
+*.obj
+*.dll
+*.dylib
+*.
+*.gz
+
+# Make dependencies files
+# Conflicts with .d for dlang
+#*.d
+
+*.swp
+*.swo
+*.un~
+/Makefile
+/options.mk
+
+# misc
+tags

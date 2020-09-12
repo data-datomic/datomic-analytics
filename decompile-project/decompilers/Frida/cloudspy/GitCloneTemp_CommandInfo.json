@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/cloudspy undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/cloudspy",
+    "repo": "https://github.com/frida/cloudspy",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/cloudspy",
+    "startTime": "2020-09-12T11:01:43.656Z",
+    "endTime": "2020-09-12T11:01:44.274Z",
+    "childProcessPid": 27279,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--cloudspy--27279"
+}

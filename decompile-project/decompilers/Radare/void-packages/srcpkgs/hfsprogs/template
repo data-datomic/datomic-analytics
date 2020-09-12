@@ -1,0 +1,38 @@
+# Template file for 'hfsprogs'
+pkgname=hfsprogs
+_distver=332.25
+_patchver=11
+version=${_distver}debian${_patchver}
+create_wrksrc=yes
+revision=6
+makedepends="libbsd-devel libressl-devel"
+short_desc="mkfs and fsck for HFS and HFS+ file systems"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="APSL-2.0"
+homepage="http://www.opensource.apple.com/"
+distfiles="
+ ${DEBIAN_SITE}/main/h/${pkgname}/${pkgname}_${_distver}.orig.tar.gz
+ ${DEBIAN_SITE}/main/h/${pkgname}/${pkgname}_${_distver}-${_patchver}.debian.tar.gz"
+checksum="
+ 74c9aeca899ed7f4bf155c65fc45bf0f250c0f6d57360ea953b1d536d9aa45e6
+ 62d9b8599c66ebffbc57ce5d776e20b41341130d9b27341d63bda08460ebde7c"
+
+post_extract() {
+	cd ${wrksrc}/diskdev*
+	for f in ${wrksrc}/debian/patches/*.patch; do
+		patch -Np1 -i ${f}
+	done
+}
+do_build() {
+	cd ${wrksrc}/diskdev*
+	make -f Makefile.lnx CC=$CC STRIP=true ${makejobs}
+}
+do_install() {
+	cd ${wrksrc}/diskdev*
+	vinstall newfs_hfs.tproj/hfsbootdata.img 644 usr/share/hfsprogs hfsbootdata
+	vbin newfs_hfs.tproj/newfs_hfs mkfs.hfsplus
+	vbin fsck_hfs.tproj/fsck_hfs fsck.hfsplus
+	vman newfs_hfs.tproj/newfs_hfs.8 mkfs.hfsplus.8
+	vman fsck_hfs.tproj/fsck_hfs.8 fsck.hfsplus.8
+	vlicense ${FILESDIR}/APSL-2.0
+}

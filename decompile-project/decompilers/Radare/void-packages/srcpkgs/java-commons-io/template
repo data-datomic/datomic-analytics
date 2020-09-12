@@ -1,0 +1,25 @@
+# Template file for 'java-commons-io'
+_origname="commons-io"
+pkgname=java-commons-io
+version=2.4
+revision=3
+maintainer="Carlo Dormeletti <carloDOTdormelettiATaliceDOTit>"
+homepage="http://commons.apache.org/io"
+license="Apache-2.0"
+short_desc="IO related classes for Java."
+hostmakedepends="oracle-jdk apache-ant"
+depends="oracle-jdk?java-runtime"
+noarch="yes"
+distfiles="http://ftp-stud.hs-esslingen.de/pub/Mirrors/ftp.apache.org/dist/commons/io/source/${_origname}-${version}-src.tar.gz"
+checksum="961c8b41a891933c2d662d8e490667243ac82422668d1ccdd7bfedfdb944bb58"
+wrksrc="${_origname}-${version}-src"
+
+do_build(){
+	cd ${wrksrc}
+	source /etc/profile.d/oracle-jdk.sh
+	ant jar
+}
+
+do_install(){
+	vinstall ${wrksrc}/target/${_origname}-2.2-SNAPSHOT.jar 755 /usr/share/java/${_origname} ${_origname}.jar
+}

@@ -1,0 +1,15 @@
+# Template build file for 'ack'.
+pkgname=ack
+version=2.14
+revision=2
+build_style=perl-module
+hostmakedepends="perl perl-File-Next"
+makedepends="${hostmakedepends}"
+depends="${makedepends}"
+noarch="yes"
+short_desc="A Perl-based grep replacement, aimed at programmers with large trees of heterogeneous source code"
+maintainer="Jan S. <jan.schreib@gmail.com>"
+homepage="http://betterthangrep.com/"
+license="PerlArtistic"
+distfiles="http://www.cpan.org/modules/by-authors/id/P/PE/PETDANCE/${pkgname}-${version}.tar.gz"
+checksum=8549a833efec158dc85bc6334b3a384ae5a389896942eab9a58c6e630c181b3f

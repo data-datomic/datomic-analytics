@@ -1,0 +1,16 @@
+# Template file for 'python-cliapp'
+pkgname=python-cliapp
+version=1.20150829
+revision=1
+noarch=yes
+build_style=python-module
+hostmakedepends="python-setuptools"
+makedepends="python-devel"
+depends="python"
+pycompile_module="cliapp"
+short_desc="Framework for Unix-like command line programs for Python2"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+homepage="http://liw.fi/cliapp/"
+license="GPL-3"
+distfiles="http://code.liw.fi/debian/pool/main/p/${pkgname}/${pkgname}_${version}.orig.tar.xz"
+checksum=28bc06e8c810e8c392768d2c60b73445dd7f15efc85f124537e4ac16c2265586

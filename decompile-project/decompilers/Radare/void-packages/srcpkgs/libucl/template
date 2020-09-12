@@ -1,0 +1,33 @@
+# Template file for 'libucl'
+pkgname=libucl
+version=0.7.3
+revision=3
+build_style=gnu-configure
+configure_args="--enable-urls --enable-signatures"
+hostmakedepends="automake libtool pkg-config"
+makedepends="libcurl-devel libressl-devel"
+short_desc="Universal configuration library parser"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="2-clause-BSD"
+homepage="https://github.com/vstakhov/libucl"
+distfiles="https://github.com/vstakhov/libucl/archive/${version}.tar.gz"
+checksum=2f69995c7f8320350f56c1183c395cc4a2a958331f22d60b7839a117c9c601e1
+
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+post_install() {
+	vlicense COPYING LICENSE
+}
+
+libucl-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+		vmove usr/share
+	}
+}

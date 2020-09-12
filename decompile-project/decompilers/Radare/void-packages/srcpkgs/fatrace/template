@@ -1,0 +1,15 @@
+# Template file for 'fatrace'
+pkgname=fatrace
+version=0.11
+revision=1
+build_style=gnu-makefile
+short_desc="Report system wide file access events"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="GPL-3"
+homepage="http://launchpad.net/fatrace"
+distfiles="http://launchpad.net/fatrace/trunk/${version}/+download/${pkgname}-${version}.tar.bz2"
+checksum=9aa04de50d8549c152f86fab0e2bf81df553af6548b4b31d72cb512b84d8e7b8
+
+post_extract() {
+	sed -i 's/sbin/bin/g' Makefile
+}

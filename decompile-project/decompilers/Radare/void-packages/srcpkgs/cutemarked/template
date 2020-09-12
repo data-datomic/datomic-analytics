@@ -1,0 +1,17 @@
+# Template file for 'cutemarked'
+pkgname=cutemarked
+reverts="v0.11.0_1"
+version=0.11.1
+revision=3
+wrksrc="CuteMarkEd-${version}"
+nocross=yes
+build_style=qmake
+hostmakedepends="pkg-config qt5-qmake"
+makedepends="qt5-devel qt5-tools-devel qt5-webkit-devel discount-devel hunspell-devel"
+depends="desktop-file-utils"
+short_desc="A Markdown editor with live HTML preview"
+maintainer="Logen K <logen@sudotask.com>"
+license="GPL-2"
+homepage="http://cloose.github.io/CuteMarkEd/"
+distfiles="https://github.com/cloose/${pkgname}/archive/v${version}.tar.gz"
+checksum=17f376429bafbd4009099340e71481075f2695a020a7c85a5f91145e168728e8

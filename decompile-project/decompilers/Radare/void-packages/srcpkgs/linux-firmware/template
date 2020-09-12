@@ -1,0 +1,60 @@
+# Template file for 'linux-firmware'
+pkgname=linux-firmware
+version=20151122
+revision=1
+noarch=yes
+short_desc="Binary firmware blobs for the Linux kernel"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.kernel.org/"
+license="See /usr/share/licenses/${pkgname}"
+hostmakedepends="git"
+depends="${pkgname}-amd-${version}_${revision} ${pkgname}-network-${version}_${revision}"
+
+do_fetch() {
+	local _githash="bb818e53175cce9967cdfd8d8155c438e7ba099f"
+	local _url="git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git"
+	git clone ${_url} ${wrksrc}
+	cd ${wrksrc}
+	git checkout ${_githash}
+}
+do_install() {
+	vmkdir usr/lib/firmware
+	vmkdir usr/share/licenses/${pkgname}
+	vcopy "*" usr/lib/firmware
+	rm -f ${DESTDIR}/usr/lib/firmware/{README*,configure,GPL*}
+	mv ${DESTDIR}/usr/lib/firmware/{LICEN*,WHENCE} \
+		${DESTDIR}/usr/share/licenses/${pkgname}
+}
+
+linux-firmware-amd_package() {
+	short_desc+=" - AMD CPU/GPU microcode"
+	noarch=yes
+	pkg_install() {
+		vmove usr/lib/firmware/amd*
+		vmove usr/lib/firmware/radeon
+		vmove usr/share/licenses/linux-firmware/LICENSE.amd-ucode
+		vmove usr/share/licenses/linux-firmware/LICENSE.radeon
+	}
+}
+linux-firmware-network_package() {
+	short_desc+=" - network"
+	noarch=yes
+	pkg_install() {
+		vmove usr/lib/firmware/3com
+		vmove usr/lib/firmware/RTL8192E
+		vmove "usr/lib/firmware/rt*"
+		vmove "usr/lib/firmware/ath*"
+		vmove "usr/lib/firmware/ar*"
+		vmove "usr/lib/firmware/bnx2*"
+		vmove usr/lib/firmware/brcm
+		vmove "usr/lib/firmware/cxgb*"
+		vmove "usr/lib/firmware/htc*"
+		vmove "usr/lib/firmware/iwl*"
+		vmove "usr/lib/firmware/intel*"
+		vmove usr/lib/firmware/kaweth
+		vmove usr/lib/firmware/libertas
+		vmove usr/lib/firmware/mrvl
+		vmove usr/lib/firmware/ueagle-atm
+		vmove usr/lib/firmware/ti-connectivity
+	}
+}

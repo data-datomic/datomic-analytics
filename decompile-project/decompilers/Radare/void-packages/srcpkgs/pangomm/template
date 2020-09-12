@@ -1,0 +1,25 @@
+# Template build file for 'pangomm'.
+pkgname=pangomm
+version=2.38.1
+revision=2
+build_style=gnu-configure
+configure_args="--disable-documentation"
+hostmakedepends="pkg-config"
+makedepends="libsigc++-devel glibmm-devel cairomm-devel pango-devel"
+short_desc="C++ bindings for the pango library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://gtkmm.sourceforge.net"
+distfiles="${GNOME_SITE}/pangomm/${version%.*}/$pkgname-$version.tar.xz"
+checksum=effb18505b36d81fc32989a39ead8b7858940d0533107336a30bc3eef096bc8b
+
+pangomm-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/pango*"
+		vmove "usr/lib/*.so"
+	}
+}

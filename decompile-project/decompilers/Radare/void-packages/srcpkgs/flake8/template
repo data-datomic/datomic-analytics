@@ -1,0 +1,23 @@
+# Template file for 'flake8'
+pkgname=flake8
+version=2.5.1
+revision=1
+noarch=yes
+build_style=python-module
+hostmakedepends="python-setuptools"
+depends="${hostmakedepends} pep8 pyflakes mccabe"
+pycompile_module="flake8"
+short_desc="The modular source code checker: pep8, pyflakes, mccabe"
+maintainer="Alessio Sergi <al3hex@gmail.com>"
+homepage="https://gitlab.com/pycqa/flake8"
+license="MIT"
+distfiles="${PYPI_SITE}/f/flake8/flake8-${version}.tar.gz"
+checksum=448aed48b0671fe6062f47b98c3081f3a4b36fbe99ddb8ac2a3be6e6cb135603
+
+pre_build() {
+	# allow pep8 1.6.2 (patched)
+	sed -i '/pep8/s|, != 1.6.2||' setup.py
+}
+post_install() {
+	vlicense LICENSE
+}

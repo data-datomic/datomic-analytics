@@ -1,0 +1,24 @@
+# Template file for 'liblxqt'
+pkgname=liblxqt
+version=0.10.0
+revision=1
+build_style=cmake
+hostmakedepends="cmake pkg-config"
+makedepends="kwindowsystem-devel libqtxdg-devel"
+short_desc="LXQT Desktop library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://lxqt.org/"
+distfiles="http://downloads.lxqt.org/lxqt/${version}/${pkgname}-${version}.tar.xz"
+checksum=77a42a9ae79d0887bf09cba0c6aaf59ba71edb0bc807736384d1072254aace7c
+
+liblxqt-devel_package() {
+	short_desc+=" - development files"
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.so
+		vmove usr/share/cmake
+	}
+}

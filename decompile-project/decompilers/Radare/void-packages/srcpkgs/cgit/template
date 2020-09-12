@@ -1,0 +1,36 @@
+# Template build file for "cgit".
+_git_version=2.3.2
+
+pkgname=cgit
+version=0.11.2
+revision=3
+hostmakedepends="asciidoc"
+makedepends="libressl-devel zlib-devel"
+short_desc="A fast webinterface for git"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+homepage="http://git.zx2c4.com/cgit/"
+license="GPL-2"
+distfiles="http://git.zx2c4.com/cgit/snapshot/cgit-${version}.tar.xz
+ https://www.kernel.org/pub/software/scm/git/git-${_git_version}.tar.xz"
+checksum="2e126e770693d7296c7eb5eb83b809410aef29870bfe8f54da072a3f4d813e3b
+ 18eb8462026a55ab34a657282e894bdaad331ea59bfebeba5eb45b27b58cf825"
+
+post_extract() {
+	rm -r git
+	mv ../git-$_git_version git
+}
+
+pre_build() {
+	if ! grep -q "^GIT_VER = $_git_version\$" Makefile; then
+		msg_error "$pkgver: update _git_version to match upstream Makefile.\n"
+	fi
+}
+
+do_build() {
+	make CC=$CC CFLAGS="$CFLAGS" prefix=/usr ${makejobs} all doc-man
+}
+
+do_install() {
+	make CC=$CC CFLAGS="$CFLAGS" prefix=/usr DESTDIR=${DESTDIR} \
+		CGIT_SCRIPT_PATH=/usr/share/webapps/cgit install install-man
+}

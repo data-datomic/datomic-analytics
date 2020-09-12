@@ -1,0 +1,15 @@
+# Template file for 'gnome-power-manager'
+pkgname=gnome-power-manager
+version=3.18.0
+revision=2
+build_style=gnu-configure
+configure_args="--disable-schemas-compile"
+hostmakedepends="pkg-config intltool gnome-doc-utils glib"
+makedepends="gtk+3-devel upower-devel"
+depends="hicolor-icon-theme desktop-file-utils"
+short_desc="GNOME power management tool"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org/projects/gnome-power-manager/"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=afe5921a4313d15757f39f6ff4ec6f7c9e9cbb9b2aaa0b8a290e1cd7557e28f0

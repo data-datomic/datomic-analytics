@@ -1,0 +1,25 @@
+# Template file for 'qtpass'
+pkgname=qtpass
+version=1.0.5
+revision=1
+build_style=qmake
+hostmakedepends="qt5-qmake qt5-tools"
+makedepends="qt5-devel"
+depends="pass pwgen"
+short_desc="Multi-platform GUI for pass"
+maintainer="annejan <brouwer@annejan.com>"
+license="GPL-3"
+homepage="http://qtpass.org/"
+distfiles="https://github.com/IJHack/${pkgname}/archive/v${version}.tar.gz"
+checksum=0c07bd1eb9e5336c0225f891e5b9a9df103f218619cf7ec6311edf654e8db281
+
+do_install() {
+	vbin qtpass
+
+	vinstall artwork/icon.png 644 \
+		usr/share/icons/hicolor/512x512/apps qtpass-icon.png
+	vinstall artwork/icon.svg 644 \
+		usr/share/icons/hicolor/scalable/apps qtpass-icon.svg
+
+	vinstall qtpass.desktop 644 usr/share/applications
+}

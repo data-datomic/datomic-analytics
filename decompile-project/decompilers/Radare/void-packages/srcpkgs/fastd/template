@@ -1,0 +1,27 @@
+# Template file for 'fastd'
+pkgname=fastd
+version=17
+revision=4
+build_style=cmake
+hostmakedepends="cmake pkg-config bison"
+makedepends="libuecc-devel libsodium-devel json-c-devel libcap-devel"
+short_desc="Fast and Secure Tunneling Daemon"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="BSD"
+homepage="https://projects.universe-factory.net/projects/fastd"
+distfiles="http://git.universe-factory.net/fastd/snapshot/fastd-${version}.tar"
+checksum=20390fc2110929ebf37feebe1bcce68d7920a5efd42c369bd2d886c6781966dc
+configure_args="ENABLE_LTO=ON"
+conf_files="
+ /etc/fastd/secret.conf
+ /etc/fastd/fastd.conf"
+make_dirs="/etc/fastd/peers	755	root 	root"
+CFLAGS="-I$XBPS_CROSS_BASE/usr/include/sodium"
+
+post_install() {
+	vmkdir etc/fastd
+	vinstall ${FILESDIR}/fastd.conf 644 etc/fastd
+	vinstall ${FILESDIR}/secret.conf 600 etc/fastd
+	vsv fastd
+	vman doc/fastd.1
+}

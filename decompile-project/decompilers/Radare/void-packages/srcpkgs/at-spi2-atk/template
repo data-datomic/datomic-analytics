@@ -1,0 +1,27 @@
+# Template file for 'at-spi2-atk'
+pkgname=at-spi2-atk
+version=2.18.1
+revision=1
+build_style=gnu-configure
+hostmakedepends="automake libtool pkg-config intltool glib-devel"
+makedepends="libglib-devel atk-devel at-spi2-core-devel"
+short_desc="A GTK+ module that bridges ATK to D-Bus at-spi"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="LGPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=c4b15f9386d34d464ddad5f6cc85669742c016df87141ceee93513245979c12d
+
+pre_configure() {
+	autoreconf -fi
+}
+
+at-spi2-atk-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

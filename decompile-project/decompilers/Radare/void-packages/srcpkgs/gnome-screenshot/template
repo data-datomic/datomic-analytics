@@ -1,0 +1,16 @@
+# Template file for 'gnome-screenshot'
+pkgname=gnome-screenshot
+version=3.18.0
+revision=1
+build_style=gnu-configure
+configure_args="--disable-schemas-compile"
+hostmakedepends="pkg-config intltool itstool gnome-doc-utils appdata-tools
+ glib-devel"
+makedepends="gtk+3-devel libcanberra-devel"
+depends="desktop-file-utils"
+short_desc="A screenshot capture utility for GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=eba64dbf4acf0ab8222fec549d0a4f2dd7dbd51c255e7978dedf1f5c06a98841

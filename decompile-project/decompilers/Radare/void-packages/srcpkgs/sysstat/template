@@ -1,0 +1,28 @@
+# Template file for 'sysstat'
+pkgname=sysstat
+version=11.2.0
+revision=1
+build_style=gnu-configure
+configure_args="--enable-install-isag --enable-copy-only --disable-file-attr
+ --with-systemdsystemunitdir= --enable-install-cron"
+make_dirs="/var/log/sa 0755 root root"
+conf_files="/etc/default/sysstat /etc/default/sysstat.ioconf"
+hostmakedepends="pkg-config"
+depends="lm_sensors"
+short_desc="A collection of performance monitoring tools"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="GPL-2"
+homepage="http://pagesperso-orange.fr/sebastien.godard/"
+distfiles="http://pagesperso-orange.fr/sebastien.godard/${pkgname}-${version}.tar.gz"
+checksum=6d50798da59b930788242333129610e3b6a52920f47ac95cfca8ad3851e2b123
+
+post_extract() {
+	sed -i 's/lib64/lib/' configure
+	sed -i '/LFLAGS =/d; s/LFLAGS/LDFLAGS/g' Makefile.in
+}
+pre_configure() {
+	export conf_dir=/etc/default
+	export cron_owner=$(whoami)
+	vmkdir etc/cron.daily
+	vmkdir etc/cron.hourly
+}

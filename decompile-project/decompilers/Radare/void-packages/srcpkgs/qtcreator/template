@@ -1,0 +1,56 @@
+# Template file for 'qtcreator'
+pkgname=qtcreator
+version=3.6.0
+revision=1
+wrksrc=qt-creator-opensource-src-${version}
+build_style=qmake
+make_install_args="INSTALL_ROOT=\${DESTDIR}/usr"
+hostmakedepends="perl python pkg-config"
+makedepends="qt5-declarative-devel qt5-script-devel qt5-tools-devel"
+depends="qt5-declarative-devel qt5-quickcontrols qt5-plugin-sqlite"
+nocross=yes
+short_desc="A cross-platform IDE for Qt developers"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="LGPL-2.1"
+homepage="http://wiki.qt.io/Category:Tools::QtCreator"
+distfiles="http://download.qt.io/official_releases/qtcreator/${version%.*}/${version}/${wrksrc}.tar.gz"
+checksum=b130104963053e21f227b08009545894af33df495445a8651843bad4b52a1dec
+
+do_build() {
+	# Note: A simple "make ${makejobs}" fails after libs because
+	# of files being removed and symlinked asynchronously.
+	# Fix this parallel build issue by first sequentially making subdirs
+	cd src
+	make ${makejobs} libs
+	make ${makejobs} app
+	make ${makejobs} plugins
+	make ${makejobs} tools
+	cd ..
+	# ... and eventually the main Makefile
+	make ${makejobs}
+}
+post_install() {
+	# Install the desktop file
+	vinstall ${FILESDIR}/qtcreator.desktop \
+		644 usr/share/applications
+	# Install shared-mime-info files for qmake and cmake projects
+	vinstall ${wrksrc}/src/plugins/qmakeprojectmanager/QmakeProjectManager.mimetypes.xml \
+		644 usr/share/mime/packages
+	vinstall ${wrksrc}/src/plugins/cmakeprojectmanager/CMakeProjectManager.mimetypes.xml \
+		644 usr/share/mime/packages
+}
+
+qtcreator-full_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - full dependencies"
+	depends+=" qt5-connectivity-devel qt5-declarative-devel qt5-enginio-devel qt5-graphicaleffects
+ qt5-location-devel qt5-multimedia-devel qt5-quick1-devel qt5-script-devel qt5-sensors-devel
+ qt5-serialport-devel qt5-svg-devel qt5-tools-devel qt5-wayland-devel qt5-webchannel-devel
+ qt5-webengine-devel qt5-webkit-devel qt5-websockets-devel qt5-x11extras-devel qt5-xmlpatterns-devel
+ qt5-declarative-devel qt5-script-devel qt5-tools-devel qt5-doc qt5-plugin-gtk
+ qt5-plugin-mysql qt5-plugin-odbc qt5-plugin-pgsql qt5-plugin-sqlite qt5-plugin-tds"
+	build_style=meta
+	pkg_install() {
+		echo "Just the dependencies"
+	}
+}

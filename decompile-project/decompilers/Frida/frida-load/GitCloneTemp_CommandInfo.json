@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/frida-load undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-load",
+    "repo": "https://github.com/frida/frida-load",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-load",
+    "startTime": "2020-09-12T11:02:52.892Z",
+    "endTime": "2020-09-12T11:02:53.421Z",
+    "childProcessPid": 27585,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--frida-load--27585"
+}

@@ -1,0 +1,31 @@
+# Template build file for 'rakudo-star'.
+pkgname=rakudo-star
+only_for_archs="i686 x86_64"
+version=2015.11
+revision=1
+build_style=configure
+configure_script="perl Configure.pl"
+configure_args="--prefix=/usr/lib/perl6 --backends=moar"
+hostmakedepends="perl MoarVM nqp"
+makedepends="${hostmakedepends}"
+short_desc="Rakudo is an implementation of Perl 6 language"
+maintainer="Ruslan <axetwe@gmail.com>"
+homepage="http://rakudo.org"
+license="Artistic-2.0"
+distfiles="http://rakudo.org/downloads/star/rakudo-star-${version}.tar.gz"
+checksum=714aed706706f02efeadc0d7e4c7ad216de5ded80d4a1b2879c275d5d05beae7
+depends="MoarVM>=${version} nqp>=${version}"
+
+pre_install() {
+	mkdir -p /usr/lib/perl6/share/perl6/runtime
+	ln -s /destdir/rakudo-star-${version}/usr/lib/perl6/share/perl6/runtime/perl6.moarvm /usr/lib/perl6/share/perl6/runtime/perl6.moarvm
+}
+
+post_install() {
+	vinstall ${FILESDIR}/rakudo-star.sh 644 etc/profile.d
+}
+
+do_clean() {
+	rm    /usr/lib/perl6/share/perl6/runtime/perl6.moarvm
+	rmdir /usr/lib/perl6/share/perl6/runtime
+}

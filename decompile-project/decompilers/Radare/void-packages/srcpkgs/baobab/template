@@ -1,0 +1,15 @@
+# Template file for 'baobab'
+pkgname=baobab
+version=3.18.1
+revision=1
+build_style=gnu-configure
+configure_args="--disable-schemas-compile"
+hostmakedepends="pkg-config intltool itstool gnome-doc-utils glib-devel"
+makedepends="gtk+3-devel vala-devel gsettings-desktop-schemas-devel"
+depends="hicolor-icon-theme desktop-file-utils gsettings-desktop-schemas>=3.14"
+short_desc="A graphical directory tree analyzer for GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=c2ac90426390e77147446a290c1480c49936c0a224f740b555ddaec2675b44b5

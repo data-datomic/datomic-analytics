@@ -1,0 +1,13 @@
+# Template file for 'lxqt-policykit'
+pkgname=lxqt-policykit
+version=0.10.0
+revision=1
+build_style=cmake
+hostmakedepends="cmake pkg-config"
+makedepends="liblxqt-devel polkit-qt5-devel"
+short_desc="LXQt policykit agent"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://lxqt.org/"
+distfiles="http://downloads.lxqt.org/lxqt/${version}/${pkgname}-${version}.tar.xz"
+checksum=c8a1843d30697030ecdcf6d328351f954c0349633106d389e2d2e678176c28ce

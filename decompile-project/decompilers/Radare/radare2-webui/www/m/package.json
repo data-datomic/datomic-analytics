@@ -1,0 +1,85 @@
+{
+  "author": {
+    "name": "pancake",
+    "email": "pancake@nopcode.org"
+  },
+  "bugs": {
+    "url": "https://github.com/radare/radare2-webui"
+  },
+  "description": "Material Lite interface for radare2",
+  "homepage": "https://radare.org",
+  "license": "LGPL-3.0",
+  "maintainers": [
+    {
+      "name": "pancake",
+      "email": "pancake@nopcode.org"
+    }
+  ],
+  "name": "radare2-webui-material",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/radare/radare2-webui.git"
+  },
+  "scripts": {
+    "build": "yarn",
+    "watch": "yarn watch",
+    "test": "mocha --require test/specs/helpers/chai.js",
+    "testbrowser": "yarn test",
+    "checkstyle": "yarn checkstyle",
+    "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'vendors', 'junction') } catch (e) { }\""
+  },
+  "version": "3.1.0",
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "acorn": "^6.4.1",
+    "babel-eslint": "*",
+    "babel-plugin-transform-es2015-modules-systemjs": "*",
+    "babel-preset-env": "^1.7.0",
+    "babelify": "*",
+    "bower": "*",
+    "browserify": "*",
+    "chai": "*",
+    "eslint": "latest",
+    "gulp": "4.0.0",
+    "gulp-babel": "*",
+    "gulp-bower": "latest",
+    "gulp-clean-css": "*",
+    "gulp-concat": "*",
+    "gulp-eslint": "*",
+    "gulp-google-webfonts": "*",
+    "gulp-htmlmin": "*",
+    "gulp-livereload": "*",
+    "gulp-replace": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-uglify": "*",
+    "gulp-uglifycss": "*",
+    "jsdom": "*",
+    "jsdom-global": "*",
+    "merge-stream": "*",
+    "mocha": "*",
+    "opener": "*",
+    "semistandard": "*",
+    "sinon": "*",
+    "sinon-chai": "*",
+    "through2": "^3.0.0",
+    "vinyl-source-stream": "2.0.0",
+    "yarn": "^1.22.0"
+  },
+  "dependencies": {
+    "babel-plugin-add-module-exports": "^1.0.0",
+    "datatables.net": "github:DataTables/Dist-DataTables",
+    "datatables.net-dt": "github:DataTables/Dist-DataTables-DataTables",
+    "dialog-polyfill": "github:GoogleChrome/dialog-polyfill",
+    "file-saver": "github:eligrey/FileSaver.js",
+    "infinite-scroll": "*",
+    "jquery": "github:jquery/jquery-dist",
+    "material-design-icons-iconfont": "github:Jossef/material-design-icons-iconfont",
+    "material-design-lite": "google/material-design-lite",
+    "mdl-selectfield": "github:mebibou/mdl-selectfield",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "engines": {
+    "yarn": ">= 1.0.0"
+  }
+}

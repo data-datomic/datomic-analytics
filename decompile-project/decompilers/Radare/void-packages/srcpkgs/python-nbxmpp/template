@@ -1,0 +1,28 @@
+# Template file for 'python-nbxmpp'
+pkgname=python-nbxmpp
+version=0.5.3
+revision=1
+noarch=yes
+wrksrc=${pkgname#*-}-${version}
+build_style=python-module
+python_versions="2.7 3.4"
+hostmakedepends="python-setuptools python3.4-setuptools"
+depends="python"
+pycompile_module="nbxmpp"
+short_desc="Non blocking Jabber/XMPP module (Python2)"
+maintainer="Duncaen <duncaen@voidlinux.eu>"
+license="GPL-3"
+homepage="https://python-nbxmpp.gajim.org/"
+distfiles="${PYPI_SITE}/n/nbxmpp/nbxmpp-${version}.tar.gz"
+checksum=b79a6b25a2ed7ac792600544778238b27cf6eef6c8eab79b0bfa46df0c3a9935
+
+python3.4-nbxmpp_package() {
+	noarch=yes
+	depends="python3.4"
+	pycompile_version="3.4"
+	pycompile_module="nbxmpp"
+	short_desc="${short_desc/Python2/Python3.4}"
+	pkg_install() {
+		vmove usr/lib/python3.4
+	}
+}

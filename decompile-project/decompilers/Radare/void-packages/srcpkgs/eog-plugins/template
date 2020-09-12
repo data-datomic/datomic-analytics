@@ -1,0 +1,18 @@
+# Template file for 'eog-plugins'
+pkgname=eog-plugins
+version=3.16.3
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool"
+makedepends="eog-devel libgdata-devel
+ libchamplain-devel libpeas-devel libexif-devel
+ gsettings-desktop-schemas-devel"
+pycompile_dirs="usr/lib/eog/plugins"
+depends="eog gsettings-desktop-schemas"
+short_desc="Eye of GNOME plugins"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=2d2198ed026b1c28329ac3d353b3031c2024277d81d60f3c1e626f4701a73bd2

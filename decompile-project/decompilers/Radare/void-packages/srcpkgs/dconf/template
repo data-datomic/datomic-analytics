@@ -1,0 +1,25 @@
+# Template file for 'dconf'
+pkgname=dconf
+version=0.24.0
+revision=2
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool libxslt docbook-xsl glib-devel"
+makedepends="vala-devel dbus-devel gtk+3-devel libxml2-devel"
+short_desc="A low-level configuration system"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://live.gnome.org/dconf"
+license="LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=4373e0ced1f4d7d68d518038796c073696280e22957babb29feb0267c630fec2
+
+dconf-devel_package() {
+	depends="libglib-devel vala-devel>=0.24 dconf>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gtk-doc
+		vmove usr/share/vala
+	}
+}

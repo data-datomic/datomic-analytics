@@ -1,0 +1,22 @@
+# Template file for 'compton-git'
+pkgname=compton-git
+version=20150515
+revision=1
+build_style="gnu-makefile"
+hostmakedepends="pkg-config asciidoc pcre-devel git"
+makedepends="dbus-devel libXcomposite-devel libXdamage-devel libXrandr-devel pcre-devel
+ libconfig-devel libdrm-devel MesaLib-devel libXinerama-devel"
+depends="desktop-file-utils"
+maintainer="Steven R <dev@styez.com>"
+homepage="https://github.com/chjj/compton"
+license="MIT"
+short_desc="A compositor for X (fork of xcompmgr-dana)"
+
+provides="compton-${version}_${revision}"
+replaces="compton>=0"
+
+do_fetch() {
+	local url="git://github.com/chjj/compton.git"
+	msg_normal "Fetching source from $url ...\n"
+	git clone ${url} ${pkgname}-${version}
+}

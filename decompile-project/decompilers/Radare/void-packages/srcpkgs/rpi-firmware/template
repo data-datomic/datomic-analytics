@@ -1,0 +1,34 @@
+# Template file for 'rpi-firmware'
+_githash="6b7cebd8e1f402ca6f847d22d86afe4b5fbb6eb8"
+_gitshort="${_githash:0:7}"
+
+pkgname=rpi-firmware
+version=20151218
+revision=1
+noarch=yes
+wrksrc="firmware-${_githash}"
+short_desc="Firmware files for the Raspberry Pi (git ${_gitshort})"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="3-clause-BSD"
+homepage="https://github.com/raspberrypi/firmware"
+distfiles="https://github.com/raspberrypi/firmware/archive/${_githash}.tar.gz"
+checksum=1625a9a45c124d5a55f6277761d7bb088273f42352b110e36996b5277852f87a
+
+conf_files="/boot/cmdline.txt /boot/config.txt"
+
+do_install() {
+	rm -f boot/*.img
+	rm -rf boot/overlays
+	rm -f boot/*.dtb
+	rm -f boot/COPYING.linux
+
+	vmkdir boot
+	cp -R boot/* ${DESTDIR}/boot
+
+	vmkdir usr/share/licenses/${pkgname}
+	mv ${DESTDIR}/boot/LICENCE.broadcom ${DESTDIR}/usr/share/licenses/${pkgname}
+
+	# Install configuration files.
+	vinstall ${FILESDIR}/cmdline.txt 644 boot
+	vinstall ${FILESDIR}/config.txt 644 boot
+}

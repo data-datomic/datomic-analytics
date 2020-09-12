@@ -1,0 +1,26 @@
+# Template file for 'yelp'
+pkgname=yelp
+version=3.18.1
+revision=1
+build_style=gnu-configure
+configure_args="--disable-schemas-compile --disable-static"
+hostmakedepends="pkg-config intltool itstool glib-devel"
+makedepends="bzip2-devel liblzma-devel sqlite-devel libgpg-error-devel
+ libgcrypt-devel libxslt-devel libsoup-devel webkit2gtk-devel yelp-xsl"
+depends="libsoup webkit2gtk dconf hicolor-icon-theme desktop-file-utils yelp-xsl"
+short_desc="Help browser for GNOME desktop"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=ba3a4eb4717c0ecf4a2e40eff0963fcd12c700c4fb80b83ecaad8b7032256880
+
+yelp-devel_package() {
+	depends="yelp>=${version}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/share/gtk-doc
+		vmove "usr/lib/*.so"
+	}
+}

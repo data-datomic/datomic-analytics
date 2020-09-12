@@ -1,0 +1,40 @@
+# Template file for 'libfm'
+#
+# THIS PKG MUST BE SYNCHRONIZED WITH "srcpkgs/libfm-extra"
+#
+pkgname=libfm
+version=1.2.3
+revision=3
+build_style=gnu-configure
+configure_args="--enable-udisks --disable-static"
+hostmakedepends="automake glib-devel gtk-doc gettext-devel libtool pkg-config intltool"
+makedepends="libexif-devel dbus-glib-devel gtk+-devel menu-cache-devel vala-devel"
+depends="libfm-extra>=${version}_${revision} desktop-file-utils"
+conf_files="/etc/xdg/libfm/libfm.conf"
+short_desc="LXDE GLib/GIO based library"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://pcmanfm.sourceforge.net/"
+license="GPL-2"
+distfiles="${SOURCEFORGE_SITE}/pcmanfm/$pkgname-$version.tar.xz"
+checksum=c692f1624a4cbc8d1dd55f3b3f3369fbf5d26f63a916e2c295230b2344e1fbf9
+
+pre_configure() {
+	autoreconf -fi
+}
+
+post_install() {
+	# remove files that belong to libfm-extra
+	rm -f ${DESTDIR}/usr/lib/libfm-extra.so*
+	rm -f ${DESTDIR}/usr/lib/pkgconfig/libfm-extra.pc
+	rm -f ${DESTDIR}/usr/include/libfm/fm-{extra,version,xml-file}.h
+}
+
+libfm-devel_package() {
+	depends="gtk+-devel menu-cache-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" -- development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}

@@ -1,0 +1,119 @@
+# Template file for 'xen'
+pkgname=xen
+version=4.6.0
+revision=1
+short_desc="The Xen hypervisor utilities"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://xen.org"
+license="GPL-2"
+distfiles="http://bits.xensource.com/oss-xen/release/$version/xen-$version.tar.gz"
+checksum=6fa1c2431df55aa5950d248e6093b8c8c0f11c357a0adbd348a2186478e80909
+
+only_for_archs="x86_64"
+
+hostmakedepends="wget bison perl pkg-config git"
+makedepends="
+ libaio-devel lzo-devel libressl-devel e2fsprogs-devel zlib-devel gnutls-devel
+ libbluetooth-devel pciutils-devel libX11-devel libXext-devel SDL-devel MesaLib-devel
+ ncurses-devel liblzma-devel python-devel yajl-devel libuuid-devel libglib-devel
+ dev86 acpica-utils pixman-devel gcc-multilib"
+depends="xen-hypervisor"
+
+make_dirs="
+	/var/lib/xenstored	755	root 	root
+	/var/lib/xen/xenpaging	755	root	root
+	/var/xen/dump		755	root	root
+	/etc/xen/auto		755	root	root"
+conf_files="
+	/etc/default/xendomains
+	/etc/default/xencommons
+	/etc/xen/xl.conf"
+nostrip_files="
+	u-boot.e500
+	openbios-ppc
+	openbios-sparc32
+	openbios-sparc64
+	palcode-clipper
+	s390-ccw.img"
+pycompile_module="xen grub"
+
+do_configure() {
+	rm -f ${XBPS_WRAPPERDIR}/strip
+	unset CC LD AR AS RANLIB CPP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
+	./configure ${configure_args}
+}
+do_build() {
+	rm -f ${XBPS_WRAPPERDIR}/strip
+	cd ${wrksrc}
+	unset CC LD AR AS RANLIB CPP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
+	make ${makejobs} DISTDIR=${wrksrc}/${pkgver}-distdir
+}
+do_install() {
+	rm -f ${XBPS_WRAPPERDIR}/strip
+	unset CC LD AR AS RANLIB CPP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
+	make DESTDIR=${DESTDIR} install
+
+	# Move example config files into correct directory.
+	vmkdir usr/share/examples/xen
+	mv ${DESTDIR}/etc/xen/x*example* ${DESTDIR}/usr/share/examples/xen
+	mv ${DESTDIR}/etc/xen/cpupool ${DESTDIR}/usr/share/examples/xen
+	mv ${DESTDIR}/etc/init.d/xendomains ${DESTDIR}/etc/xen/scripts
+
+	# Remove useless stuff.
+	rm -rf ${DESTDIR}/etc/init.d ${DESTDIR}/usr/local
+	rm -f ${DESTDIR}/install.sh ${DESTDIR}/usr/lib64
+	rm -rf ${DESTDIR}/usr/bin/qemu-*-xen
+	rm -f ${DESTDIR}/boot/xen{,-4,-4.3}.gz
+	rm -f ${DESTDIR}/usr/sbin/xen-python-path
+	rm -f ${DESTDIR}/{install,COPYING,README,usr/lib/lib}
+	rm -rf ${DESTDIR}/etc/udev
+	rm -f ${DESTDIR}//usr/libexec/qemu-bridge-helper
+	rm -rf ${DESTDIR}/usr/etc
+
+	# Move bash-completion to the correct dir.
+	vmkdir usr/share/bash-completion/completions
+	mv ${DESTDIR}/etc/bash_completion.d/* \
+		${DESTDIR}/usr/share/bash-completion/completions
+
+	vmkdir usr/lib/modules-load.d
+	install -m644 ${FILESDIR}/xen.conf ${DESTDIR}/usr/lib/modules-load.d
+
+	# Drop xen/xm stuff (obsolete).
+	rm -f ${DESTDIR}/usr/bin/{xm,xend}
+	rm -f ${DESTDIR}/etc/xen/*.{sxp,xml}
+	rm -f ${DESTDIR}/usr/share/man/man5/{xmdomain.cfg,xend-config.sxp}.5
+	rm -f ${DESTDIR}/usr/share/man/man1/xm.1
+	rm -f ${DESTDIR}/usr/share/doc/xen/html/man/xm.1.html
+	rm -f ${DESTDIR}/usr/share/doc/xen/html/man/{xmdomain.cfg,xend-config.sxp}.5.html
+	rm -f ${DESTDIR}/usr/share/examples/xen/xmexample*
+
+	# runit services
+	vsv xen
+	vsv xenconsoled
+	vsv xenstored
+
+	rm -f ${DESTDIR}/boot/xen-${version%.*}.gz
+}
+
+xen-hypervisor_package() {
+	short_desc="Xen Hypervisor"
+	nostrip_files="xen-syms-${version}"
+	pkg_install() {
+		vmove boot
+	}
+}
+xen-devel_package() {
+	short_desc+=" - development files"
+	depends="xen-libs>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}
+xen-libs_package() {
+	short_desc+=" - runtime libraries"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}

@@ -1,0 +1,37 @@
+# Template file for 'at-spi2-core'
+pkgname=at-spi2-core
+version=2.18.3
+revision=1
+build_style=gnu-configure
+configure_args="$(vopt_enable gir introspection)"
+hostmakedepends="pkg-config intltool dbus glib-devel $(vopt_if gir gobject-introspection)"
+makedepends="libglib-devel libXext-devel libSM-devel libXtst-devel libXevie-devel dbus-devel"
+conf_files="/etc/at-spi2/accessibility.conf"
+short_desc="Assistive Technology Service Provider Interface"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=ada26add94155f97d0f601a20cb7a0e3fd3ba1588c3520b7288316494027d629
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+at-spi2-core-devel_package() {
+	depends="dbus-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+		vmove usr/share/gtk-doc
+		vmove "usr/lib/*.so"
+	}
+}

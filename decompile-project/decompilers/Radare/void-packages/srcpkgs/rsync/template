@@ -1,0 +1,19 @@
+# Template file for 'rsync'
+pkgname=rsync
+version=3.1.2
+revision=1
+build_style=gnu-configure
+conf_files="/etc/rsyncd.conf"
+hostmakedepends="perl"
+makedepends="zlib-devel acl-devel popt-devel"
+short_desc="Remote fast incremental file transfer tool"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://samba.anu.edu.au/rsync/"
+distfiles="http://www.samba.org/ftp/rsync/src/rsync-$version.tar.gz"
+checksum=ecfa62a7fa3c4c18b9eccd8c16eaddee4bd308a76ea50b5c02a5840f09c0a1c2
+
+post_install() {
+	vconf ${FILESDIR}/rsyncd.conf
+	vsv rsyncd
+}

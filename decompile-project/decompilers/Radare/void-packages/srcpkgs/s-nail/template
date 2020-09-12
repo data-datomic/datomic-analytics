@@ -1,0 +1,35 @@
+# Template file for 's-nail'
+pkgname=s-nail
+version=14.8.5
+revision=3
+makedepends="libressl-devel libidn-devel"
+conf_files="/etc/s-nail.rc"
+short_desc="Mail processing system with a command syntax reminiscent of ed"
+maintainer='Juan RP <xtraeme@voidlinux.eu>'
+license="BSD"
+homepage="http://s-nail.sourceforge.net/"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version//./_}.tar.gz"
+checksum="0f4f157c9517ba1990dd68ccf1b48d3d167fe867399385d7a4e4d0492e981908"
+
+provides="mail-${version}_${revision}"
+
+alternatives="
+ mail:mail.rc:/etc/s-nail.rc
+ mail:mail:/usr/bin/s-nail
+ mail:mail.1:/usr/share/man/man1/s-nail.1
+"
+
+do_build() {
+	make CC=$CC PREFIX=/usr SYSCONFDIR=/etc SID= NAIL=mail BINDIR=/usr/bin MANDIR=/usr/share/man \
+		MAILSPOOL=/var/spool/mail XPAGER=less SENDMAIL=/usr/bin/sendmail WANT_IDNA=1 WANT_AUTOCC=0 \
+		WANT_FILTER_HTML_TAGSOUP=1 config
+	make CC=$CC ${makejobs} build
+}
+
+do_install() {
+	make DESTDIR=$DESTDIR packager-install
+	mv ${DESTDIR}/etc/{mail,$pkgname}.rc
+	mv ${DESTDIR}/usr/bin/{mail,$pkgname}
+	mv ${DESTDIR}/usr/share/man/man1/{mail,$pkgname}.1
+	vlicense COPYING
+}

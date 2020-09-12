@@ -1,0 +1,23 @@
+# Template file for 'pcb'
+pkgname=pcb
+version=20140316
+revision=4
+build_style=gnu-configure
+configure_args="--disable-update-desktop-database --disable-update-mime-database"
+hostmakedepends="flex intltool pkg-config desktop-file-utils"
+makedepends="MesaLib-devel glu-devel gtk+-devel gtkglext-devel gd-devel tk-devel"
+depends="pcb-data geda"
+short_desc="Interactive printed circuit board editor"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-2"
+homepage="http://pcb.geda-project.org/news.html"
+distfiles="http://ftp.geda-project.org/${pkgname}/${pkgname}-${version}/${pkgname}-${version}.tar.gz"
+checksum=82c4f39438ee4e278196a3b67ef021145dcfbb00519508ccf51aa7832121c950
+
+pcb-data_package() {
+	noarch=yes
+	short_desc+=" - data files"
+	pkg_install() {
+		vmove usr/share/pcb
+	}
+}

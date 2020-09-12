@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/frida-presentations undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-presentations",
+    "repo": "https://github.com/frida/frida-presentations",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/frida-presentations",
+    "startTime": "2020-09-12T11:02:56.300Z",
+    "endTime": "2020-09-12T11:02:58.486Z",
+    "childProcessPid": 27618,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--frida-presentations--27618"
+}

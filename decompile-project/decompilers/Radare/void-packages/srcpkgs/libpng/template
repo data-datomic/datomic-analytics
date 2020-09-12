@@ -1,0 +1,36 @@
+# Template build file for 'libpng'.
+pkgname=libpng
+version=1.6.20
+revision=1
+build_style=gnu-configure
+makedepends="zlib-devel"
+short_desc="Library for manipulating PNG images"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.libpng.org/pub/png/libpng.html"
+license="zlib"
+distfiles="ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-${version}.tar.xz"
+checksum=55c5959e9f3484d96141a3226c53bc9da42a4845e70879d3e1d6e94833d1918b
+
+post_install() {
+	rm -f ${DESTDIR}/usr/lib/*.la
+	vlicense LICENSE
+}
+
+libpng-devel_package() {
+	depends="${makedepends} libpng>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove "usr/bin/libpng*-config"
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+		vmove usr/share/man/man3
+	}
+}
+libpng-progs_package() {
+	short_desc+=" - utilities"
+	pkg_install() {
+		vmove usr/bin
+	}
+}

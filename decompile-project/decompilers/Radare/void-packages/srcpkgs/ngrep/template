@@ -1,0 +1,33 @@
+# Template file for 'ngrep'
+pkgname=ngrep
+version=1.45
+revision=5
+hostmakedepends="automake pkg-config"
+makedepends="pcre-devel libpcap-devel libressl-devel"
+short_desc="grep-like utility for network interfaces"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="MIT"
+homepage="http://ngrep.sourceforge.net/"
+distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}.tar.bz2"
+checksum=aea6dd337da8781847c75b3b5b876e4de9c58520e0d77310679a979fc6402fa7
+
+pre_configure() {
+	autoreconf -fi
+}
+
+do_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		configure_args+=" --with-pcap-includes=$XBPS_CROSS_BASE/usr/include/pcap "
+	else
+		configure_args+=" --with-pcap-includes=/usr/include/pcap "
+	fi
+	./configure ${configure_args} --enable-ipv6 --enable-pcre EXTRA_LIBS="-lpcre"
+}
+
+do_build() {
+	make ${makejobs}
+}
+
+do_install() {
+	make DESTDIR=${DESTDIR} install
+}

@@ -1,0 +1,33 @@
+# Template file for 'lxqt'
+pkgname=lxqt
+version=0.10.0
+revision=1
+build_style=meta
+depends="
+	qt5-translations
+	lxqt-about>=${version}
+	lxqt-common>=${version}
+	lxqt-config>=${version}
+	lxqt-notificationd>=${version}
+	lxqt-openssh-askpass>=${version}
+	lxqt-panel>=${version}
+	lxqt-policykit>=${version}
+	lxqt-powermanagement>=${version}
+	lxqt-qtplugin>=${version}
+	lxqt-runner>=${version}
+	lxqt-session>=${version}
+	lxqt-sudo>=${version}
+	pcmanfm-qt>=${version}
+	lximage-qt>=0.3.0
+	lxmenu-data
+	qterminal
+	openbox
+	obconf-qt
+	oxygen-icons
+	xdg-utils
+	ConsoleKit2
+	upower0"
+short_desc="The LXQT meta-package for Void Linux"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.lxqt.org"
+license="LGPL-2.1"

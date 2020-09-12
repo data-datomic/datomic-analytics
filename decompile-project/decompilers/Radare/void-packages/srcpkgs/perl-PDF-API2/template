@@ -1,0 +1,16 @@
+# Template build file for 'perl-PDF-API2'.
+pkgname=perl-PDF-API2
+version=2.025
+revision=1
+wrksrc="PDF-API2-$version"
+build_style=perl-module
+hostmakedepends="perl"
+makedepends="perl"
+depends="perl"
+short_desc="PDF::API2 - Facilitates the creation and modification of PDF files"
+maintainer="Dominik Honnef <dominik@honnef.co>"
+homepage="http://search.cpan.org/~ssimms/PDF-API2/"
+license="LGPL-2.1"
+distfiles="${CPAN_SITE}/PDF/PDF-API2-${version}.tar.gz"
+checksum=123b49cd459526662d9e0c98c68a52294132051327abe07af1255d599e6d62ea
+noarch=yes

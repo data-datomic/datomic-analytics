@@ -1,0 +1,55 @@
+# Template file for 'sed'
+pkgname=synergy
+version=1.7.3
+revision=1
+wrksrc="${pkgname}-${version}-stable"
+build_style=cmake
+hostmakedepends="cmake unzip pkg-config"
+makedepends="avahi-compat-libs-devel libcurl-devel
+ libSM-devel libXext-devel libXrandr-devel libXtst-devel libXinerama-devel"
+short_desc="Share a single mouse and keyboard between multiple computers"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://synergy-foss.org/"
+license="GPL-2"
+distfiles="https://github.com/synergy/synergy/archive/v${version}-stable.tar.gz"
+checksum=a4effc3ddb0ef6de95f83fa62b5290e2909f8b76729b1bde89c5061e5d381e25
+
+CXXFLAGS="-pthread"
+
+post_extract() {
+	cd ext
+	unzip gmock-1.6.0.zip -d gmock-1.6.0
+	unzip gtest-1.6.0.zip -d gtest-1.6.0
+}
+
+if [ -z "$CROSS_BUILD" ]; then
+	makedepends+=" qt5-devel"
+	post_build() {
+		CXXFLAGS+=" $(pkg-config --cflags avahi-compat-libdns_sd)"
+		# qt4 gui
+		cd $wrksrc/src/gui
+		qmake
+		make CXXFLAGS+="$CXXFLAGS -fPIC" ${makejobs}
+	}
+	synergy-gui_package() {
+		depends="desktop-file-utils ${sourcepkg}>=${version}_${revision}"
+		pkg_install() {
+			vbin ${wrksrc}/bin/synergy
+			vmove usr/share/pixmaps
+			vmove usr/share/applications
+		}
+	}
+fi
+
+do_install() {
+	vbin bin/synergyc
+	vbin bin/synergys
+
+	vmkdir usr/share/examples/${pkgname}
+	install -m644 doc/synergy.conf.example* \
+		${DESTDIR}/usr/share/examples/${pkgname}
+
+	vinstall ${FILESDIR}/synergy.png 644 usr/share/pixmaps
+	vinstall ${FILESDIR}/synergy.desktop 644 usr/share/applications
+}
+

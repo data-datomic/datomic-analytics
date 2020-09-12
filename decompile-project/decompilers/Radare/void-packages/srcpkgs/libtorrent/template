@@ -1,0 +1,39 @@
+# Template build file for 'libtorrent'
+pkgname=libtorrent
+version=0.13.6
+revision=1
+build_style=gnu-configure
+configure_args="--enable-static --disable-debug --without-kqueue
+ --enable-aligned --with-posix-fallocate"
+hostmakedepends="automake libtool pkg-config"
+makedepends="zlib-devel libressl-devel"
+short_desc="BitTorrent library written in C++"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="https://github.com/rakshasa/${pkgname}"
+license="GPL-2"
+distfiles="https://github.com/rakshasa/${pkgname}/archive/${version}.tar.gz>${pkgname}-${version}.tar.gz"
+checksum=bf963ac6e73e194a2cd87ebdf809988b5b3d6244bb7cd43d7d0c4852fc501524
+
+pre_configure() {
+	# Drop cppunit requirement
+	sed '/AM_PATH_CPPUNIT.*/d' -i configure.ac
+	autoreconf -fi
+	sed -e 's,test "$cross_compiling" = yes, false,' -i configure
+}
+post_configure() {
+	# Replace wrong (for cross buidls) -L/lib in Makefiles
+	for f in $(find ${wrksrc} -name Makefile); do
+		sed -i $f -e "s;-L/lib;-L${XBPS_CROSS_BASE}/lib;g"
+	done
+}
+
+libtorrent-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

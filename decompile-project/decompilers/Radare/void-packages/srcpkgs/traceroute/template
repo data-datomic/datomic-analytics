@@ -1,0 +1,25 @@
+# Template file for 'traceroute'
+pkgname=traceroute
+version=2.0.21
+revision=5
+short_desc="Traces the route taken by packets over an IPv4/IPv6 network"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+homepage="http://traceroute.sourceforge.net"
+distfiles="$SOURCEFORGE_SITE/$pkgname/$pkgname-$version.tar.gz"
+checksum=f7ac93ef30b13a587292b8d6a7e2538a65bc978a3a576eab238c392b884e96e0
+
+do_build() {
+	if [ "$CROSS_BUILD" ]; then
+		make LDFLAGS="-L${wrksrc}/libsupp $LDFLAGS" CFLAGS="$CFLAGS $CPPFLAGS" CROSS=${XBPS_CROSS_TRIPLET}- ${makejobs}
+	else
+		make CFLAGS="$CFLAGS $CPPFLAGS" LDFLAGS="$LDFLAGS" ${makejobs}
+	fi
+}
+do_install() {
+	vbin traceroute/traceroute
+	vman traceroute/traceroute.8
+
+	ln -s traceroute $DESTDIR/usr/bin/traceroute6
+	ln -s traceroute.8 $DESTDIR/usr/share/man/man8/traceroute6.8
+}

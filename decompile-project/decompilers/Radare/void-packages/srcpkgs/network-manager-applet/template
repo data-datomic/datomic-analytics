@@ -1,0 +1,54 @@
+# Template file for 'network-manager-applet'
+pkgname=network-manager-applet
+version=1.0.4
+revision=4
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--disable-static --without-bluetooth
+ --with-modem-manager-1 --disable-migration
+ $(vopt_enable gir introspection) LDFLAGS="
+hostmakedepends="pkg-config intltool glib-devel dbus-glib-devel
+ $(vopt_if gir gobject-introspection)"
+makedepends="
+ dbus-glib-devel libgnome-keyring-devel libsecret-devel
+ NetworkManager-devel gtk+3-devel libnotify-devel
+ ModemManager-devel polkit-devel libgudev-devel iso-codes"
+depends="iso-codes NetworkManager>=1.0 hicolor-icon-theme"
+short_desc="NetworkManager panel applet for GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org/projects/NetworkManager/"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=2cc26f03d0011d2a067bd5205dc0c17d5aa0470020a8c36d319ae10e5728af72
+
+# Package build options
+build_options="gir"
+
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+libnm-gtk_package() {
+	short_desc+=" - runtime library"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+		if [ "$build_option_gir" ]; then
+			vmove usr/lib/girepository-1.0
+		fi
+	}
+}
+
+network-manager-applet-devel_package() {
+	depends="gtk+3-devel NetworkManager-devel>=1.0
+		libnm-gtk>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}

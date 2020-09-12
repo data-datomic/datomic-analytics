@@ -1,0 +1,19 @@
+{
+  "name": "frida-libclang",
+  "version": "0.0.12",
+  "main": "libclang.js",
+  "description": "Bindings to libclang",
+  "keywords": [
+    "libclang",
+    "ffi",
+    "bindings"
+  ],
+  "author": "Timothy J Fontaine <tjfontaine@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ffi": "",
+    "ref": "",
+    "ref-array": "",
+    "ref-struct": ""
+  }
+}

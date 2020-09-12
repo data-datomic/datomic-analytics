@@ -1,0 +1,23 @@
+# Template file for 'darkice'
+pkgname=darkice
+version=1.2
+revision=1
+build_style=gnu-configure
+configure_args="
+ --with-lame-prefix=${XBPS_CROSS_BASE}/usr
+ --with-vorbis-prefix=${XBPS_CROSS_BASE}/usr
+ --with-faac-prefix=${XBPS_CROSS_BASE}/usr
+ --with-alsa-prefix=${XBPS_CROSS_BASE}/usr
+ --with-pulseaudio-prefix=${XBPS_CROSS_BASE}/usr
+ --with-jack-prefix=${XBPS_CROSS_BASE}/usr
+ --with-samplerate-prefix=${XBPS_CROSS_BASE}/usr"
+hostmakedepends="pkg-config"
+makedepends="lame-devel libogg-devel libvorbis-devel faac-devel
+ alsa-lib-devel pulseaudio-devel jack-devel libsamplerate-devel"
+conf_files="/etc/darkice.cfg"
+short_desc="A live audio streamer source client for icecast"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://code.google.com/p/${pkgname}/"
+distfiles="http://${pkgname}.googlecode.com/files/${pkgname}-${version}.tar.gz"
+checksum=b3fba9be2d9c72f36b0659cd9ce0652c8f973b5c6498407f093da9a364fdb254

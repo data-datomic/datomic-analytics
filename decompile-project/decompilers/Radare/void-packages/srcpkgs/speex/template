@@ -1,0 +1,32 @@
+# Template file for 'speex'.
+pkgname=speex
+version=1.2rc2
+revision=5
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="fftw-devel libogg-devel speexdsp-devel"
+short_desc="A free codec for free speech"
+homepage="http://www.speex.org"
+license="BSD"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="http://downloads.xiph.org/releases/speex/speex-$version.tar.gz"
+checksum=caa27c7247ff15c8521c2ae0ea21987c9e9710a8f2d3448e8b79da9806bce891
+
+libspeex_package() {
+	short_desc+=" - shared libraries"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}
+speex-devel_package() {
+	depends="speexdsp-devel libspeex-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/share/doc
+		vmove usr/share/aclocal
+	}
+}

@@ -1,0 +1,13 @@
+# Template file for 'gnome-gettings-stated-docs'
+pkgname=gnome-getting-started-docs
+version=3.18.2
+revision=1
+noarch="yes"
+build_style=gnu-configure
+hostmakedepends="pkg-config intltool itstool gnome-doc-utils"
+homepage="http://www.gnome.org"
+short_desc="Getting Started documentation for GNOME"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=5f4a39d51aba3669d84ce2cb06619a09a92103f58d4bc6728db448398b1f308b

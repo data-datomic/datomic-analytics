@@ -1,0 +1,115 @@
+# Template file for 'subversion'
+pkgname=subversion
+version=1.9.3
+revision=1
+short_desc="Enterprise-class centralized version control for the masses"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Apache-2.0, BSD"
+homepage="http://subversion.apache.org/"
+distfiles="http://apache.rediris.es/subversion/subversion-${version}.tar.bz2"
+checksum=8bbf6bb125003d88ee1c22935a36b7b1ab7d957e0c8b5fbfe5cb6310b6e86ae0
+
+hostmakedepends="pkg-config"
+makedepends="db-devel perl python-devel swig apr-util-devel
+ libldap-devel serf-devel gdbm-devel expat-devel apr-devel libuuid-devel
+ sqlite-devel libsasl-devel dbus-devel libgnome-keyring-devel glib-devel
+ qt-devel kdelibs-devel apache-devel"
+depends="ca-certificates"
+nocross=yes
+
+do_configure() {
+	./configure ${configure_args} \
+		--with-apxs --disable-javahl --disable-static \
+		--with-kwallet --with-gnome-keyring --with-editor=vi \
+		--disable-mod-activation
+}
+do_build() {
+	make ${makejobs} LT_LDFLAGS="-L$Fdestdir/usr/lib"
+	make ${makejobs} swig_pydir=/usr/lib/python2.7/site-packages/libsvn \
+		swig_pydir_extra=/usr/lib/python2.7/site-packages/svn \
+		swig-py swig-pl
+}
+do_install() {
+	export LD_LIBRARY_PATH=${DESTDIR}/usr/lib:$LD_LIBRARY_PATH
+
+	make DESTDIR=${DESTDIR} INSTALLDIRS=vendor \
+		swig_pydir=/usr/lib/python2.7/site-packages/libsvn \
+		swig_pydir_extra=/usr/lib/python2.7/site-packages/svn \
+		install install-swig-py install-swig-pl
+
+	rm -rf ${DESTDIR}/usr/lib/perl5/core_perl
+	vmkdir usr/share/subversion
+	install -d -m755 tools/hook-scripts ${DESTDIR}/usr/share/subversion/
+	rm -f ${DESTDIR}/usr/share/subversion/hook-scripts/*.in
+
+	install -Dm644 tools/client-side/bash_completion \
+		${DESTDIR}/usr/share/bash-completion/completions/subversion
+
+	for i in svn svnadmin svndumpfilter svnlook svnsync svnversion; do
+		ln -sf subversion ${DESTDIR}/usr/share/bash-completion/completions/${i}
+	done
+
+	vsv svnserve
+}
+
+libsvn_package() {
+	short_desc+=" - shared libraries"
+	pkg_install() {
+		vmove "usr/lib/libsvn_ra*.so.*"
+		vmove "usr/lib/libsvn_fs*.so.*"
+		vmove "usr/lib/libsvn_subr*.so.*"
+		vmove "usr/lib/libsvn_wc*.so.*"
+		vmove "usr/lib/libsvn_delta*.so.*"
+		vmove "usr/lib/libsvn_diff*.so.*"
+		vmove "usr/lib/libsvn_repos*.so.*"
+		vmove "usr/lib/libsvn_client*.so.*"
+	}
+}
+subversion-apache_package() {
+	short_desc+=" - apache httpd modules"
+	pkg_install() {
+		vmove usr/libexec
+	}
+}
+subversion-devel_package() {
+	depends="libsvn>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.so
+	}
+}
+subversion-gnome-keyring-auth_package() {
+	lib32disabled=yes
+	short_desc+=" - gnome-keyring authentication support"
+	pkg_install() {
+		vmove "usr/lib/libsvn_auth_gnome_keyring*"
+	}
+}
+subversion-kwallet-auth_package() {
+	lib32disabled=yes
+	short_desc+=" - KDE kwallet authentication support"
+	pkg_install() {
+		vmove "usr/lib/libsvn_auth_k*"
+	}
+}
+subversion-python_package() {
+	lib32disabled=yes
+	depends="python"
+	pycompile_module="libsvn svn"
+	short_desc+=" - python bindings"
+	pkg_install() {
+		vmove "usr/lib/libsvn_swig_py*"
+		vmove "usr/lib/python*"
+	}
+}
+subversion-perl_package() {
+	lib32disabled=yes
+	depends="perl>=5.22"
+	short_desc+=" - perl bindings"
+	pkg_install() {
+		vmove "usr/lib/libsvn_swig_perl*"
+		vmove usr/lib/perl5
+		vmove usr/share/man/man3
+	}
+}

@@ -1,0 +1,28 @@
+# Template file for 'libmatroska'
+pkgname=libmatroska
+version=1.4.4
+revision=1
+build_style=gnu-configure
+hostmakedepends="automake libtool pkg-config"
+makedepends="libebml-devel"
+short_desc="Extensible open standard Audio/Video container format"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://dl.matroska.org/downloads/libmatroska/"
+license="LGPL-2.1"
+distfiles="http://dl.matroska.org/downloads/libmatroska/libmatroska-${version}.tar.bz2"
+checksum=d3efaa9f6d3964351a05bea0f848a8d5dc570e4791f179816ce9a93730296bd7
+
+pre_configure() {
+	autoreconf -if
+}
+
+libmatroska-devel_package() {
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+	}
+}

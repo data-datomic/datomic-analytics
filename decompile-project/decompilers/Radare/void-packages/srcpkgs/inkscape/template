@@ -1,0 +1,22 @@
+# Template file for 'inkscape'.
+pkgname=inkscape
+version=0.91
+revision=11
+build_style=gnu-configure
+configure_args="--enable-lcms --enable-poppler-cairo
+ --without-gnome-vfs --disable-static"
+hostmakedepends="pkg-config intltool"
+makedepends="
+ popt-devel libpng-devel gsl-devel gc-devel gtkmm2-devel libxslt-devel
+ lcms2-devel poppler-glib-devel boost-devel libmagick-devel
+ libvisio-devel libwpg-devel libcdr-devel dbus-glib-devel libgomp-devel"
+depends="desktop-file-utils hicolor-icon-theme python-lxml"
+short_desc="Vector-based drawing program"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://inkscape.org/"
+license="GPL-2, LGPL-2.1"
+#distfiles="$SOURCEFORGE_SITE/$pkgname/$pkgname-$version.tar.bz2"
+distfiles="https://inkscape.global.ssl.fastly.net/media/resources/file/${pkgname}-${version}.tar.bz2"
+checksum=4d901f8a9e1924404e797ad23b8b0c495a9d155448816d95a55974314e1f141b
+
+CXXFLAGS="-std=c++11"

@@ -1,0 +1,42 @@
+# Template file for 'telepathy-qt'
+pkgname=telepathy-qt5
+version=0.9.6.1
+revision=2
+wrksrc=${pkgname//5/}-${version}
+build_style=cmake
+configure_args="
+ -DENABLE_EXAMPLES=OFF
+ -DENABLE_TESTS=OFF
+ -DDESIRED_QT_VERSION=5
+ -DQT_QMAKE_EXECUTABLE=/usr/bin/qmake-qt5"
+hostmakedepends="cmake pkg-config"
+makedepends="qt5-devel telepathy-farstream-devel telepathy-glib-devel gstreamer-devel"
+short_desc="Qt5 bindings for the Telepathy D-Bus protocol"
+maintainer="Duncaen <duncaen@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://telepathy.freedesktop.org/"
+distfiles="http://telepathy.freedesktop.org/releases/${pkgname//5/}/${pkgname//5/}-${version}.tar.gz"
+checksum=496eb4951ea9b181d7d68a2122a885474c4f73b519319496aa1b97d9b361a1f8
+
+CXXFLAGS="-D_DEFAULT_SOURCE"
+
+subpackages="telepathy-qt5-farstream telepathy-qt5-devel"
+
+telepathy-qt5-farstream_package() {
+	short_desc+=" - farstream component"
+	depends="telepathy-qt5>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/lib/*-farstream.so.*
+	}
+}
+telepathy-qt5-devel_package() {
+	depends="telepathy-qt5>=${version}_${revision} telepathy-qt5-farstream>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/cmake/TelepathyQt5*
+		vmove usr/lib/*.so
+		vmove usr/lib/*.a
+		vmove usr/lib/pkgconfig
+	}
+}

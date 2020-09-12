@@ -1,0 +1,35 @@
+# Template build file for 'libwapcaplet'.
+pkgname=libwapcaplet
+version=0.2.2
+revision=1
+hostmakedepends="netsurf-buildsystem"
+homepage="http://www.netsurf-browser.org"
+short_desc="String internment library, written in C"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="MIT"
+distfiles="http://download.netsurf-browser.org/libs/releases/${pkgname}-${version}-src.tar.gz"
+checksum=38021992e1e6b3ec50d0d3bf7add069bee4c5b179691afa6a76dd58695201485
+CFLAGS="-Wno-error"
+
+do_build() {
+	make ${makejobs} COMPONENT_TYPE=lib-shared PREFIX=/usr
+	make ${makejobs} COMPONENT_TYPE=lib-static PREFIX=/usr
+}
+
+do_install() {
+	make COMPONENT_TYPE=lib-shared PREFIX=/usr DESTDIR=${DESTDIR} install
+	make COMPONENT_TYPE=lib-static PREFIX=/usr DESTDIR=${DESTDIR} install
+
+	vinstall COPYING 0644 usr/share/licenses/${pkgname}
+}
+
+libwapcaplet-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+	}
+}

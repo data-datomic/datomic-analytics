@@ -1,0 +1,23 @@
+# Template file for 'lxqt-globalkeys'
+pkgname=lxqt-globalkeys
+version=0.10.0
+revision=1
+build_style=cmake
+hostmakedepends="cmake pkg-config"
+makedepends="liblxqt-devel"
+short_desc="LXQt key shortcuts"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2.1"
+homepage="http://lxqt.org/"
+distfiles="http://downloads.lxqt.org/lxqt/${version}/${pkgname}-${version}.tar.xz"
+checksum=9a9d6a0299a26f91d391a601123e78e18cbe56ee6086cc27ccf800920e146e1a
+
+lxqt-globalkeys-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.so
+	}
+}

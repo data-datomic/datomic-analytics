@@ -1,0 +1,19 @@
+# Template file for 'fping'
+pkgname=fping
+version=3.13
+revision=1
+build_style=gnu-configure
+configure_args="--sbindir=/usr/bin --enable-ipv4 --enable-ipv6"
+short_desc="High performance ping"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://fping.org"
+license="MIT-alike"
+distfiles="${homepage}/dist/${pkgname}-${version}.tar.gz"
+checksum=4bb28efd1cb3d1240ae551dadc20daa852b1ba71bafe32e49ca629c1848e5720
+
+post_install() {
+	vlicense COPYING
+	# make fping{,6} setuid.
+	chmod 4555 ${DESTDIR}/usr/bin/fping
+	chmod 4555 ${DESTDIR}/usr/bin/fping6
+}

@@ -1,0 +1,66 @@
+# Template build file for 'icu'.
+pkgname=icu
+version=56.1
+revision=2
+wrksrc=icu
+build_wrksrc=source
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+short_desc="Robust and full-featured Unicode services"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.icu-project.org/"
+license="ICU License /usr/share/licenses/icu/license.html"
+distfiles="http://download.icu-project.org/files/icu4c/${version}/icu4c-${version//./_}-src.tgz"
+checksum=3a64e9105c734dcf631c0b3ed60404531bce6c0f5a64bfe1a6402a4cc2314816
+
+if [ "$CROSS_BUILD" ]; then
+	configure_args+=" --with-cross-build=${XBPS_BUILDDIR}/${wrksrc}/host-icu"
+fi
+
+pre_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		# Configure and build for host.
+		mkdir host-build
+		(
+		cd host-build
+		env CC=cc LD=ld CXX=g++ AR=ar RANLIB=ranlib \
+			AS=as STRIP=strip CFLAGS="-Os -fPIE" CXXFLAGS="-Os -fPIE" \
+			../configure --prefix=/
+		make ${makejobs}
+		mkdir -p ${wrksrc}/host-icu/config
+		cp config/icucross.* ${wrksrc}/host-icu/config
+		make DESTDIR=${wrksrc}/host-icu install
+		mv ${wrksrc}/host-icu/sbin/* ${wrksrc}/host-icu/bin
+		make distclean
+		)
+	fi
+
+	# libicudata must be linked to libc, otherwise it's soft-float on ARM.
+	# probably other stuff breaks too, so let's just do it.
+	# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=653457
+	sed -e 's,-nostdlib,,g' -i ${wrksrc}/source/config/mh-linux
+}
+
+post_install() {
+	vlicense $wrksrc/license.html
+}
+
+icu-devel_package() {
+	depends="libstdc++-devel icu-libs>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/icu
+		vmove usr/lib/pkgconfig
+		vmove usr/share/icu
+		vmove usr/bin/icu-config
+		vmove "usr/share/man/man1/icu-config*"
+		vmove "usr/lib/*.so"
+	}
+}
+icu-libs_package() {
+	short_desc+=" - shared libs"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}

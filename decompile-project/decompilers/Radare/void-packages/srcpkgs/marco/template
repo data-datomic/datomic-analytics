@@ -1,0 +1,38 @@
+# Template file for 'marco'
+pkgname=marco
+version=1.12.1
+revision=1
+build_style=gnu-configure
+configure_args="--disable-static --with-gtk=3.0 --enable-startup-notification --disable-schemas-compile"
+hostmakedepends="automake libtool gettext-devel pkg-config
+ intltool itstool glib-devel gdk-pixbuf-devel mate-common zenity"
+makedepends="gtk+3-devel libnotify-devel libgtop-devel libSM-devel
+ libXt-devel libXcomposite-devel mate-desktop-devel libcanberra-devel
+ startup-notification-devel"
+depends="zenity"
+short_desc="A window manager for MATE"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="LGPL-2"
+homepage="http://mate-desktop.org"
+distfiles="http://pub.mate-desktop.org/releases/${version%.*}/${pkgname}-${version}.tar.xz"
+checksum=7f799115952a209e5063e5bd88d61d0baf430e630ca7783626af4dce46add084
+
+pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
+
+libmarco_package() {
+	short_desc+=" - runtime library"
+	pkg_install() {
+		vmove usr/lib/*.so.*
+	}
+}
+libmarco-devel_package() {
+	short_desc+=" - development files"
+	depends="libmarco>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+	}
+}

@@ -1,0 +1,18 @@
+# Template file for 'gnome-keyring'
+pkgname=gnome-keyring
+version=3.18.3
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--with-pam-dir=/usr/lib/security --disable-schemas-compile"
+hostmakedepends="pkg-config glib-devel intltool libtasn1-tools libxslt docbook-xsl"
+makedepends="dbus-devel libcap-ng-devel pam-devel libcap-devel libtasn1-devel
+ libgcrypt-devel gcr-devel"
+# For setcap(8).
+depends="libcap-progs dconf gcr"
+short_desc="GNOME password and secret manager"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2, LGPL-2.1"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*}/$pkgname-$version.tar.xz"
+checksum=3f670dd61789bdda75b9c9e31e289bf7b1d23ba012433474790081ba7dc0ed98

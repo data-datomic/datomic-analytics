@@ -1,0 +1,52 @@
+# Template file for 'zeitgeist'
+pkgname=zeitgeist
+version=0.9.16
+revision=1
+build_style=gnu-configure
+configure_args="--enable-fts --enable-datahub $(vopt_enable gir introspection)"
+hostmakedepends="pkg-config intltool vala-devel $(vopt_if gir gobject-introspection)"
+makedepends="
+ python-rdflib json-glib-devel gtk+3-devel telepathy-glib-devel
+ python-gobject-devel dbus-devel sqlite-devel xapian-core-devel raptor"
+depends="python-dbus python-gobject"
+pycompile_module="zeitgeist"
+short_desc="Logs the users’ activities and events"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://zeitgeist-project.com"
+license="LGPL-2.1"
+distfiles="https://launchpad.net/${pkgname}/${version%.*}/${version}/+download/${pkgname}-${version}.tar.xz"
+checksum=6ed3e60d0cd82ea58ee134c19beccafac10eb0f71977f3848755dacbf0927d3a
+
+# Package build options
+build_options="gir"
+# Disable gir for cross builds.
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default="gir"
+fi
+
+post_install() {
+	rm -rf ${DESTDIR}/usr/doc
+}
+
+libzeitgeist2_package() {
+	short_desc+=" - shared library"
+	pkg_install() {
+		vmove usr/lib/*.so.*
+		if [ "$build_option_gir" ]; then
+			vmove usr/lib/girepository-1.0
+		fi
+	}
+}
+zeitgeist-devel_package() {
+	short_desc+=" - development files"
+	depends="libzeitgeist2-${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/lib/*.so
+		vmove usr/share/vala
+		if [ "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}

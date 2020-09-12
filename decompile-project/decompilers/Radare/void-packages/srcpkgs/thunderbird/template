@@ -1,0 +1,125 @@
+# Template build file for 'thunderbird'.
+pkgname=thunderbird
+version=38.4.0
+revision=1
+wrksrc="comm-esr${version/.*/}"
+short_desc="Standalone Mail/News reader"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+homepage="http://www.mozilla.org/thunderbird/"
+license="MPL-1.1, GPL-2, LGPL-2.1"
+distfiles="${MOZILLA_SITE}/${pkgname}/releases/${version}/source/${pkgname}-${version}.source.tar.bz2"
+checksum=326a4408d6dc79890cba8466dbc337acf99df76b58dadb0ed453e5e42af7fdbe
+
+nopie=yes
+lib32disabled=yes
+
+hostmakedepends="unzip zip pkg-config perl python yasm autoconf"
+makedepends="alsa-lib-devel cairo-devel dbus-glib-devel gst-plugins-base1-devel
+ gtk+-devel hunspell-devel icu-devel libSM-devel libXScrnSaver-devel
+ libXcomposite-devel libXdamage-devel libXrender-devel libXt-devel
+ libevent-devel libjpeg-turbo-devel libvpx-devel nss-devel pixman-devel
+ pulseaudio-devel python-devel sqlite-devel startup-notification-devel
+ wireless_tools-devel"
+depends="desktop-file-utils hicolor-icon-theme"
+
+pre_configure() {
+	case "$XBPS_TARGET_MACHINE" in
+	*-musl)
+		# http://git.alpinelinux.org/cgit/aports/plain/community/firefox/stab.h
+		cp $FILESDIR/stab.h mozilla/toolkit/crashreporter/google-breakpad/src/
+		sed -i "s/__off64_t/off64_t/g" mozilla/toolkit/crashreporter/google-breakpad/src/third_party/lss/linux_syscall_support.h
+		;;
+	esac
+
+	# configure script misdetects the preprocessor without an optimization level
+	sed -i '/ac_cpp=/s/$CPPFLAGS/& -O2/' configure
+
+	[ ! -d xbps-build ] && mkdir -p xbps-build
+}
+
+do_configure() {
+	local cross_args
+
+	case "$XBPS_TARGET_MACHINE" in
+	*-musl) # XXX gold linking with --hash-style=sysv results in unhidden symbols
+		# XXX see https://sourceware.org/ml/binutils/2014-09/msg00230.html
+		#
+		# XXX disable jemalloc.
+		cross_args+=" --disable-jemalloc --enable-gold=no"
+		;;
+	esac
+
+	if [ "$CROSS_BUILD" ]; then
+		cross_args+=" --target=$XBPS_CROSS_TRIPLET --disable-jemalloc"
+
+		# Make config/system_wrappers/alsa/alsalib.h and pulse/pulse.h find
+		# the required includes. Set system nspr and nss include paths.
+		export HOST_CFLAGS="${XBPS_CFLAGS}"
+		export HOST_CXXFLAGS="${XBPS_CXXFLAGS}"
+		export CFLAGS+=" -I${XBPS_CROSS_BASE}/usr/include/alsa \
+			-I${XBPS_CROSS_BASE}/usr/include/pulse \
+			-I${XBPS_CROSS_BASE}/usr/include/nspr \
+			-I${XBPS_CROSS_BASE}/usr/include/nss"
+		export CXXFLAGS+=" ${CFLAGS}"
+
+		export ac_cv_sqlite_secure_delete=yes \
+			ac_cv_sqlite_threadsafe=yes \
+			ac_cv_sqlite_enable_fts3=yes \
+			ac_cv_sqlite_dbstat_vtab=yes \
+			ac_cv_sqlite_enable_unlock_notify=yes \
+			ac_cv_prog_hostcxx_works=1
+	fi
+
+	mkdir -p /usr/lib/thunderbird
+	export LDFLAGS+=" -Wl,-rpath=/usr/lib/thunderbird"
+
+	cd xbps-build
+	# disable --enable-gstreamer for now
+	# Use bundled libpng, our does not have the apng patch.
+	SHELL=/bin/bash ../configure --prefix=/usr --libdir=/usr/lib \
+		--enable-application=mail \
+		--with-system-nspr --with-system-nss --with-system-bz2  \
+		--with-system-jpeg --with-system-zlib --without-system-png \
+		--with-system-libevent --with-system-libvpx --enable-system-cairo  \
+		--enable-system-pixman --enable-system-hunspell --enable-system-sqlite \
+		--enable-system-ffi --enable-startup-notification --enable-gio \
+		--with-pthreads --enable-official-branding --enable-safe-browsing \
+		--disable-skia --disable-debug --disable-gnomevfs --disable-gconf \
+		--disable-crashreporter --disable-updater --disable-xprint --disable-tests \
+		--disable-mochitest --disable-installer --disable-elf-hack \
+		--with-system-icu --enable-pulseaudio --enable-gstreamer=1.0 \
+		--disable-cpp-exceptions --disable-javaxpcom \
+		--with-nspr-prefix=${XBPS_CROSS_BASE}/usr \
+		--with-nss-prefix=${XBPS_CROSS_BASE}/usr ${cross_args} \
+		--enable-optimize="$CFLAGS" --disable-strip --disable-install-strip \
+		--disable-static --enable-pie \
+		--disable-profiling --disable-profilelocking
+}
+do_build() {
+	cd xbps-build
+	SHELL=/bin/bash make ${makejobs}
+}
+do_install() {
+	cd xbps-build
+	make DESTDIR=${DESTDIR} install
+
+	vinstall ${FILESDIR}/vendor.js 644 usr/lib/thunderbird/defaults/pref
+	vinstall ${FILESDIR}/thunderbird.desktop 644 usr/share/applications
+
+	for i in 16 22 24 32 48 256; do
+		vinstall ../other-licenses/branding/thunderbird/mailicon${i}.png 644 \
+			usr/share/icons/hicolor/${i}x${i}/apps thunderbird.png
+	done
+
+	# Use system-provided dictionaries
+	rm -rf ${DESTDIR}/usr/lib/thunderbird/{dictionaries,hyphenation}
+	ln -s /usr/share/hunspell ${DESTDIR}/usr/lib/thunderbird/dictionaries
+	ln -s /usr/share/hyphen ${DESTDIR}/usr/lib/thunderbird/hyphenation
+
+	# We don't want the development stuff
+	rm -r ${DESTDIR}/usr/{include,share/idl}
+	rm -r ${DESTDIR}/usr/lib/thunderbird-devel
+
+	# same binaries : usr/lib/thunderbird/{thunderbird-bin,thunderbird}
+	rm -f ${DESTDIR}/usr/lib/thunderbird/thunderbird-bin
+}

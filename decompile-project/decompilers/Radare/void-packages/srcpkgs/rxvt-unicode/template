@@ -1,0 +1,102 @@
+# Template build file for 'rxvt-unicode'.
+pkgname=rxvt-unicode
+version=9.21
+revision=8
+build_style=gnu-configure
+configure_args="
+ --with-terminfo=/usr/share/terminfo --enable-256-color
+ --enable-font-styles --enable-xim --enable-keepscrolling
+ --enable-selectionscrolling --enable-smart-resize --enable-transparency
+ --disable-utmp --disable-wtmp --disable-lastlog --disable-frills
+ --enable-combining --with-term=rxvt-unicode-256color"
+hostmakedepends="pkg-config"
+makedepends="renderproto fontconfig-devel libXrender-devel libXft-devel libSM-devel"
+depends="ncurses rxvt-unicode-terminfo-${version}_${revision}"
+short_desc="rxvt clone supporting Xft fonts and Unicode"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://software.schmorp.de/pkg/rxvt-unicode.html"
+license="GPL-2"
+distfiles="http://dist.schmorp.de/${pkgname}/${pkgname}-${version}.tar.bz2"
+checksum=75270ed72bc5895a64a1d7392bf45a622204192371c3965bd3dd978dc088956b
+
+pre_build() {
+	sed -i 's,tic,/bin/true,g' doc/Makefile
+}
+
+post_install() {
+	vinstall doc/etc/rxvt-unicode.terminfo 644 usr/share/terminfo/r
+	vinstall ${FILESDIR}/${pkgname}.desktop 644 usr/share/applications
+	vinstall ${FILESDIR}/${pkgname}.png 644 usr/share/pixmaps
+}
+
+# Package build options
+build_options="gdk_pixbuf perl startup_notification unicode3"
+desc_option_unicode3="Use 21 instead of 16 bits to represent unicode chars"
+
+# Enable startup-notification by default.
+build_options_default="perl startup_notification"
+
+if [ "$build_option_gdk_pixbuf" ]; then
+	configure_args+=" --enable-pixbuf"
+	makedepends+=" gdk-pixbuf-devel"
+else
+	configure_args+=" --disable-pixbuf"
+fi
+
+if [ "$build_option_perl" ]; then
+	configure_args+=" --enable-perl"
+	hostmakedepends+=" perl autoconf"
+	makedepends+=" perl"
+else
+	configure_args+=" --disable-perl"
+fi
+
+if [ "$build_option_startup_notification" ]; then
+	configure_args+=" --enable-startup-notification"
+	makedepends+=" startup-notification-devel"
+else
+	configure_args+=" --disable-startup-notification"
+fi
+
+if [ "$build_option_unicode3" ]; then
+	configure_args+=" --enable-unicode3"
+else
+	configure_args+=" --disable-unicode3"
+fi
+
+_cross_perl() {
+	if [ "$CROSS_BUILD" ]; then
+		sed -e "s#/usr/lib#${XBPS_CROSS_BASE}\0#g" \
+			-e "s#/usr/share#${XBPS_CROSS_BASE}\0#g"
+	else
+		cat
+	fi
+}
+
+pre_configure() {
+	if [ "$build_option_perl" ]; then
+		rm configure
+		./autogen.sh
+	fi
+}
+
+do_configure() {
+	if [ "$build_option_perl" ]; then
+		./configure $configure_args \
+			PERL=perl \
+			PERL_O=rxvtperl.o \
+			PERLFLAGS="$(perl -MExtUtils::Embed -e ccopts | _cross_perl)" \
+			PERLLIB="$(perl -MExtUtils::Embed -e ldopts | _cross_perl)" \
+			PERLPRIVLIBEXP="$(perl -MConfig -e 'print $Config{privlibexp}' | _cross_perl)"
+	else
+		./configure $configure_args
+	fi
+}
+
+rxvt-unicode-terminfo_package() {
+	short_desc+=" - terminfo data"
+	noarch=yes
+	pkg_install() {
+		vmove usr/share/terminfo
+	}
+}

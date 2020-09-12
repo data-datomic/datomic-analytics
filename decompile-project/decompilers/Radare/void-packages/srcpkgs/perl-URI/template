@@ -1,0 +1,15 @@
+# Template file for 'perl-URI'
+pkgname=perl-URI
+version=1.69
+revision=1
+wrksrc="URI-$version"
+build_style=perl-module
+hostmakedepends="perl"
+depends="${hostmakedepends}"
+noarch=yes
+short_desc="Perl Uniform Resource Identifiers class (URI, RFC 2396)"
+homepage="http://search.cpan.org/dist/URI"
+license="Artistic, GPL-1"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+distfiles="${CPAN_SITE}/URI/URI-${version}.tar.gz"
+checksum=b74b16ea626b6f8061821bb350674c638a98be1fc766eadb24fec6635998b42d

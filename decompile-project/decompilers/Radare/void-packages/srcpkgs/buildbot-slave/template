@@ -1,0 +1,16 @@
+# Template file for 'buildbot-slave'
+pkgname=buildbot-slave
+version=0.8.12
+revision=1
+noarch=yes
+build_style=python-module
+hostmakedepends="python"
+makedepends="python Twisted"
+depends="${makedepends}"
+pycompile_module="buildslave"
+short_desc="BuildBot Slave Daemon"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://buildbot.net/"
+license="GPL-2"
+distfiles="https://pypi.python.org/packages/source/b/${pkgname}/${pkgname}-${version}.tar.gz"
+checksum=905eab122dcfc9425d51f0ed0c7682e7f933e140a7203637aa12a84498bd7461

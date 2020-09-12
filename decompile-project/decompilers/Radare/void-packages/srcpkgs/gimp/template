@@ -1,0 +1,57 @@
+# Template build file for 'gimp'.
+pkgname=gimp
+version=2.8.16
+revision=1
+lib32disabled=yes
+build_style=gnu-configure
+configure_args="--without-aa --without-gvfs --enable-gimp-console
+ --enable-python --with-gif-compression=lzw --with-libcurl --enable-mp"
+hostmakedepends="pkg-config intltool"
+makedepends="libpng-devel gtk+-devel lcms2-devel
+ alsa-lib-devel dbus-glib-devel libXmu-devel libXcursor-devel
+ libexif-devel libsoup-devel webkitgtk2-devel libwmf-devel librsvg-devel
+ libmng-devel libXpm-devel libcurl-devel babl-devel gegl-devel pygtk-devel
+ libgudev-devel jasper-devel poppler-glib-devel ghostscript-devel iso-codes"
+short_desc="The GNU image manipulation program"
+conf_files="
+	/etc/gimp/2.0/gimprc
+	/etc/gimp/2.0/gtkrc
+	/etc/gimp/2.0/templaterc
+	/etc/gimp/2.0/unitrc
+	/etc/gimp/2.0/sessionrc
+	/etc/gimp/2.0/controllerrc
+	/etc/gimp/2.0/menurc"
+depends="desktop-file-utils hicolor-icon-theme iso-codes"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gimp.org"
+license="GPL-3"
+distfiles="http://download.gimp.org/pub/gimp/v${version%.*}/gimp-${version}.tar.bz2"
+checksum=95e3857bd0b5162cf8d1eda8c78b741eef968c3e3ac6c1195aaac2a4e2574fb7
+
+libgimp_package() {
+	short_desc+=" - runtime libraries"
+	pkg_install() {
+		vmove usr/lib/*.so.*
+	}
+}
+gimp-devel_package() {
+	depends="libgimp>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove usr/share/gtk-doc
+		vmove usr/share/aclocal
+		vmove "usr/lib/*.so"
+	}
+}
+gimp-python_package() {
+	lib32disabled=yes
+	depends="pygtk"
+	pycompile_dirs="usr/lib/gimp/2.0/python"
+	short_desc+=" - python bindings"
+	pkg_install() {
+		vmove usr/lib/gimp/2.0/python
+		vmove "usr/lib/gimp/2.0/plug-ins/*.py"
+	}
+}

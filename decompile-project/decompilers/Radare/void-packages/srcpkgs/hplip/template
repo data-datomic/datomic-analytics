@@ -1,0 +1,61 @@
+# Template file for 'hplip'
+pkgname=hplip
+version=3.15.11
+revision=1
+#XXX: pyqt pkgs for python gui
+hostmakedepends="pkg-config automake libtool python"
+makedepends="libressl-devel python-devel libxml2-python cups-devel
+ sane-devel ghostscript-devel net-snmp-devel libusb-devel libjpeg-turbo-devel
+ dbus-devel polkit-devel"
+depends="python-gobject2 python-dbus foomatic-db foomatic-db-engine desktop-file-utils"
+conf_files="/etc/hp/hplip.conf"
+make_dirs="/var/lib/hp 0755 root root"
+short_desc="HP Linux Imaging and Printing"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://hplipopensource.com/"
+license="GPL-2"
+distfiles="$SOURCEFORGE_SITE/$pkgname/$pkgname-$version.tar.gz"
+checksum=33c4711bde04a34b81f3f70e6277a0375dded171469e5aa8b9cef1a14a407c6d
+
+CFLAGS="-I${XBPS_CROSS_BASE}/usr/include/libusb-1.0 -I${XBPS_CROSS_BASE}/usr/include/python2.7"
+
+do_configure() {
+	# https://bugs.archlinux.org/task/30085 - hack found in Gentoo
+	# Use system foomatic-rip for hpijs driver instead of foomatic-rip-hplip
+	# The hpcups driver does not use foomatic-rip
+	local i
+	for i in ppd/hpijs/*.ppd.gz ; do
+		rm -f ${i}.temp
+		gunzip -c ${i} | sed 's/foomatic-rip-hplip/foomatic-rip/g' | gzip > ${i}.temp
+		mv ${i}.temp ${i}
+	done
+
+	libtoolize -f
+	autoreconf -fi || true
+
+	# do not install systemd service file
+	sed -i '/[[:space:]]install-dist_rulessystemDATA/s,install-dist_rulessystemDATA,,' Makefile.in
+
+	./configure ${configure_args} --disable-gui-build \
+		--disable-foomatic-rip-hplip-install \
+		--enable-foomatic-ppd-install \
+		--enable-hpcups-install \
+		--enable-new-hpcups \
+		--enable-cups-ppd-install \
+		--enable-cups-drv-install \
+		--enable-hpijs-install \
+		--enable-foomatic-drv-install \
+		--enable-pp-build \
+		--with-mimedir=/usr/share/cups/mime
+}
+do_build() {
+	make ${makejobs}
+}
+do_install() {
+	make rulesdir=/usr/lib/udev/rules.d DESTDIR=${DESTDIR} install
+	# remove config provided by sane and autostart of hp-daemon
+	rm -rf ${DESTDIR}/etc/{sane.d,xdg}
+	# remove HAL .fdi file because HAL is no longer used
+	rm -rf ${DESTDIR}/usr/share/hal
+	rm -rf ${DESTDIR}/var
+}

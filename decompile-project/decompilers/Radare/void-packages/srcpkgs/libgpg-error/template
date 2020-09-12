@@ -1,0 +1,32 @@
+# Template build file for 'libgpg-error'.
+pkgname=libgpg-error
+version=1.21
+revision=1
+build_style=gnu-configure
+short_desc="Library for error values used by GnuPG component"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnupg.org"
+license="LGPL-2.1"
+distfiles="ftp://ftp.gnupg.org/gcrypt/libgpg-error/$pkgname-$version.tar.bz2"
+checksum=b7dbdb3cad63a740e9f0c632a1da32d4afdb694ec86c8625c98ea0691713b84d
+
+post_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		cp ${FILESDIR}/lock-obj-pub.arm.h \
+			src/syscfg/lock-obj-pub.${XBPS_CROSS_TRIPLET#*-}.h
+	fi
+}
+post_install() {
+	rm -rf ${DESTDIR}/usr/share/common-lisp
+}
+
+libgpg-error-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/bin/gpg-error-config
+		vmove usr/include
+		vmove usr/share/aclocal
+		vmove "usr/lib/*.so"
+	}
+}

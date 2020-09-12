@@ -1,0 +1,181 @@
+# Template file for 'qt'
+pkgname=qt
+version=4.8.7
+revision=7
+_distname=qt-everywhere-opensource-src
+patch_args="-Np1"
+wrksrc=${_distname}-${version}
+homepage="http://qt.io/"
+short_desc="A cross-platform application and UI framework"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3, LGPL-2.1"
+distfiles="http://download.qt.io/official_releases/qt/${version%.*}/${version}/${_distname}-${version}.tar.gz"
+checksum=e2882295097e47fe089f8ac741a95fef47e0a73a3f3cdf21b56990638f626ea0
+
+nocross=yes
+hostmakedepends="sqlite pkg-config"
+makedepends="
+ libressl-devel libpng-devel MesaLib-devel libXrender-devel unixodbc-devel
+ fontconfig-devel libXi-devel libXv-devel libXinerama-devel libXrandr-devel
+ libXcursor-devel dbus-devel glib-devel icu-devel cups-devel libjpeg-turbo-devel
+ sqlite-devel alsa-lib-devel tiff-devel libmng-devel libxshmfence-devel
+ libSM-devel gtk+-devel libmysqlclient-devel postgresql-libs-devel
+ pulseaudio-devel"
+depends="qtchooser hicolor-icon-theme"
+replaces="qt-qtconfig>=0"
+
+do_configure() {
+	local _libdir
+
+	export LD_LIBRARY_PATH="${wrksrc}/lib:${LD_LIBRARY_PATH}"
+	export LD="$CXX"
+
+	if [ "$XBPS_TARGET_MACHINE" = "i686" ]; then
+		_libdir=lib32
+	else
+		_libdir=lib
+	fi
+
+	QMAKE_CFLAGS="${CFLAGS}" \
+	QMAKE_CXXFLAGS="${CXXFLAGS}" \
+	QMAKE_LFLAGS="${LDFLAGS}" \
+		./configure -confirm-license -opensource \
+		-prefix /usr -sysconfdir /etc -docdir /usr/share/doc/qt \
+		-plugindir /usr/${_libdir}/qt/plugins -importdir /usr/lib/qt/imports \
+		-translationdir /usr/share/qt/translations \
+		-datadir /usr/share/qt -bindir /usr/lib/qt/bin \
+		-nomake demos -nomake examples -gtkstyle \
+		-system-sqlite -no-phonon -no-phonon-backend \
+		-graphicssystem raster -openssl-linked -silent -no-pch -no-rpath \
+		-optimized-qmake -reduce-relocations -dbus-linked -no-openvg
+}
+do_build() {
+	export LD_LIBRARY_PATH="${wrksrc}/lib:${LD_LIBRARY_PATH}"
+	export LD="$CXX"
+	make ${makejobs}
+}
+do_install() {
+	local hicolordir=${DESTDIR}/usr/share/icons/hicolor
+
+	make INSTALL_ROOT=${DESTDIR} install
+
+	# delete tests
+	rm -rf ${DESTDIR}/usr/tests
+
+	# install missing icons and desktop files
+	for icon in tools/linguist/linguist/images/icons/linguist-*-32.png ; do
+		size=$(echo $(basename ${icon}) | cut -d- -f2)
+		install -D -m644 ${icon} \
+			${hicolordir}/${size}x${size}/apps/linguist.png
+	done
+	install -Dm644 src/gui/dialogs/images/qtlogo-64.png \
+		${hicolordir}/64x64/apps/qtlogo.png
+	install -Dm644 src/gui/dialogs/images/qtlogo-64.png \
+		${DESTDIR}/usr/share/pixmaps/qtlogo.png
+	install -Dm644 tools/assistant/tools/assistant/images/assistant.png \
+		${hicolordir}/32x32/apps/assistant.png
+	install -Dm644 tools/designer/src/designer/images/designer.png \
+		${hicolordir}/128x128/apps/designer.png
+	install -d ${DESTDIR}/usr/share/applications
+	install -m644 ${FILESDIR}/*.desktop \
+		${DESTDIR}/usr/share/applications
+
+	vlicense LGPL_EXCEPTION.txt
+
+	vmkdir usr/bin
+	for f in ${DESTDIR}/usr/lib/qt/bin/*; do
+		ln -s /usr/lib/qt/bin/$(basename $f) ${DESTDIR}/usr/bin/$(basename $f)-qt4
+	done
+
+	# Remove wrong stuff
+	rm -rf ${DESTDIR}/usr/{examples,demos}
+}
+
+qt-doc_package() {
+	depends="qt-devel-tools>=${version}_${revision}"
+	short_desc+=" - Documentation"
+	pkg_install() {
+		vmove usr/share/doc/qt
+	}
+}
+qt-designer_package() {
+	depends="hicolor-icon-theme"
+	short_desc+=" - GUI designer"
+	pkg_install() {
+		vmove usr/bin/designer-qt4
+		vmove usr/lib/qt/bin/designer
+		vmove "usr/lib/libQtDesigner.so*"
+		vmove "usr/lib/libQtDesignerComponents.so*"
+		vmove usr/lib/qt/plugins/designer
+		vmove "usr/share/icons/hicolor/128x128/apps/designer.*"
+		vmove "usr/share/applications/designer.*"
+		vmove "usr/share/qt/translations/designer*"
+	}
+}
+qt-devel-tools_package() {
+	depends="hicolor-icon-theme"
+	short_desc+=" - development tools"
+	pkg_install() {
+		for f in assistant lconvert linguist pixeltool qcollectiongenerator \
+			qhelpgenerator qhelpconverter xmlpatterns xmlpatternsvalidator \
+			qttracereplay qdoc3 qmlviewer; do
+			vmove usr/bin/${f}-qt4
+			vmove usr/lib/qt/bin/${f}
+		done
+		vmove usr/share/icons/hicolor
+		for f in linguist assistant; do
+			vmove usr/share/applications/${f}.desktop
+			[ ! -f ${DESTDIR}/usr/share/pixmaps/${f}.png ] && continue
+			vmove usr/share/pixmaps/${f}.png
+		done
+		vmove usr/share/qt/phrasebooks
+	}
+}
+qt-devel_package() {
+	depends="qt-qmake qt-devel-tools libX11-devel icu-devel qt>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		for f in lrelease lupdate moc qdbuscpp2xml qdbusxml2cpp qt3to4 \
+			rcc uic uic3; do
+			vmove usr/bin/${f}-qt4
+			vmove usr/lib/qt/bin/${f}
+		done
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.prl"
+		vmove usr/lib/pkgconfig
+	}
+}
+
+qt-plugin-odbc_package() {
+	short_desc+=" - ODBC plugin"
+	pkg_install() {
+		vmove usr/lib/qt/plugins/sqldrivers/libqsqlodbc.so
+	}
+}
+qt-plugin-pgsql_package() {
+	short_desc+=" - PostgreSQL plugin"
+	pkg_install() {
+		vmove usr/lib/qt/plugins/sqldrivers/libqsqlpsql.so
+	}
+}
+qt-plugin-mysql_package() {
+	short_desc+=" - MySQL plugin"
+	pkg_install() {
+		vmove usr/lib/qt/plugins/sqldrivers/libqsqlmysql.so
+	}
+}
+qt-plugin-sqlite_package() {
+	short_desc+=" - SQLite plugin"
+	pkg_install() {
+		vmove usr/lib/qt/plugins/sqldrivers/libqsqlite.so
+	}
+}
+qt-qmake_package() {
+	short_desc+=" - qmake Makefile generator tool"
+	pkg_install() {
+		vmove usr/bin/qmake-qt4
+		vmove usr/lib/qt/bin/qmake
+		vmove usr/share/qt/mkspecs
+	}
+}

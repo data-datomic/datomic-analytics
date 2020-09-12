@@ -1,0 +1,37 @@
+# Template build file for 'tdb'.
+pkgname=tdb
+version=1.3.6
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config python libxslt docbook-xsl"
+short_desc="Hierarchical pool based memory allocator with destructors"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="http://tdb.samba.org/"
+distfiles="http://samba.org/ftp/tdb/tdb-$version.tar.gz"
+checksum=85d7dd247e58d8b303de542a2bc39a3dff9e5f54dea39a94c1c910cee25a59a5
+
+do_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		cp ${FILESDIR}/cross-32bit.answers .
+		sed -i "s,@@XBPS_TARGET_MACHINE@@,$XBPS_TARGET_MACHINE,g" cross-32bit.answers
+		_args="--cross-compile --hostcc=cc --cross-answers=cross-32bit.answers"
+	fi
+	./configure --prefix=/usr --disable-python ${_args}
+}
+
+tdb-devel_package() {
+	depends="libtdb-${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}
+libtdb_package() {
+	short_desc="Trivial Database - shared library"
+	pkg_install() {
+		vmove "usr/lib/*.so.*"
+	}
+}

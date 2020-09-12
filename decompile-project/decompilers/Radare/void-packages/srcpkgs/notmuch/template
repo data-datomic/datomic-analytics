@@ -1,0 +1,73 @@
+# Template file for 'notmuch'
+pkgname=notmuch
+version=0.21
+revision=1
+hostmakedepends="pkg-config perl python-Sphinx"
+makedepends="xapian-core-devel gmime-devel talloc-devel bash-completion"
+short_desc="The mail indexer"
+maintainer="Jan S. <jan.schreib@gmail.com>"
+license="GPL-3"
+homepage="http://notmuchmail.org"
+distfiles="http://http.debian.net/debian/pool/main/n/notmuch/notmuch_${version}.orig.tar.gz"
+checksum=d06f8ffed168c7d53ffc449dd611038b5fa90f7ee22d58f3bec3b379571e25b3
+
+nocross="http://build.voidlinux.eu/builders/armv7l-musl_builder/builds/6341/steps/shell_3/logs/stdio"
+
+subpackages="libnotmuch libnotmuch-devel notmuch-mutt"
+case "$XBPS_TARGET_MACHINE" in
+	i686|x86_64)
+		makedepends+=" emacs"
+		subpackages+=" notmuch-emacs"
+		_args="--emacslispdir=/usr/share/emacs/site-lisp/notmuch
+			--emacsetcdir=/usr/share/emacs/site-lisp/notmuch"
+		;;
+	*) _args="--without-emacs";;
+esac
+
+do_configure() {
+	# fool the endianess test
+	sed -i 's|\(util_byte_order\)=.*|\1=1234|' configure
+	./configure --prefix=/usr \
+		--bashcompletiondir=/usr/share/bash-completion/completions \
+		--zshcompletiondir=/usr/share/zsh/site-functions ${_args}
+}
+do_build() {
+	make ${makejobs} V=1
+	make -C contrib/notmuch-mutt
+}
+do_install() {
+	make DESTDIR=${DESTDIR} install
+}
+
+libnotmuch_package() {
+	short_desc+=" - runtime library"
+	pkg_install() {
+		vmove usr/lib/*.so.*
+	}
+}
+libnotmuch-devel_package() {
+	short_desc+=" - development files"
+	depends="libnotmuch-${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.so
+	}
+}
+notmuch-emacs_package() {
+	noarch=yes
+	short_desc+=" - Emacs interface"
+	depends="${sourcepkg}-${version}_${revision} virtual?emacs"
+	pkg_install() {
+		vmove usr/share/emacs/site-lisp
+	}
+}
+notmuch-mutt_package() {
+	noarch=yes
+	short_desc+=" - Mutt interface"
+	depends="${sourcepkg}-${version}_${revision} perl-Mail-Box perl-MailTools
+	 perl-String-ShellQuote perl-Term-ReadLine-Gnu perl-File-Which"
+	pkg_install() {
+		vbin contrib/notmuch-mutt/notmuch-mutt
+		vman contrib/notmuch-mutt/notmuch-mutt.1
+	}
+}

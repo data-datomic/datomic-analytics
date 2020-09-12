@@ -1,0 +1,174 @@
+--- fsr/xfs_fsr.c.orig	2015-08-27 02:17:57.000000000 +0200
++++ fsr/xfs_fsr.c	2015-10-03 21:15:14.888366570 +0200
+@@ -43,6 +43,10 @@
+ #define _PATH_FSRLAST		"/var/tmp/.fsrlast_xfs"
+ #define _PATH_PROC_MOUNTS	"/proc/mounts"
+ 
++#ifndef _PATH_MOUNTED
++#define _PATH_MOUNTED MOUNTED
++#endif
++
+ 
+ char *progname;
+ 
+--- include/linux.h.orig	2015-08-04 01:37:12.000000000 +0200
++++ include/linux.h	2015-10-03 21:19:02.256382607 +0200
+@@ -30,7 +30,9 @@
+ #include <endian.h>
+ #include <stdbool.h>
+ #include <asm/types.h>
+ #include <mntent.h>
++#include <linux/limits.h>	/* XATTR_SIZE_MAX */
++#include <stdio.h>
+ 
+ static __inline__ int xfsctl(const char *path, int fd, int cmd, void *p)
+ {
+@@ -140,6 +141,10 @@
+ #define EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
+ #define EFSBADCRC	EBADMSG	/* Bad CRC detected */
+ 
++#ifndef loff_t
++#define loff_t 	off_t
++#endif
++
+ typedef loff_t		xfs_off_t;
+ typedef __uint64_t	xfs_ino_t;
+ typedef __uint32_t	xfs_dev_t;
+--- libhandle/handle.c.orig	2015-10-03 21:15:14.890366562 +0200
++++ libhandle/handle.c	2015-10-03 21:19:28.903266874 +0200
+@@ -21,6 +21,9 @@
+ #include "xfs.h"
+ #include "handle.h"
+ #include "parent.h"
++#if defined(__linux__)
++#include <linux/limits.h>
++#endif
+ 
+ /* just pick a value we know is more than big enough */
+ #define	MAXHANSIZ	64
+--- libhandle/jdm.c.orig	2015-10-03 21:15:14.890366562 +0200
++++ libhandle/jdm.c	2015-10-03 21:19:38.716224218 +0200
+@@ -21,6 +21,9 @@
+ #include "handle.h"
+ #include "jdm.h"
+ #include "parent.h"
++#if defined(__linux__)
++#include <linux/limits.h>
++#endif
+ 
+ /* internal fshandle - typecast to a void for external use */
+ #define FSHANDLE_SZ		8
+--- libxfs/linux.c.orig	2015-08-03 02:39:42.000000000 +0200
++++ libxfs/linux.c	2015-10-03 21:17:50.262694871 +0200
+@@ -16,11 +16,8 @@
+  * Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
+-#define ustat __kernel_ustat
+ #include <mntent.h>
+ #include <sys/stat.h>
+-#undef ustat
+-#include <sys/ustat.h>
+ #include <sys/mount.h>
+ #include <sys/ioctl.h>
+ #include <sys/sysinfo.h>
+@@ -51,9 +48,12 @@
+ int
+ platform_check_ismounted(char *name, char *block, struct stat64 *s, int verbose)
+ {
+-	/* Pad ust; pre-2.6.28 linux copies out too much in 32bit compat mode */
+-	struct ustat	ust[2];
+ 	struct stat64	st;
++	FILE		*f;
++	struct stat64	mst;
++	struct mntent	*mnt;
++	char		mounts[MAXPATHLEN];
++	int		ismounted = 0;
+ 
+ 	if (!s) {
+ 		if (stat64(block, &st) < 0)
+@@ -63,14 +63,25 @@
+ 		s = &st;
+ 	}
+ 
+-	if (ustat(s->st_rdev, ust) >= 0) {
++	strcpy(mounts, (!access(PROC_MOUNTED, R_OK)) ? PROC_MOUNTED : MOUNTED);
++	if ((f = setmntent(mounts, "r")) == NULL)
++		return 0;
++
++	while ((mnt = getmntent(f)) != NULL) {
++		if (stat64(mnt->mnt_dir, &mst) < 0)
++			continue;
++		if (mst.st_dev != s->st_rdev)
++			continue;
++
+ 		if (verbose)
+ 			fprintf(stderr,
+ 				_("%s: %s contains a mounted filesystem\n"),
+ 				progname, name);
+-		return 1;
++		ismounted = 1;
++		break;
+ 	}
+-	return 0;
++	endmntent(f);
++	return ismounted;
+ }
+ 
+ int
+--- include/xfs.h.orig	2015-08-04 01:37:12.000000000 +0200
++++ include/xfs.h	2015-10-03 21:42:48.317971365 +0200
+@@ -33,6 +33,8 @@
+ #ifndef __XFS_H__
+ #define __XFS_H__
+ 
++#include <xfs/xfs_types.h>
++
+ #if defined(__linux__)
+ #include <xfs/linux.h>
+ #elif defined(__FreeBSD__)
+@@ -60,7 +62,6 @@
+ #define __user
+ #endif
+ 
+-#include <xfs/xfs_types.h>
+ #include <xfs/xfs_fs.h>
+ 
+ #endif	/* __XFS_H__ */
+--- libxfs/xfs_types.h.orig	2015-08-03 02:39:42.000000000 +0200
++++ libxfs/xfs_types.h	2015-10-03 21:42:38.897015215 +0200
+@@ -18,6 +18,34 @@
+ #ifndef __XFS_TYPES_H__
+ #define	__XFS_TYPES_H__
+ 
++#include <stdint.h>
++
++#ifndef __uint8_t
++#define __uint8_t uint8_t
++#endif
++#ifndef __uint16_t
++#define __uint16_t uint16_t
++#endif
++#ifndef __uint32_t
++#define __uint32_t uint32_t
++#endif
++#ifndef __uint64_t
++#define __uint64_t uint64_t
++#endif
++
++#ifndef __int8_t
++#define __int8_t int8_t
++#endif
++#ifndef __int16_t
++#define __int16_t int16_t
++#endif
++#ifndef __int32_t
++#define __int32_t int32_t
++#endif
++#ifndef __int64_t
++#define __int64_t int64_t
++#endif
++
+ typedef __uint32_t	prid_t;		/* project ID */
+ 
+ typedef __uint32_t	xfs_agblock_t;	/* blockno in alloc. group */

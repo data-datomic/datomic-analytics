@@ -1,0 +1,23 @@
+# Template file for 'cabal-install'
+pkgname=cabal-install
+version=1.22.7.0
+revision=1
+hostmakedepends="ghc curl"
+makedepends="gmp-devel libffi-devel zlib-devel"
+depends="ghc"
+short_desc="Command-line interface for Cabal and Hackage"
+maintainer="Christian Neukirchen <chneukirchen@gmail.com>"
+license="custom"
+homepage="http://hackage.haskell.org/package/cabal-install"
+distfiles="http://hackage.haskell.org/packages/archive/$pkgname/$version/$pkgname-$version.tar.gz"
+checksum=b30fd14f20fdd11b028cba68fefeed7eeadcacf919e7c29bc4d7289a656d19f3
+nopie=yes  # network-2.6.0.2 build fails with a relocation
+
+do_build() {
+	PREFIX=$PWD/build sh bootstrap.sh --user
+}
+
+do_install() {
+	vbin build/bin/cabal
+	vlicense LICENSE
+}

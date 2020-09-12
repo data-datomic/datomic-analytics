@@ -1,0 +1,20 @@
+# Template file for 'actiona'
+pkgname=actiona
+version=3.9.1
+revision=1
+build_style=qmake
+hostmakedepends="pkg-config qt5-qmake qt5-plugin-mysql"
+makedepends="libopencv-devel libnotify-devel boost-devel qt5-devel qt5-multimedia-devel
+ qt5-script-devel qt5-tools-devel qt5-x11extras-devel qt5-xmlpatterns-devel libXtst-devel"
+depends="qt5-plugin-mysql"
+short_desc="Cross platform automation tool"
+maintainer="Jürgen Buchmüller <pullmoll@t-online.de>"
+license="GPL-3"
+homepage="https://actiona.tools/"
+distfiles="https://github.com/Jmgr/${pkgname}/archive/v${version}.tar.gz>${pkgname}-${version}.tar.gz"
+checksum=46ddc28a6cc4bb951a1ea4bd65832e7cb2f10d4397e18475bb872c83b5c60188
+
+post_install() {
+	vmkdir usr/share/applications
+	vinstall ${FILESDIR}/actiona.desktop 644 usr/share/applications
+}

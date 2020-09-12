@@ -1,0 +1,35 @@
+# Template file for 's6'
+pkgname=s6
+version=2.2.4.0
+revision=1
+build_style=gnu-configure
+makedepends="execline-devel skalibs-devel"
+configure_args="--libdir=/usr/lib"
+short_desc="Small suite of programs for UNIX, designed to allow process supervision"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="ISC"
+homepage="http://skarnet.org/software/s6/"
+distfiles="http://skarnet.org/software/s6/s6-${version}.tar.gz"
+checksum=9ca153e240c01fe758b0b9ce9c92318517f1c009e8485a3367a317c386d40158
+
+post_install() {
+	vlicense COPYING
+	vdoc README
+	vcopy "doc/*" usr/share/doc/${pkgname}
+}
+
+s6-doc_package() {
+	noarch=yes
+	short_desc="s6 supervision documentation"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/share/doc
+	}
+}
+s6-devel_package() {
+	short_desc="s6 supervision library and headers"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.a
+	}
+}

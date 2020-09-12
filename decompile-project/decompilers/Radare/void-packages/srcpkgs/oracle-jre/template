@@ -1,0 +1,91 @@
+# Template file for 'oracle-jre'
+pkgname=oracle-jre
+version=8u66
+revision=5
+
+_longVersion=1.8.0_66
+_build=17
+
+short_desc="Java Runtime Environment (JRE)"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+homepage="http://www.oracle.com/technetwork/java/javase/downloads/index.html"
+license="oracle"
+lib32disabled=yes
+repository="nonfree"
+only_for_archs="i686 x86_64"
+depends="hicolor-icon-theme desktop-file-utils xdg-utils shared-mime-info wget"
+hostmakedepends="wget"
+provides="java-runtime-${version}_1"
+
+case "${XBPS_TARGET_MACHINE}" in
+x86_64)
+	_arch=amd64
+	_filename=jre-${version}-linux-x64.tar.gz
+	checksum="f2249370a6ac4ca8977b66d7665179f0fef4df732f3af80b0f34567d594588bf"
+	;;
+i686)
+	_arch=i386
+	_filename=jre-${version}-linux-i586.tar.gz
+	checksum="70ee96be46d1cdeb15720b58a74c4dff0eecb6fcdded91d887b16779789f3596"
+	;;
+esac
+
+alternatives="
+ java:/usr/bin/java:/usr/lib/jvm/jre${_longVersion}/bin/java
+ java:/usr/bin/javaws:/usr/lib/jvm/jre${_longVersion}/bin/javaws
+ java:/usr/bin/jcontrol:/usr/lib/jvm/jre${_longVersion}/bin/jcontrol
+ java:/usr/bin/jjs:/usr/lib/jvm/jre${_longVersion}/bin/jjs
+ java:/usr/bin/keytool:/usr/lib/jvm/jre${_longVersion}/bin/keytool
+ java:/usr/bin/orbd:/usr/lib/jvm/jre${_longVersion}/bin/orbd
+ java:/usr/bin/pack200:/usr/lib/jvm/jre${_longVersion}/bin/pack200
+ java:/usr/bin/policytool:/usr/lib/jvm/jre${_longVersion}/bin/policytool
+ java:/usr/bin/rmid:/usr/lib/jvm/jre${_longVersion}/bin/rmid
+ java:/usr/bin/rmiregistry:/usr/lib/jvm/jre${_longVersion}/bin/rmiregistry
+ java:/usr/bin/servertool:/usr/lib/jvm/jre${_longVersion}/bin/servertool
+ java:/usr/bin/tnameserv:/usr/lib/jvm/jre${_longVersion}/bin/tnameserv
+ java:/usr/bin/unpack200:/usr/lib/jvm/jre${_longVersion}/bin/unpack200
+
+ java-plugin:/usr/lib/mozilla/plugins/libnpjp2.so:/usr/lib/jvm/jre${_longVersion}/lib/$_arch/libnpjp2.so
+"
+
+distfiles="http://download.oracle.com/otn-pub/java/jdk/${version}-b${_build}/${_filename}"
+wrksrc="jre$_longVersion"
+
+do_fetch() {
+	mkdir -p $wrksrc
+	cd $wrksrc
+	wget \
+		--no-check-certificate \
+		--header "Cookie: oraclelicense=accept-securebackup-cookie" \
+		--progress=bar:force \
+		-c -O $_filename \
+		$distfiles
+	echo "$checksum  $_filename" | sha256sum -c || { sha256sum "$_filename"; return 1; }
+}
+
+do_extract() {
+	tar xf $_filename -C ..
+}
+
+do_build() {
+	sed \
+		-e "s|%LONG_VERSION%|${_longVersion}|" \
+		-e "s|%ORACLE_JRE_URL%|${distfiles}|" \
+		-e "s|%ORACLE_JRE_CHECKSUM%|${checksum}|" \
+			${FILESDIR}/oracle-jre-vars.sh.in > oracle-jre-vars.sh
+}
+
+do_install() {
+	vmkdir "usr/share/licenses/${pkgname}"
+	vinstall oracle-jre-vars.sh 644 "usr/lib/jvm/"
+
+	vinstall LICENSE 644 "usr/share/licenses/${pkgname}"
+	vinstall $FILESDIR/java-policy-settings.desktop 644 usr/share/applications
+	ln -s jre${_longVersion} ${DESTDIR}/usr/lib/jvm/oracle-jre
+
+	for i in 16 20 22 24 32 40 48 64 72 96 128 256 512; do
+		vinstall $FILESDIR/oracle-jre-${i}x${i}.png 644 usr/share/icons/hicolor/${i}x${i}/apps oracle-java.png
+	done
+
+	vinstall $FILESDIR/oracle-jre.sh 644 "etc/profile.d" 10_oracle-jre.sh
+}

@@ -1,0 +1,14 @@
+# Template file for 'tcc'
+only_for_archs="i686 x86_64"
+
+pkgname=tcc
+version=0.9.26
+revision=2
+build_style=gnu-configure
+hostmakedepends="perl"
+short_desc="The Tiny C Compiler"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://bellard.org/tcc/"
+license="LGPL-2.1"
+distfiles="${NONGNU_SITE}/tinycc/tcc-$version.tar.bz2"
+checksum=521e701ae436c302545c3f973a9c9b7e2694769c71d9be10f70a2460705b6d71

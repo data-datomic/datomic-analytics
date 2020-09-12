@@ -1,0 +1,16 @@
+# Template file for 'perl-HTTP-Message'
+pkgname=perl-HTTP-Message
+version=6.11
+revision=1
+wrksrc="${pkgname/perl-/}-${version}"
+build_style=perl-module
+hostmakedepends="perl"
+makedepends="perl-LWP-MediaTypes perl-Encode-Locale perl-URI perl-HTTP-Date perl-HTML-Parser"
+depends="${makedepends}"
+noarch="yes"
+short_desc="HTTP::Message - HTTP style message (base class)"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://search.cpan.org/dist/HTTP-Message"
+license="Artistic, GPL-1"
+distfiles="${CPAN_SITE}/HTTP/HTTP-Message-$version.tar.gz"
+checksum=e7b368077ae6a188d99920411d8f52a8e5acfb39574d4f5c24f46fd22533d81b

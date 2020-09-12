@@ -1,0 +1,33 @@
+#!/bin/sh
+# python wrapper trying to fix the python versioning hell
+# -- pancake
+
+PCS="${PYTHON_CONFIG}
+	python3
+	python38
+	python3.8
+	python37
+	python3.7
+	python36
+	python3.6
+	python"
+
+PYCFG=""
+
+for a in ${PCS} ; do
+	$a --help >/dev/null 2>&1
+	if [ $? = 0 ]; then
+		PYCFG=$a
+		PY3=$($a --version 2>&1 | grep 'Python 3')
+		[ -n "${PY3}" ] && break
+	fi
+done
+
+[ -z "${PYCFG}" ] && exit 1
+if [ "$1" = "-n" ]; then
+	echo "${PYCFG}"
+	exit 0
+fi
+
+"${PYCFG}" "$@" | sed -e 's/-arch [^\s]*//g' | \
+	sed s,-Wstrict-prototypes,,g 2>/dev/null

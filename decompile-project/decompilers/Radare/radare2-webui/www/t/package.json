@@ -1,0 +1,37 @@
+{
+  "author": {
+    "name": "pancake",
+    "email": "pancake@nopcode.org"
+  },
+  "bugs": {
+    "url": "https://github.com/radare/radare2-webui"
+  },
+  "dependencies": {
+    "source-map": "*"
+  },
+  "description": "Tiles UI for radare2",
+  "homepage": "https://radare.org",
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "pancake",
+      "email": "pancake@nopcode.org"
+    }
+  ],
+  "name": "radare2-webui-enyo",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/radare/radare2-webui.git"
+  },
+  "scripts": {},
+  "version": "0.10.2",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^4.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-gzip": "^1.4.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-tar": "^2.0.0",
+    "gulp-uglify": "^3.0.0"
+  }
+}

@@ -1,0 +1,16 @@
+# Template file for 'ioping'
+pkgname=ioping
+version=0.9
+revision=2
+build_style=gnu-makefile
+short_desc="Simple disk I/O latency measuring tool"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="GPL-3"
+homepage="https://github.com/koct9i/ioping/"
+distfiles="https://github.com/koct9i/ioping/releases/download/v$version/${pkgname}-${version}.tar.gz"
+checksum=951e430875987c8cfe0ed85a0bcfe1081788121a34102eb6f7c91330c63a775d
+
+do_install() {
+	vbin ioping
+	vman ioping.1
+}

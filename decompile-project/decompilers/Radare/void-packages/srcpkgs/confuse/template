@@ -1,0 +1,23 @@
+# Template file for 'confuse'
+pkgname=confuse
+version=2.8
+revision=1
+build_style=gnu-configure
+configure_args="--enable-shared --enable-static --disable-nls"
+short_desc="Small configuration file parser library for C"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://github.org/martinh/libconfuse/"
+license="ISC"
+distfiles="https://github.com/martinh/libconfuse/releases/download/v${version}/confuse-${version}.tar.xz"
+checksum=2a8102bfa3ccc846c14d94a81b0abfb4f5e855809f89ff3722aca1a9f314ea0d
+
+confuse-devel_package() {
+	depends="confuse>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+	}
+}

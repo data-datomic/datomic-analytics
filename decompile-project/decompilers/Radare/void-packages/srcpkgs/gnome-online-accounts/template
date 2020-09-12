@@ -1,0 +1,44 @@
+# Template file for 'gnome-online-accounts'
+pkgname=gnome-online-accounts
+version=3.18.2.1
+revision=1
+build_style=gnu-configure
+configure_args="$(vopt_enable gir introspection)
+ --enable-google --enable-kerberos --enable-flickr --enable-telepathy
+ --enable-facebook --disable-static --enable-exchange  --enable-imap-smtp
+ --enable-owncloud --enable-windows-live --disable-twitter --enable-yahoo"
+hostmakedepends="pkg-config intltool libxslt docbook-xsl glib-devel
+ gobject-introspection gnome-common gettext-devel libtool"
+makedepends="libsoup-gnome-devel webkit2gtk-devel json-glib-devel libnotify-devel
+ rest-devel gcr-devel libsecret-devel mit-krb5-devel dbus-glib-devel telepathy-glib-devel"
+depends="hicolor-icon-theme"
+short_desc="GNOME service to access online accounts"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://www.gnome.org"
+license="GPL-2"
+distfiles="${GNOME_SITE}/$pkgname/${version%.*.*}/$pkgname-$version.tar.xz"
+checksum=ca0a9c58ea5ac08437ed68fea9e8c3de69a8804e670ccf5a578c6786096ecfac
+
+build_options="gir"
+if [ -z "$CROSS_BUILD" ]; then
+	build_options_default+=" gir"
+fi
+
+pre_configure() {
+	autoreconf -if
+	export CFLAGS+=" -I$PWD/telepathy-account-widgets"
+}
+
+gnome-online-accounts-devel_package() {
+	depends="libglib-devel gtk+3-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/lib/goa-1.0
+		if [ -n "$build_option_gir" ]; then
+			vmove usr/share/gir-1.0
+		fi
+	}
+}

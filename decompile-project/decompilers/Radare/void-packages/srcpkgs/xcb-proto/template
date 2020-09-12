@@ -1,0 +1,16 @@
+# Template build for 'xcb-proto'.
+pkgname=xcb-proto
+version=1.11
+revision=2
+build_style=gnu-configure
+hostmakedepends="python"
+makedepends="libxml2"
+depends="python"
+noarch="yes"
+pycompile_module="xcbgen"
+short_desc="XML-XCB (X C Bindings) protocol descriptions"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://xcb.freedesktop.org"
+license="MIT"
+distfiles="http://xcb.freedesktop.org/dist/$pkgname-$version.tar.bz2"
+checksum=b4aceee6502a0ce45fc39b33c541a2df4715d00b72e660ebe8c5bb444771e32e

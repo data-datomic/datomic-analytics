@@ -1,0 +1,10 @@
+{
+    "commandText": "git clone --progress --verbose https://github.com/frida/libgee undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/libgee",
+    "repo": "https://github.com/frida/libgee",
+    "targetPath": "undefined\\frid--09-12-2020--4UEr3n3heYbzjp51LDg4V3/libgee",
+    "startTime": "2020-09-12T11:03:59.052Z",
+    "endTime": "2020-09-12T11:03:59.894Z",
+    "childProcessPid": 27767,
+    "executionErrors": [],
+    "commandLogFilePath": "/Users/brian/dev_space/GitHub-data-datomic/datomic-analytics/decompile-project/decompilers/Frida/workingdir/--frida--libgee--27767"
+}

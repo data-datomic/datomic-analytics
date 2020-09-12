@@ -1,0 +1,23 @@
+# Template build file for "vnstat"
+pkgname=vnstat
+version=1.15
+revision=2
+build_style=gnu-configure
+hostmakedepends="automake libtool pkg-config"
+short_desc="A terminal based network traffic monitor"
+maintainer="Eivind Uggedal <eivind@uggedal.com>"
+homepage="http://humdi.net/vnstat/"
+license="GPL-2"
+distfiles="http://humdi.net/vnstat/${pkgname}-${version}.tar.gz"
+checksum=c3814b5baa8b627198a8debfe1dce4b4346a342523818cc8668a5497971dbc39
+
+conf_files="/etc/vnstat.conf"
+make_dirs="/var/lib/vnstat 0755 root root"
+
+pre_configure() {
+	autoreconf -fi
+}
+post_install() {
+	vconf cfg/vnstat.conf
+	vsv vnstatd
+}

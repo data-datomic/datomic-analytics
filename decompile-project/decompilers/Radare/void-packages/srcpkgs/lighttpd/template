@@ -1,0 +1,56 @@
+# Template file for 'lighttpd'
+pkgname=lighttpd
+version=1.4.38
+revision=1
+makedepends="libmysqlclient-devel lua52-devel libxml2-devel sqlite-devel gdbm-devel pcre-devel libressl-devel fcgi-devel"
+hostmakedepends="automake pkg-config pcre-devel libtool"
+conf_files="/etc/lighttpd/lighttpd.conf"
+system_accounts="lighttpd"
+lighttpd_homedir="/var/tmp/lighttpd"
+make_dirs="
+	/srv/www 0755 root root
+	/var/log/lighttpd 0750 lighttpd lighttpd"
+short_desc="A secure, fast, compliant and very flexible web-server"
+maintainer="Enno Boland <gottox@voidlinux.eu>"
+license="2-clause-BSD"
+homepage="http://lighttpd.net"
+distfiles="http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-${version}.tar.xz"
+checksum=4912568b7befcf3f552ca4668bd7f38cd85f42a22944359d00816ec27eb1e504
+build_style=gnu-configure
+configure_args="
+	--sbindir=/usr/bin \
+	--with-gnu-ld \
+	--libdir=/usr/lib/lighttpd/modules/ \
+	--sysconfdir=/etc/lighttpd \
+	--with-mysql=${XBPS_CROSS_BASE}/usr/bin/mysql_config \
+	--with-ldap \
+	--with-attr \
+	--with-zlib \
+	--with-bzip2 \
+	--with-openssl \
+	--with-pcre \
+	--with-kerberos5 \
+	--without-fam \
+	--with-memcache \
+	--with-webdav-props \
+	--with-webdav-locks \
+	--with-gdbm \
+	--with-memcache \
+	--with-lua"
+lib32disabled=yes
+
+CFLAGS="-I${XBPS_CROSS_BASE}/usr/include/lua5.2"
+
+pre_configure() {
+	autoreconf -fi
+}
+do_configure() {
+	export LUA_CFLAGS="-L${XBPS_CROSS_BASE}/usr/include/lua5.2"
+	export LUA_LIBS="-L${XBPS_CROSS_BASE}/usr/lib -llua5.2"
+	./configure ${configure_args}
+}
+post_install() {
+	vlicense COPYING
+	vsv lighttpd
+	vinstall ${FILESDIR}/lighttpd.conf 644 etc/lighttpd
+}

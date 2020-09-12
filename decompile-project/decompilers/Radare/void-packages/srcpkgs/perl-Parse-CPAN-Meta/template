@@ -1,0 +1,16 @@
+# Template build file for 'perl-Parse-CPAN-Meta'.
+pkgname=perl-Parse-CPAN-Meta
+version=1.4417
+revision=1
+wrksrc="Parse-CPAN-Meta-${version}"
+hostmakedepends="perl"
+makedepends="${hostmakedepends}"
+depends="${makedepends}"
+noarch="yes"
+build_style=perl-module
+short_desc="Parse::CPAN::Meta - Parse META.yml and META.json CPAN metadata files"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+homepage="http://search.cpan.org/dist/Parse-CPAN-Meta"
+license="GPL-1, Artistic"
+distfiles="${CPAN_SITE}/Parse/${pkgname#perl-}-${version}.tar.gz"
+checksum=dd1df72c80390551563159f18f81a26baabeda8d4b0e94df7f1c223391967121
