@@ -1,0 +1,7 @@
+;; Copyright (c) Cognitect, Inc.
+;; All rights reserved.
+
+{:paths ["resources"]
+ :deps {ion-event-example {:git/url "git@github.com:datomic/ion-event-example.git"
+                           :sha "d6f0f95b7f524ad2c40bac68970efc9d1f5686bd"}}}
+
