@@ -1,0 +1,87 @@
+
+body {
+    margin-top: 60px;
+}
+
+.uri {
+    padding: 8px;
+}
+
+.CodeMirror {
+    border: 1px #ddd solid;
+    margin-bottom: 20px;
+}
+
+.select2-container {
+    width: 220px;
+}
+
+.nav > li > a.disconnect:hover {
+    color: #c33;
+}
+
+.navbar {
+    box-shadow: #aaa 0px 4px 4px;
+}
+
+.footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    color: #aaa;
+    border-top: 1px #eee solid;
+    text-align: center;
+}
+
+/*========== data insert =============*/
+
+.data-insert .delete {
+    color: #faa;
+    position: relative;
+    top: 13px;
+    left: 10px;
+    cursor: pointer;
+}
+
+.data-insert .delete:hover {
+    color: #c33;
+}
+
+.data-insert .field,
+.data-insert .add {
+    clear: left;
+}
+
+.data-insert .name,
+.data-insert .value {
+    float: left;
+    margin: 8px;
+}
+
+.data-insert .add {
+    float: left;
+    margin: 10px 0 20px 0;
+}
+
+.data-insert form {
+    clear: left;
+}
+
+/*========== queries ===========*/
+
+.edit-query {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+/*=========== schema updates ===========*/
+
+.schema-update {
+    margin-top: 25px;
+}
+
+.schema-update .CodeMirror {
+    margin-top: 20px;
+    width: 420px;
+    height: 130px;
+}
+

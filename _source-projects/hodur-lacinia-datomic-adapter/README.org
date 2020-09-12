@@ -1,0 +1,335 @@
+#+TITLE:   Hodur Lacinia<->Datomic Adapter
+#+AUTHOR:  Tiago Luchini
+#+EMAIL:   info@tiagoluchini.eu
+#+OPTIONS: toc:t
+
+TBD: fix this badge ->
+[[https://circleci.com/gh/luchiniatwork/hodur-lacinia-schema.svg?style=shield&circle-token=]]
+[[https://img.shields.io/clojars/v/hodur/engine.svg]]
+[[https://img.shields.io/clojars/v/hodur/lacinia-datomic-adapter.svg]]
+[[https://img.shields.io/badge/License-MIT-blue.svg]]
+
+Hodur is a descriptive domain modeling approach and related collection
+of libraries for Clojure.
+
+By using Hodur you can define your domain model as data, parse and
+validate it, and then either consume your model via an API making your
+apps respond to the defined model or use one of the many plugins to
+help you achieve mechanical, repetitive results faster and in a purely
+functional manner.
+
+* Motivation
+
+  For a deeper insight into the motivations behind Hodur, check the
+  [[https://github.com/luchiniatwork/hodur-engine/blob/master/docs/MOTIVATION.org][motivation doc]].
+
+* Getting Started (TBD - review this)
+
+  Hodur has a highly modular architecture. [[https://github.com/luchiniatwork/hodur-engine][Hodur Engine]] is always
+  required as it provides the meta-database functions and APIs
+  consumed by plugins.
+
+  Therefore, refer the [[https://github.com/luchiniatwork/hodur-engine#getting-started][Hodur Engine's Getting Started]] first and then
+  return here for Lacinia-specific setup.
+
+  After having set up ~hodur-engine~ as described above, we also need
+  to add ~hodur/lacinia-schema~, ~hodur/datomic-schema~, and
+  ~hodur/lacinia-datomic-adapter~ individually to the ~deps.edn~ file:
+
+#+BEGIN_SRC clojure
+  {:deps {:hodur/engine                  {:mvn/version "0.1.2"}
+          :hodur/lacinia-schema          {:mvn/version "0.1.0"}
+          :hodur/datomic-schema          {:mvn/version "0.1.0"}
+          :hodur/lacinia-datomic-adapter {:mvn/version "0.1.0"}}}
+#+END_SRC
+
+  You should ~require~ it any way you see fit:
+
+#+BEGIN_SRC clojure
+  (require '[hodur/lacinia-schema.core :as hodur-lacinia])
+#+END_SRC
+
+  Let's expand our ~Person~ model from the original getting started by
+  "tagging" the ~Person~ entity for Lacinia. You can read more about
+  the concept of tagging for plugins in the sessions below but, in
+  short, this is the way we, model designers, use to specify which
+  entities we want to be exposed to which plugins.
+
+#+BEGIN_SRC clojure
+  (def meta-db (hodur/init-schema
+                '[^{:lacinia/tag-recursive true}
+                  Person
+                  [^String first-name
+                   ^String last-name]]))
+#+END_SRC
+
+  The ~hodur-lacinia-schema~ plugin exposes a function called ~schema~
+  that generates your model as a Lacinia schema payload:
+
+#+BEGIN_SRC clojure
+  (def lacinia-schema (hodur-lacinia/schema meta-db))
+#+END_SRC
+
+  When you inspect ~datomic-schema~, this is what you have:
+
+#+BEGIN_SRC clojure
+  {:objects
+   {:Person
+    {:fields
+     {:firstName {:type (non-null String)},
+      :lastName {:type (non-null String)}}}}}
+#+END_SRC
+
+  Assuming Lacinia's ~com.walmartlabs.lacinia.schema~ is bound to
+  ~schema~, you can initialize your instance by compiling the schema like this:
+
+#+BEGIN_SRC clojure
+  (def compiled-schema (-> lacinia-schema
+                           schema/compile))
+#+END_SRC
+
+  Most certainly you will have some resolvers defined in your schema
+  (say ~:person-query/resolver~ that you want to bind to function
+  ~person-query-resolver~). In this case, attach the resolvers using
+  Lacinia's ~com.walmartlabs.lacinia.util/attach-resolvers~ function
+  (shown in this next example as bound to ~util/attach-resolvers~:
+
+#+BEGIN_SRC clojure
+  (def compiled-schema (-> lacinia-schema
+                           (util/attach-resolvers
+                            {:person-query/resolver person-query-resolver})
+                           schema/compile))
+#+END_SRC
+
+* Model Definition
+
+  All Hodur plugins follow the [[https://github.com/luchiniatwork/hodur-engine#model-definition][Model Definition]] as described on Hodur
+  [[https://github.com/luchiniatwork/hodur-engine#model-definition][Engine's documentation]].
+
+* Setting up Queries
+
+** Querying one entity
+
+   In many cases you want simply to have a GraphQL query that returns
+   a specific instance of an entity.
+
+   For these cases, make sure your Lacinia query field is marked with
+   ~:lacinia/query~ plus ~:lacinia->datomic.query/type :one~. Both the
+   query field and the entity returned must be tagged for lacinia and
+   datomic.
+
+   The adapter will look for params in the field marked with
+   ~:lacinia->datomic.param/lookup-ref~. Each of these params must
+   point to a Datomic lookup ref that will be used to located this
+   entity.
+
+   In the following example, we are specifying that param ~email~ will
+   cause the adapter to search for an employee that has the attribute
+   ~:employee/email~ set to the value of the parameter, therefore
+   fetching it.
+
+#+BEGIN_SRC clojure
+  [QueryRoot
+   [^{:type Employee
+      :lacinia->datomic.query/type :one}
+    employee
+    [^{:type String
+       :optional true
+       :lacinia->datomic.param/lookup-ref :employee/email}
+     email]]
+#+END_SRC
+
+   It's important to mention that, in order for this to work on
+   Datomic, the attribute ~:employee/email~ must be marked as
+   identity. Example:
+
+#+BEGIN_SRC clojure
+  [Employee
+   [^{:type String
+      :datomic/unique :db.unique/identity}
+    email
+    
+    ^{:type String}
+    first-name]]
+#+END_SRC
+
+   If you have any sort of treatment you want to do on the parameters
+   before sending them to Datomic, you can specify
+   ~:lacinia->datomic.param/transform~ on the param. This marker
+   points to a fully qualified symbol that is expected to be resolved
+   to your desired function.
+
+** Querying many entities
+TBD
+
+~:lacinia->datomic.query/type :many~
+
+- must be in a field in a ~lacinia/query~
+- both entity and field must be lacinia tagged
+
+*** Modeling many responses
+
+- "list object":
+
+[^Integer
+     total-count
+     
+     ^PageInfo
+     page-info
+
+     ^{:type Employee
+       :cardinality [0 n]}
+     nodes]
+
+- then page info:
+
+[PageInfo
+    [^{:type Integer}
+     total-pages
+
+     ^{:type Integer}
+     current-page
+
+     ^{:type Integer}
+     page-size
+     
+     ^{:type Integer}
+     current-offset
+
+     ^{:type Boolean}
+     has-next
+     
+     ^{:type Integer}
+     next-offset
+
+     ^{:type Boolean}
+     has-prev
+     
+     ^{:type Integer}
+     prev-offset]
+
+*** Parameters
+
+:lacinia->datomic.param/offset true
+:lacinia->datomic.param/limit true
+
+*** Filter builders (TBD)
+
+:lacinia->datomic.param/filter-builder user/new-build-employee-name-search-where
+
+
+** Lookups
+
+- one to one are simple lookups
+- everything else is paginated... two options:
+
+*** Direct Lookup
+
+~:lacinia->datomic.field/lookup-many~ formerly called lookup
+
+*** Reverse lookup
+
+~:lacinia->datomic.field/reverse-lookup-many~ formerly called reverse-lookup
+
+TBD
+
+** Custom Resolvers
+
+- TBD: should we have a final "resolver" like function with the
+  prepped payload before returning the response???
+
+TBD
+
+** Special case
+
+- :lacinia->datomic.field/depends-on [:employee/first-name
+                                           :employee/last-name]
+- then can receive both on a resolver
+
+
+ 
+
+
+TBD
+
+* Setting up Mutations
+
+
+Notes:
+
+For creating payload:
+
+- ~map-to~ might be ok - it's a way to limit the input and still
+  indicate what to parse to
+- a limitation here is that fields MUST be exactly the same
+- alternative here would be to have a a keyword mapper... for
+  instance, ~EmployeeInput~ would have a map-to ~:employee~
+- it feels similar :point-up:
+
+Entity Identification:
+
+- we need a kind of ~lookup-ref~ to help find the entity on an upsert
+  scenario
+- it would have to be something like ~email~ -> ~:employee/email~
+- consider whether we could have a automatic ~uuid~ generator too
+- or maybe a kind of "transformer" that gets called with the args so
+  that users can extend it (as in, creating a random uuid if one is
+  not offered)
+
+Deletion:
+
+- :db/retractEntity needs to be considered for sure (it seems to
+  smartly trickle to attributes, refs, and components)
+- ~[:db/retractEntity [:person/email "jdoe@example.com"]]~
+- :db/retract needs to specify Op E A V
+- if you specify a V that does not exist, the transaction gets through
+  but does not change anything
+
+
+Field marked as /retract-entity and email marked as lookup-ref
+~retractPerson (email: "bla")~
+
+Field marked as /retract, email as lookup-ref, and projectuuid as /target-ref?
+~retractProjectFromPerson (email: "bla", projectUuid: "xxx")~
+
+Field marked as /retract, email as lookup-ref, and factInput as /retract-map?
+~retractFactsFromPerson (email: "bla", factInput: {likes: "pizza"})
+
+
+:lacinia->datomic.input/map-to Employee
+
+:lacinia->datomic.input/attach-from Project TBD> try to remove
+
+:lacinia->datomic.input/dbid true TBD> try to remove
+
+:lacinia->datomic.input/delete-from Project TBD> try to remove
+
+
+
+
+:lacinia->datomic.mutation/type :upsert TBD> keep
+
+:lacinia->datomic.mutation/type :add-to TBD> try to remove
+
+:lacinia->datomic.mutation/type :attach-to TBD> try to remove
+
+:lacinia->datomic.mutation/type :delete TBD> keep
+* Trobleshooting
+
+TBD: what does it mean in practice
+
+* Bugs
+
+  If you find a bug, submit a [[https://github.com/luchiniatwork/hodur-lacinia-datomic-adapter/issues][GitHub issue]].
+
+* Help!
+
+  This project is looking for team members who can help this project
+  succeed! If you are interested in becoming a team member please open
+  an issue.
+
+* License
+
+  Copyright © 2018 Tiago Luchini
+
+  Distributed under the MIT License (see [[./LICENSE][LICENSE]]).

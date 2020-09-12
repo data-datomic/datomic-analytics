@@ -1,0 +1,65 @@
+;; Copyright (c) Cognitect, Inc. All rights reserved.
+;; The use and distribution terms for this software are covered by the
+;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+;; which can be found in the file epl-v10.html at the root of this distribution.
+;; By using this software in any fashion, you are agreeing to be bound by
+;; the terms of this license.
+;; You must not remove this notice, or any other, from this software.
+
+(require
+ '[clojure.data.csv :as csv]
+ '[clojure.edn :as edn]
+ '[clojure.java.io :as io]
+ '[datomic.client.api :as d])
+
+;; This uses data from http://fastml.com/goodbooks-10k.
+;; Assumes you've already imported the dataset.
+;; - see goodbooks-10k-import.repl
+
+(def client-cfg (read-string (slurp "config.edn")))
+(def client (d/client client-cfg))
+(def conn (d/connect client {:db-name "goodreads-10k"}))
+(def db (d/db conn))
+
+;; This is slow -- initial clause selects almost 20% of the entire db
+(defn book-rating-count-slow
+  [db title rating]
+  (d/q '[:find (count ?e)
+         :in $ ?title ?rating
+         :where
+         [?e :rating/rating ?rating]
+         [?e :rating/book ?book]
+         [?book :book/title ?title]]
+       db title rating))
+
+(book-rating-count-slow db "To Kill a Mockingbird" 5)
+
+
+;; This is slow -- initial clause is selective, but second clause
+;; makes a cross product
+(defn book-rating-count-slow-2
+  [db title rating]
+  (d/q '[:find (count ?e)
+         :in $ ?title ?rating
+         :where
+         [?book :book/title ?title]
+         [?e :rating/rating ?rating]
+         [?e :rating/book ?book]]
+       db title rating))
+
+(book-rating-count-slow-2 db "To Kill a Mockingbird" 5)
+
+
+;; This is fast -- begins with a selective clause, then each
+;; subsequent clause shrinks the result.
+(defn book-rating-count-fast
+  [db title rating]
+  (d/q '[:find (count ?e)
+         :in $ ?title ?rating
+         :where
+         [?book :book/title ?title]
+         [?e :rating/book ?book]
+         [?e :rating/rating ?rating]]
+       db title rating))
+
+(book-rating-count-fast db "To Kill a Mockingbird" 5)

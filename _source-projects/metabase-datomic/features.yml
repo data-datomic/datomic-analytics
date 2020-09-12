@@ -1,0 +1,61 @@
+- Basics:
+    - "{:source-table integer-literal}": Yes
+    - "{:fields [& field]}":
+        - "[:field-id field-id]": Yes
+        - "[:datetime-field local-field | fk unit]": Yes
+    - "{:breakout [& concrete-field]}":
+        - "[:field-id field-id]": Yes
+        - "[:aggregation 0]": Yes
+        - "[:datetime-field local-field | fk unit]": Yes
+    - "{:filter filter-clause}":
+        - "[:and & filter-clause]": Yes
+        - "[:or & filter-clause]": Yes
+        - "[:not filter-clause]": Yes
+        - "[:= concrete-field value & value]": Yes
+        - "[:!= concrete-field value & value]": Yes
+        - "[:< concrete-field orderable-value]": Yes
+        - "[:> concrete-field orderable-value]": Yes
+        - "[:<= concrete-field orderable-value]": Yes
+        - "[:>= concrete-field orderable-value]": Yes
+        - "[:is-null concrete-field]": Yes
+        - "[:not-null concrete-field]": Yes
+        - "[:between concrete-field min orderable-value max orderable-value]": Yes
+        - "[:inside lat concrete-field lon concrete-field lat-max numeric-literal lon-min numeric-literal lat-min numeric-literal lon-max numeric-literal]": Yes
+        - "[:starts-with concrete-field string-literal]": Yes
+        - "[:contains concrete-field string-literal]": Yes
+        - "[:does-not-contain concrete-field string-literal]": Yes
+        - "[:ends-with concrete-field string-literal]": Yes
+        - "[:time-interval field concrete-field n :current|:last|:next|integer-literal unit relative-datetime-unit]":
+    - "{:limit integer-literal}": Yes
+    - "{:order-by [& order-by-clause]}": Yes
+- :basic-aggregations:
+    - "{:aggregation aggregation-clause}":
+        - "[:count]": Yes
+        - "[:count concrete-field]": Yes
+        - "[:cum-count concrete-field]": Yes
+        - "[:cum-sum concrete-field]": Yes
+        - "[:distinct concrete-field]": Yes
+        - "[:sum concrete-field]": Yes
+        - "[:min concrete-field]": Yes
+        - "[:max concrete-field]": Yes
+        - "[:share filter-clause]":
+- :standard-deviation-aggregations:
+    - "{:aggregation aggregation-clause}":
+        - "[:stddev concrete-field]": Yes
+- :foreign-keys:
+    - "{:fields [& field]}":
+        - "[:fk-> fk-field-id dest-field-id]": Yes
+- :nested-fields:
+- :set-timezone:
+- :expressions:
+    - "{:fields [& field]}":
+        - "[:expression]":
+    - "{:breakout [& concrete-field]}":
+        - "[:expression]":
+    - "{:expressions {expression-name expression}}":
+- :native-parameters:
+- :expression-aggregations:
+- :nested-queries:
+    - "{:source-query query}": Yes
+- :binning:
+- :case-sensitivity-string-filter-options: Yes

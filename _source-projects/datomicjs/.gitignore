@@ -1,0 +1,4 @@
+*.sw?
+/db
+/node_modules
+/temp

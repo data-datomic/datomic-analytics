@@ -1,0 +1,138 @@
+# See comments in test/resources/test-schemas/music/queries.yaml for details
+nil-result:
+  query: |-
+    {
+      rainbowById(id: 7777) {
+        oneString
+        oneKeyword
+        twoKeyword
+        oneBoolean
+        oneLong
+        oneBigint
+        oneFloat
+        oneDouble
+        oneBigdec
+        oneInstant
+        oneUuid
+        oneRef {
+          id
+        }
+      }
+    }
+  # No such id
+  response: |-
+    {:data {:rainbowById nil } }
+
+# This query tests serialization of various data types to String.
+one-result:
+  query: |-
+    {
+      rainbowById(id: 111) {
+        oneString
+        oneKeyword
+        twoKeyword
+        oneBoolean
+        oneLong
+        oneBigint
+        oneFloat
+        oneDouble
+        oneBigdec
+        oneInstant
+        twoInstant
+        oneUuid
+        oneRef {
+          id
+        }
+      }
+    }
+  response: |-
+    {:data
+     {:rainbowById
+      {:oneBigdec "123.45",
+       :oneBigint "1321"
+       :oneBoolean true
+       :oneDouble 132.45
+       :oneFloat 132.45
+       :oneInstant "2018-01-01T01:01:01Z"
+       :twoInstant "1514768461000"
+       :oneKeyword ":my.keyword/value"
+       :twoKeyword "my.keyword/value"
+       :oneLong "149"
+       :oneRef {:id "222"}
+       :oneString "One string"
+       :oneUuid "fcc81e3e-f301-11e7-8a4d-4762cfbddccf"}}}
+
+# These queries test scalar serialization (so that the resolver receives arguments
+# of the correct type). Each typecheck query takes two calls: value, which is the
+# argument value as a string, and expected, which is a string encoded as EDN.
+# The resolver will decode the EDN and then check that the `value` argument has
+# the same type as the decoded EDN, returning true if that's the case.
+
+typecheck_uuid:
+  query: |-
+    { typecheck_uuid(value: "fcc81e3e-f301-11e7-8a4d-4762cfbddccf",
+                     expected: "#uuid \"fcc81e3e-f301-11e7-8a4d-4762cfbddccf\"") }
+  response: |-
+    {:data {:typecheck_uuid true}}
+
+typecheck_keyword:
+  query: |-
+    { typecheck_keyword(value: ":my/keyword", expected: ":keyword") }
+  response: |-
+    {:data {:typecheck_keyword true}}
+
+typecheck_long:
+  query: |-
+    { typecheck_long(value: "22000000000", expected: "1") }
+  response: |-
+    {:data {:typecheck_long true}}
+
+typecheck_bigdec:
+  query: |-
+    { typecheck_bigdec(value: "23.45", expected: "23.45M") }
+  response: |-
+    {:data {:typecheck_bigdec true}}
+
+typecheck_bigint:
+  query: |-
+    { typecheck_bigint(value: "10000000000000000000", expected: "123N") }
+  response: |-
+    {:data {:typecheck_bigint true}}
+
+typecheck_double:
+  query: |-
+    { typecheck_double(value: "12.34", expected: "12.34") }
+  response: |-
+    {:data {:typecheck_double true}}
+typecheck_double2:
+  query: |-
+    { typecheck_double(value: "12", expected: "12.34") }
+  response: |-
+    {:data {:typecheck_double true}}
+
+typecheck_epoch_ms:
+  query: |-
+    { typecheck_epoch_ms(value: "1234567890", expected: "#inst \"2018-01-01T01:01:01Z\"") }
+  response: |-
+    {:data {:typecheck_epoch_ms true}}
+
+typecheck_iso8601:
+  query: |-
+    { typecheck_iso8601(value: "2018-01-01T01:01:01Z", expected: "#inst \"2018-01-01T01:01:01Z\"") }
+  response: |-
+    {:data {:typecheck_iso8601 true}}
+
+# This query tests coercion of missing attributes to false (this entity doesn't have a value
+# for two-boolean, but we don't want to return nil).
+bool-coercion:
+  query: |-
+    {
+      rainbowById(id: 111) {
+        twoBoolean
+      }
+    }
+  response: |-
+    {:data
+     {:rainbowById
+      {:twoBoolean false}}}
+

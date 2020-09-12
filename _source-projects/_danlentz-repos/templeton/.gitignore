@@ -1,0 +1,20 @@
+tmp/
+*.dribble
+*.fasl
+*.dfsl
+*.cfsl
+*.fas
+*.lib
+*.o
+*.*fsl
+*.bak
+*~
+bin/
+
+#Mac stuff
+Icon?
+.DS_Store
+xml-grammar.lisp
+
+attic
+contrib/tmp

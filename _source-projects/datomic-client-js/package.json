@@ -1,0 +1,31 @@
+{
+  "name": "datomic-client-js",
+  "version": "0.1.9",
+  "description": "Client for Datomic Cloud and Peer Server",
+  "scripts": {
+    "test": "mocha",
+    "apidoc": "jsdoc -d docs src/channel.js src/client.js src/query.js src/tx.js src/shared.js"
+  },
+  "keywords": [
+    "datomic"
+  ],
+  "author": "Casey Marshall",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "aws-sdk": "2.599.0",
+    "npm": "^6.13.6",
+    "socks-proxy-agent": "4.0.2",
+    "transit-js": "0.8.861",
+    "uuid": "latest",
+    "jsedn": "~0.4.1"
+  },
+  "devDependencies": {
+    "promise": "~8.0.3",
+    "jsdoc": "~3.6.3"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/csm/datomic-client-js.git"
+  }
+}

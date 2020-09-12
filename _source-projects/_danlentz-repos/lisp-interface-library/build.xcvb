@@ -1,0 +1,51 @@
+;; -*- Lisp -*-
+(module
+ (:fullname "/lisp-interface-library"
+  :nicknames ("lil")
+  :build-depends-on ("/alexandria" "/fare-memoization" "/xcvb/xcvb-utils" "/closer-mop")
+  :depends-on
+  ("interface/interface"
+   "interface/base"
+   "interface/box"
+   "interface/eq"
+   "interface/order"
+   "interface/iterator"
+   "interface/map-interface"
+   "interface/tree-interface"
+   "pure/package"
+   "pure/iterator"
+   "pure/map-interface"
+   "pure/tree-interface"
+   "pure/alist-interface"
+   "pure/encoded-key-map-interface"
+   "pure/fmim-interface"
+   "pure/hash-table-interface"
+   "pure/map"
+   "pure/tree"
+   "pure/alist"
+   "pure/encoded-key-map"
+   "pure/fmim"
+   "pure/hash-table"
+   "stateful/package"
+   "stateful/iterator"
+   "stateful/map-interface"
+   "stateful/tree-interface"
+   "stateful/encoded-key-map-interface"
+   "stateful/hash-table-interface"
+   "stateful/map"
+   "stateful/tree"
+   "stateful/encoded-key-map"
+   "stateful/hash-table"
+   "transform/linearize"
+   "transform/linearized-interfaces"
+   "transform/mutating"
+   "transform/mutating-interfaces"
+   "transform/classify"
+   "transform/classified"
+   #|"test/pure-map" "test/stateful-map"|#
+   )
+  :supersedes-asdf
+  ("lisp-interface-library" "lil"
+   "interface"
+   "pure-interfaces" "pure-datastructures"
+   "stateful-interfaces" "stateful-datastructures")))

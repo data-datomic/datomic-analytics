@@ -1,0 +1,12 @@
+[submodule "lib/slime"]
+	path = lib/slime
+	url = git://github.com/slime/slime.git
+[submodule "lib/cider"]
+	path = lib/cider
+	url = git://github.com/clojure-emacs/cider.git
+[submodule "lib/clojure-mode"]
+	path = lib/clojure-mode
+	url = git://github.com/clojure-emacs/clojure-mode.git
+[submodule "lib/clj-refactor"]
+	path = lib/clj-refactor
+	url = git://github.com/clojure-emacs/clj-refactor.el.git

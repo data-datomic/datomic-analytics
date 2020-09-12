@@ -1,0 +1,99 @@
+{
+
+ ;; Manual schema for rainbow
+ ;{:db/id               "two"
+ ; :rainbow/id          222
+ ; :rainbow/one-keyword :my.keyword/value
+ ; :rainbow/one-string  "String value"
+ ; :rainbow/one-boolean true
+ ; :rainbow/one-long    249
+ ; :rainbow/one-bigint  2321N
+ ; :rainbow/one-float   232.45
+ ; :rainbow/one-double  232.45
+ ; :rainbow/one-bigdec  223.45M
+ ; :rainbow/one-instant #inst "2018-02-02T16:48:13Z"
+ ; :rainbow/one-uuid    #uuid "796ddd5e-f3b4-11e7-82d5-0747e98878c6"}}
+
+
+ :objects
+ {:Rainbow
+  {:description "I've got one of everything"
+   :fields      {:id         {:type ID}
+                 :oneString  {:type String}
+                 :oneKeyword {:type :ClojureKeywordWithColon}
+                 :twoKeyword {:type :ClojureKeyword}
+                 :oneBoolean {:type Boolean}
+
+                 ;; Following uses a ref resolver to test boolean coercion. Because the
+                 ;; :lacinia-type argument is 'Boolean, entities with missing attribute
+                 ;; values for this field return false for the value.
+                 :twoBoolean {:type    (non-null Boolean)
+                              :resolve [:stillsuit/ref
+                                        #:stillsuit{:attribute    :rainbow/two-boolean
+                                                    :lacinia-type (non-null Boolean)}]}
+                 :oneLong    {:type :JavaLong}
+                 :oneBigint  {:type :JavaBigInt}
+                 :oneFloat   {:type Float}
+                 :oneDouble  {:type Float}
+                 :oneBigdec  {:type :JavaBigDec}
+                 :oneInstant {:type :Iso8601Date}
+                 :twoInstant {:type :EpochMillisecs}
+                 :oneUuid    {:type :JavaUUID}
+                 :oneRef     {:type :Rainbow}}}}
+ :queries
+ {:rainbowById
+  {:type        :Rainbow
+   :description "Get a rainbow by ID"
+   :args        {:id {:type ID}}
+   :resolve     [:stillsuit/query-by-unique-id
+                 #:stillsuit{:attribute    :rainbow/id
+                             :datomic-type :db.type/string
+                             :lacinia-type :Rainbow
+                             :predicate    :my/pred}]}
+  :typecheck_uuid
+  {:type    (non-null Boolean)
+   :args    {:value    {:type (non-null :JavaUUID)}
+             :expected {:type (non-null String)}}
+   :resolve :rainbow/typecheck}
+
+  :typecheck_keyword
+  {:type    (non-null Boolean)
+   :args    {:value    {:type (non-null :ClojureKeyword)}
+             :expected {:type (non-null String)}}
+   :resolve :rainbow/typecheck}
+
+  :typecheck_long
+  {:type    (non-null Boolean)
+   :args    {:value    {:type (non-null :JavaLong)}
+             :expected {:type (non-null String)}}
+   :resolve :rainbow/typecheck}
+
+  :typecheck_bigint
+  {:type    (non-null Boolean)
+   :args    {:value    {:type (non-null :JavaBigInt)}
+             :expected {:type (non-null String)}}
+   :resolve :rainbow/typecheck}
+
+  :typecheck_bigdec
+  {:type    (non-null Boolean)
+   :args    {:value    {:type (non-null :JavaBigDec)}
+             :expected {:type (non-null String)}}
+   :resolve :rainbow/typecheck}
+
+  :typecheck_double
+  {:type    (non-null Boolean)
+   :args    {:value    {:type (non-null :JavaDouble)}
+             :expected {:type (non-null String)}}
+   :resolve :rainbow/typecheck}
+
+  :typecheck_epoch_ms
+  {:type    (non-null Boolean)
+   :args    {:value    {:type (non-null :EpochMillisecs)}
+             :expected {:type (non-null String)}}
+   :resolve :rainbow/typecheck}
+
+  :typecheck_iso8601
+  {:type    (non-null Boolean)
+   :args    {:value    {:type (non-null :Iso8601Date)}
+             :expected {:type (non-null String)}}
+   :resolve :rainbow/typecheck}}}

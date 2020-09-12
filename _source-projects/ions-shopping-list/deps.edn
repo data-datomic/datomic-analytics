@@ -1,0 +1,27 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.0"}
+        com.datomic/ion {:mvn/version "0.9.34"}}
+ :mvn/repos {"datomic-cloud" {:url "s3://datomic-releases-1fc2183a/maven/releases"}}
+ :aliases
+ {:dev {:extra-deps {;; For push and deploy
+                     com.datomic/ion-dev {:mvn/version "0.9.229"}
+                     ;; For making queries to databases from repl
+                     com.datomic/client-cloud {:mvn/version "0.8.71"}
+
+                     ;; Emacs
+                     cider/cider-nrepl {:mvn/version "0.21.0"}
+
+                     ;; For refreshing namespaces
+                     org.clojure/tools.namespace {:mvn/version "0.2.11"}
+
+                     ;; For creating/updating API Gateway via cloudformation
+                     cfn-yaml                         {:git/url "git@github.com:portkey-cloud/cfn-yaml.git"
+                                                       :sha     "23e9442ec643007edf45e78af24d3d6c35db4a5e"}
+                     com.cognitect.aws/api            {:mvn/version "0.8.305"}
+                     com.cognitect.aws/endpoints      {:mvn/version "1.1.11.549"}
+                     com.cognitect.aws/apigateway     {:mvn/version "697.2.391.0"}
+                     com.cognitect.aws/cloudformation {:mvn/version "717.2.442.0"}
+
+                     ;; For http calls at the repl
+                     clj-http                         {:mvn/version "3.10.0"}}
+        :extra-paths ["dev"]}}}

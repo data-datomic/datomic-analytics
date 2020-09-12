@@ -1,0 +1,115 @@
+version: 2
+jobs:
+  test-clj:
+    docker:
+      - image: clojure:tools-deps
+        environment:
+          BOOT_JVM_OPTIONS: "-Xms1024m -Xmx2048m"
+          BOOT_WATCHERS_DISABLE: "yes"
+    steps:
+      - checkout
+      - restore_cache:
+          key: test-clj-{{checksum "deps.edn"}}
+      - run: clojure -A:test-clj :output test-results/clojure/results.xml :output-format :junit :ns-regex "hyper.*|contrib.*"
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: test-clj-{{checksum "deps.edn"}}
+      - store_test_results:
+          path: test-results
+
+  test-cljs-yarn:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - restore_cache:
+          key: test-cljs-yarn-{{checksum "yarn.lock"}}
+      - run: yarn install --frozen-lockfile --non-interactive --prod=true
+      - persist_to_workspace:
+          root: .
+          paths: node_modules
+      - save_cache:
+          paths:
+            - node_modules
+          key: test-cljs-yarn-{{checksum "yarn.lock"}}
+      - store_test_results:
+          path: test_yarn.xml
+
+  test-cljs:
+    docker:
+      - image: circleci/clojure:tools-deps-node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: test-cljs-{{checksum "deps.edn"}}
+      - run: clojure -A:test-cljs --namespace-regex "hyper.*|contrib.*" --env node
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: test-cljs-{{checksum "deps.edn"}}
+      #- store_test_results:
+          #path: test-results
+
+
+  build:
+    docker:
+      - image: clojure:boot-2.8.1-alpine
+        environment:
+          BOOT_JVM_OPTIONS: "-Xms1024m -Xmx2048m"
+          BOOT_WATCHERS_DISABLE: "yes"
+    steps:
+      - checkout
+      - restore_cache:
+          key: build-{{checksum "boot.properties" }}-{{ checksum "build.boot" }}
+      - run: boot pom jar -f hyperfiddle.jar target
+      - persist_to_workspace:
+          root: .
+          paths: target
+      - save_cache:
+          paths:
+            - ~/.m2
+            - ~/.boot/cache/lib
+            - ~/.boot/cache/bin
+          key: build-{{checksum "boot.properties" }}-{{ checksum "build.boot" }}
+
+  publish:
+    docker:
+      - image: clojure:boot-2.8.1-alpine
+    environment:
+      BOOT_JVM_OPTIONS: "-Xms1024m -Xmx2048m"
+      BOOT_WATCHERS_DISABLE: "yes"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: publish-{{checksum "boot.properties" }}-{{ checksum "build.boot" }}
+      - run: boot push-snapshot -f target/hyperfiddle.jar
+      - save_cache:
+          paths:
+            - ~/.m2
+            - ~/.boot/cache/lib
+            - ~/.boot/cache/bin
+          key: publish-{{checksum "boot.properties" }}-{{ checksum "build.boot" }}
+
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - test-clj
+      - test-cljs-yarn
+      - test-cljs:
+          requires:
+            - test-cljs-yarn
+      - build
+#      - publish:      # broken, see https://github.com/hyperfiddle/hyperfiddle/issues/1052
+#          requires:
+#            - test-clj
+#            - test-cljs
+#            - build
+#          filters:
+#            branches:
+#              only: master

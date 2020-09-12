@@ -1,0 +1,8 @@
+pom.xml
+*jar
+lib
+classes
+data
+checkouts
+target
+.lein-failures

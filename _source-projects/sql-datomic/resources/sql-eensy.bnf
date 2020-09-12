@@ -1,0 +1,213 @@
+sql_data_statement ::= delete_statement
+                     | select_statement
+                     | insert_statement
+                     | update_statement
+                     | retract_statement
+
+delete_statement ::=
+    <"DELETE"> <"FROM"> table_name
+    [ where_clause ]
+  | <"DELETE"> where_clause
+
+insert_statement ::=
+                 <"INSERT"> <"INTO"> table_name
+                 <"("> insert_cols <")">
+                 <"VALUES">
+                 <"("> insert_vals <")">
+               | <"INSERT"> [<"INTO">]
+                 set_clausen
+
+select_statement ::= <"SELECT"> select_list from_clause [ where_clause ]
+                   | <"SELECT"> [ select_list ] where_clause
+
+update_statement ::=
+    <"UPDATE"> table_name <"SET"> set_clausen     [ where_clause ]
+  | <"UPDATE"> [ <"SET"> ]        set_clausen       where_clause
+
+(* reduce ease-of-use intentionally via db_id_clause and not where_clause
+   in order to make the user more mindful of these changes *)
+retract_statement ::=
+    <"RETRACT"> retract_attrs <"WHERE"> db_id_clause
+
+table_name ::= #"[-_A-Za-z][-\w]*"
+
+search_condition ::= boolean_term
+                   | search_condition <"OR"> boolean_term
+
+boolean_term ::= boolean_factor
+               | boolean_term <"AND"> boolean_factor
+
+boolean_negative ::= <"NOT"> boolean_test
+
+boolean_factor ::= boolean_negative | boolean_test
+
+boolean_test ::= boolean_primary
+
+<boolean_primary> ::= predicate | <"("> search_condition <")">
+
+<predicate> ::= binary_comparison
+              | between_clause
+              | in_clause
+
+(* disallow mixing of db_id-based where with general where *)
+where_clause ::= <"WHERE"> ( db_id_clause | search_condition )
+
+db_id_clause ::= < ("db.id" | <"#attr"> ":db/id") >
+                 (
+                     <"="> long_literal
+                 |
+                     <"IN"> <"(">
+                     long_literal [ { [<",">] long_literal }+ ] <")">
+                 |   (* be flexible with :db/id selections *)
+                     long_literal [ { [<",">] long_literal }+ ]
+                 )
+
+insert_cols ::= #"[-_A-Za-z][-\w]*" [ { <","> #"[-_A-Za-z][-\w]*" }+ ]
+
+<insertable_val> ::= boolean_literal
+                   | bytes_literal
+                   | chrono_literal
+                   | keyword_literal
+                   | numeric_literal
+                   | string_literal
+                   | uri_literal
+                   | uuid_literal
+
+insert_vals ::= insertable_val [ { <","> insertable_val }+ ]
+
+from_clause ::= <"FROM"> table_ref [ { <","> table_ref }+ ]
+
+<selectable_val> ::= column_name
+                   | qualified_asterisk
+                   | boolean_literal
+                   | bytes_literal
+                   | chrono_literal
+                   | numeric_literal
+                   | string_literal
+                   | uri_literal
+                   | uuid_literal
+
+select_list ::= selectable_val [ { <","> selectable_val }+ ]
+
+set_clausen ::= assignment_pair [ { <","> assignment_pair }+ ]
+
+retract_attrs ::= non_db_id_column_name [ { <","> non_db_id_column_name }+ ]
+
+between_clause ::= non_db_id_column_name <"BETWEEN">
+               {
+                 ( chrono_literal <"AND"> chrono_literal )
+                 |
+                 ( numeric_literal <"AND"> numeric_literal )
+                 |
+                 ( uuid_literal <"AND"> uuid_literal )
+               }
+
+binary_comparison ::= non_db_id_column_name
+                  {
+                    ( #"(<=|<|>=|>)" ( non_db_id_column_name
+                                     | comparable_literal ) )
+                    |
+                    ( #"(=|!=|<>)" ( non_db_id_column_name
+                                   | equalable_literal ) )
+                  }
+
+in_clause ::= non_db_id_column_name <"IN"> <"(">
+                equalable_literal [ { <","> equalable_literal }+ ]
+              <")">
+
+string_literal ::= #"'(?:[^'\\]|\\.)*?'"
+
+long_literal ::= #"(?:-|\+)?(?:0|[1-9]\d*)"
+
+bigint_literal ::= #"(?:-|\+)?(?:0|[1-9]\d*)N"
+
+double_literal ::= #"(?:(?i)[-+]?(?:\d(?:\.\d*)?[Ee][-+]?\d+|\d+\.\d*))"
+
+float_literal ::= #"(?:(?i)[-+]?(?:\d(?:\.\d*)?[Ee][-+]?\d+|\d+\.\d*))[Ff]"
+    | <"#float"> #"(?:(?i)[-+]?(?:\d(?:\.\d*)?[Ee][-+]?\d+|\d+\.\d*))"
+
+bigdec_literal ::= #"(?:(?i)[-+]?(?:\d(?:\.\d*)?[Ee][-+]?\d+|\d+(?:\.\d*)?))M"
+
+boolean_literal ::= true | false
+
+true ::= <"TRUE">
+
+false ::= <"FALSE">
+
+inst_literal ::= <"#inst">
+     <"\"">
+     #"\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?([-\+]\d{2}:\d{2})?)?"
+     <"\"">
+
+date_literal ::= <"date"> <"'"> #"\d{4}-\d{2}-\d{2}" <"'">
+
+datetime_literal ::= <"datetime">
+                     <"'">
+                     #"\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}"
+                     <"'">
+
+epochal_literal ::= <"time"> <"'"> #"\d+" <"'">
+
+keyword_literal ::= <":"> #"[-\.\*\+\$\?\|_/<>=%!#\w]+"
+
+uuid_literal ::= <"#uuid">
+     <"\"">
+     #"[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}"
+     <"\"">
+
+uri_literal ::= <"#uri"> <"\""> #"[^\"]+" <"\"">
+
+bytes_literal ::= <#"#(bytes|base64)"> <"\""> #"[A-Za-z0-9+/=]+" <"\"">
+
+table_ref ::= table_name [ table_alias ]
+
+<non_db_id_column_name> ::=
+                ! #"db.id|#attr\s+:db/id"
+                column_name
+
+column_name ::=
+                #'("[^\"]+"|[-_A-Za-z][-\w]*)'
+                <"."> #'("[^\"]+"|[-_A-Za-z][-\w]*)'
+              | <"#attr"> <":">
+                #"([-\.\*\+\$\?\|_<>=%!#\w]+)"
+                <"/">
+                #"([-\.\*\+\$\?\|_<>=%!#\w]+)"
+
+qualified_asterisk ::= #'("[^\"]+"|[-_A-Za-z][-\w]*)' <"."> <"*">
+
+assignment_pair ::= non_db_id_column_name <"=">
+                    ( string_literal
+                    | boolean_literal
+                    | numeric_literal
+                    | keyword_literal
+                    | chrono_literal
+                    | uuid_literal
+                    | uri_literal
+                    | bytes_literal )
+
+table_alias ::= [ <"AS"> ] #'"[^\"]+"|[-_A-Za-z][-\w]*'
+
+<integral_literal> ::= long_literal | bigint_literal
+
+<floating_literal> ::= float_literal | double_literal | bigdec_literal
+
+<numeric_literal> ::= integral_literal | floating_literal
+
+<chrono_literal> ::= date_literal
+                   | datetime_literal
+                   | epochal_literal
+                   | inst_literal
+
+(* literals supporting `=`, `<>`, `!=` *)
+<equalable_literal> ::= keyword_literal
+                      | boolean_literal
+                      | chrono_literal
+                      | numeric_literal
+                      | string_literal
+                      | uuid_literal
+                      | uri_literal
+
+(* literals supporting `<`, `<=`, `>`, `>=` *)
+<comparable_literal> ::= chrono_literal
+                       | numeric_literal
+                       | uuid_literal

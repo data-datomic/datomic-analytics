@@ -1,0 +1,15 @@
+._*
+*DS_Store
+.nrepl*
+pom.xml
+pom.xml.asc
+*jar
+/lib/
+/classes/
+/target/
+/checkouts/
+.lein*
+.repl*
+.nrepl*
+scripts
+*cider*

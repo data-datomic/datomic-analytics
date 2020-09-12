@@ -1,0 +1,10 @@
+{:deps    {org.clojure/core.async   {:mvn/version "1.1.587"}
+           com.datomic/client       {:mvn/version "0.8.89"}
+           com.datomic/datomic-free {:mvn/version "0.9.5697"}}
+ :paths   ["src"]
+ :aliases {:test      {:extra-paths ["test"]}
+           :run-tests {:extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                               :sha     "f7ef16dc3b8332b0d77bc0274578ad5270fbfedd"}}
+                       :main-opts  ["-m" "cognitect.test-runner"]}
+           :jar       {:extra-deps {seancorfield/depstar {:mvn/version "0.5.2"}}
+                       :main-opts  ["-m" "hf.depstar.jar" "datomic-client-memdb.jar"]}}}

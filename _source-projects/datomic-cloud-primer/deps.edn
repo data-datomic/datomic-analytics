@@ -1,0 +1,8 @@
+{:paths ["src" "resources" "dev"]
+ 
+ :deps
+ {com.datomic/client-cloud {:mvn/version "0.8.50"}
+  environ                  {:mvn/version "1.1.0"}
+  org.clojure/clojure      {:mvn/version "1.9.0"}
+  org.clojure/tools.nrepl  {:mvn/version "0.2.12"}}}
+

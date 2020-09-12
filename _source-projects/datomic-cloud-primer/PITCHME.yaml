@@ -1,0 +1,6 @@
+theme : black
+logo : doc/img/signifier_logo_transparent.png
+footnote : Signifier, Inc.
+theme-override : PITCHME.css
+remote-control: true
+transition: none

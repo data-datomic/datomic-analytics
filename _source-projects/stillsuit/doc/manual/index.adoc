@@ -1,0 +1,770 @@
+= stillsuit user manual
+Tim Gilbert <tim@workframe.com>
+v0.10, 2018-05-04
+:sectanchors:
+:toc: left
+:source-highlight: true
+
+`stillsuit` is a library intended to be used with lacinia and datomic. It provides a glue mechanism and
+some useful utilities that make it easy to implement GraphQL APIs on top of datomic.
+
+== Basic operation
+
+The main interface to stillsuit is via the
+http://docs.workframe.com/stillsuit/current/doc/stillsuit.core.html#var-decorate[`(stillsuit/decorate)`]
+function. This function takes in a lacinia schema file, some maps referencing lacinia resolver
+functions, and a configuration map. It returns a compiled lacinia file and an
+application context; these parameters can be passed to `(lacinia/execute)` to
+execute GraphQL queries.
+
+[#img-overview]
+.Stillsuit Overview
+image::../image/stillsuit-summary.png[alt=Summary diagram, width=970 height=840]
+
+In the diagram above, the library user supplies the bits in yellow and stillsuit provides
+the bits in green.
+
+=== Sample code
+
+Here's some sample code corresponding to the above diagram:
+
+[source,clojure]
+----
+(ns stillsuit-sample.seattle-manual
+  (:require [com.walmartlabs.lacinia :as lacinia]
+            [stillsuit.core :as stillsuit]
+            [datomic.api :as d]))
+
+;; Standard lacinia query definition
+(def my-schema {:objects {...} :queries {:query_name {...}}})
+
+;; Connection to datomic, which is added to the app context
+(def datomic-conn (d/connect "datomic:dev://localhost:4334/seattle"))
+
+;; Map of resolver names to resolver functions
+(def my-resolvers {:resolver/name (fn [c a v] ...)})
+
+;; Regular GraphQL query, ie from client code
+(def my-query "{ query_name { field ... } }")
+
+(defn -main [_]
+  (let [;; This options map tells stillsuit where to look for stuff
+        options   {:stillsuit/schema     my-schema
+                   :stillsuit/connection (d/connect my-db-uri)
+                   :stillsuit/resolvers  my-resolvers}
+        ;; (stillsuit/decorate) is the main stillsuit interface.
+        stillsuit (stillsuit/decorate options)
+        ;; Stillsuit returns a compiled schema to the calling code
+        compiled  (:stillsuit/schema stillsuit)
+        ;; It also sets up an app context
+        context   (:stillsuit/app-context stillsuit)
+        ;; We pass these two values to (lacinia/execute) to resolve the query.
+        result    (lacinia/execute compiled my-query nil context)]
+    (println result)))
+----
+
+=== What stillsuit provides
+
+Stillsuit contains a bunch of stuff intended to make it easy to build GraphQL APIs that
+are backed by datomic databases:
+
+* a resolver which can be used to navigate datomic graph data
+* a resolver used to expose datomic enum or keyword values as GraphQL enums
+* a set of custom scalar transformers to aid in serializing and  deserializing datomic's primitive types
+
+`(stillsuit/decorate)` is the main interface to stillsuit; it associates a datomic connection with
+a lacinia application context and also integrates stillsuit's own resolvers into the user's code.
+
+== Invoking stillsuit
+
+stillsuit's public interface is fairly simple. The
+http://docs.workframe.com/stillsuit/current/doc/stillsuit.core.html#var-decorate[`(stillsuit/decorate)`]
+function accepts a lacinia configuration map, a datomic connection, and some references to resolvers
+and bits of code. It returns a map containing the parameters you need to pass to lacinia's
+http://walmartlabs.github.io/lacinia/com.walmartlabs.lacinia.html#var-execute[`(lacinia/execute)`]
+function.
+
+=== Compiling a schema
+
+`(stillsuit/decorate)` accepts a single argument, a map with several keys in the `:stillsuit` namespace.
+
+See the http://docs.workframe.com/stillsuit/current/doc/stillsuit.core.html#var-decorate[API docs]
+for more information about what data should be in argument map, but at a minimum it requires the
+following three keys:
+
+* `:stillsuit/connection`: a
+  https://docs.datomic.com/on-prem/peer-getting-started.html#connecting[datomic connection object]
+* `:stillsuit/schema`: the uncompiled lacinia
+  http://lacinia.readthedocs.io/en/latest/tutorial/init-schema.html[schema definition] to use
+* `:stillsuit/resolvers`: a map from resolver keyword names to resolvers functions, just as you
+  would pass to
+  http://lacinia.readthedocs.io/en/latest/resolve/attach.html[`(lacinia.util/attach-resolvers)`].
+
+The return value of `(stillsuit/decorate)` is a map with two keys:
+
+* `:stillsuit/schema`: a compiled lacinia schema
+* `:stillsuit/app-context`: the lacinia
+  http://lacinia.readthedocs.io/en/latest/resolve/context.html[application context]
+
+=== Calling `(lacinia/execute)`
+
+Invoking lacinia to execute a GraphQL query is as simple as passing the values returned by
+`(stillsuit/decorate)` to `(lacinia/execute)`, along with the query you want to execute and its
+associated variables, if any.
+
+[source,clojure]
+----
+(let [options   #:stillsuit{:connection my-connection
+                            :resolvers  my-resolvers
+                            :schema     {:objects {:foo {...}}}}
+      decorated (stillsuit/decorate options)]
+  (lacinia/execute
+   (:stillsuit/schema decorated)                            ; Schema
+   "query getFoo(id: Int!) { foo(id: $id) { bar } }"        ; Query
+   {:foo-id 123}                                            ; Variables
+   (:stillsuit/app-context decorated)))                     ; Context
+----
+
+NOTE: By default, stillsuit will run
+https://lacinia.readthedocs.io/en/latest/overview.html#compiling-the-schema[`(lacinia.schema/compile)`]
+for you. If you need to mess with the schema before you compile it, you can set
+the value `:stillsuit/compile?` to `false` in the `:stillsuit/config` map.
+
+==== `(stillsuit/execute)`
+
+As a convenience, stillsuit also includes a
+http://docs.workframe.com/stillsuit/current/doc/stillsuit.core.html#var-execute[little wrapper function]
+which calls `(lacinia/execute)` for you from the result of `(stillsuit/decorate)`.
+
+With `(stillsuit/execute)`, the above code would look like this:
+
+[source,clojure]
+----
+(let [options   #:stillsuit{:connection my-connection
+                            :resolvers  my-resolvers
+                            :schema     {:objects {:foo {...}}}}
+      decorated (stillsuit/decorate options)]
+  (stillsuit/execute
+   decorated                                                ; Stillsuit result
+   "query getFoo(id: Int!) { foo(id: $id) { bar } }"        ; Query
+   {:foo-id 123}))                                          ; Variables
+----
+
+== Configuring stillsuit
+
+Stillsuit can take in a number of options to configure how it operates, which are
+represented as a map.
+
+The configuration settings come from three places:
+
+* Stillsuit has a set of defaults for most config settings.
+* If the schema configuration passed to stillsuit contains a top-level key `:stillsuit/config`,
+  those values will override the default values.
+* A map passed as the `:stillsuit/config` key in the options map of `(stillsuit/decorate)` will
+  override both of the above values.
+
+The config settings from all three places are deep-merged.
+
+=== Config settings
+
+`:stillsuit/compile?` - if set to `false`, stillsuit won't
+http://lacinia.readthedocs.io/en/latest/tutorial/init-schema.html#schema-namespace[compile]
+the lacinia schema configuration returned in the `:stillsuit/schema` key of `(stillsuit/decorate)`.
+
+(More TBD)
+
+== The `:stillsuit/ref` resolver
+
+The stillsuit _ref resolver_ is a lacinia
+http://lacinia.readthedocs.io/en/latest/resolve/attach.html#resolver-factories[resolver factory]
+which you can use to handle datomic `:db.type/ref` attributes (links from one entity to another).
+
+With the ref resolver, you can tell stillsuit what type of entity you expect to be linked to
+from the given reference. Note that datomic itself does not enforce any constraints on what
+kind of entities may be referred to at a database level.
+
+You refer to the ref resolver from a lacinia config file by specifying it like this:
+
+[source,clojure]
+----
+{:objects
+ {:MyType
+  {:fields
+   {:myFieldName
+    {:type    :MyOtherType
+     :resolve [:stillsuit/ref options]}}}}}
+----
+
+The ref resolver's primary function is to handle `:db.type/ref` datomic attributes. However,
+it will also work for regular primitive attributes like `:db.type/string` or `:db.type/long`,
+which can be handy if you need to customize the GraphQL field name corresponding to a specific
+datomic attribute.
+
+=== Ref Resolver Options
+
+The `options` value above is a map whose keys are all in the `:stillsuit` namespace. This section
+lists what the options are.
+
+==== :stillsuit/attribute
+
+This option specifies the name of the datomic attribute to use for this GraphQL field name.
+
+You can use it to override the default resolver's Datomic-to-GraphQL name translation,
+so you can expose a datomic attribute with an arbitrary lacinia name.
+
+===== Backrefs
+
+One important use for the `:stillsuit/attribute` option is to expose
+https://docs.datomic.com/on-prem/entities.html#basics[datomic back references]. Using the entity
+API, we can navigate backwards along any link, so if a project has a `:project/author` ref
+attribute, and we have a `person` entity, we can get to the set of projects which point to
+that person via `(:project/_author person-ent)`. With stillsuit you can expose that back-reference
+as a list of `:Project` objects on the `:Person` object like so:
+
+[source,clojure]
+----
+{:objects
+ {:Person
+  {:fields
+   {:projects
+    {:type    (list (non-null :Project))
+     :resolve [:stillsuit/ref {:stillsuit/attribute    :project/_author
+                               :stillsuit/lacinia-type :Project}]}}}}}
+----
+
+Note that we're returning a `(list (non-null :Project))` here, since a person can be the
+author of many projects. This behavior is configurable via the `:stillsuit/cardinality`
+option, see below.
+
+==== :stillsuit/lacinia-type
+
+This option specifies what lacinia type will be returned by a ref resolver. It currently needs to
+be specified for every ref resolver, though it's redundant with lacinia's field `:type` definition.
+We're looking at workarounds so that this could be omitted.
+
+==== :stillsuit/cardinality
+
+Datomic ref attributes inherently encode either many-to-one attributes (for `:db.cardinality/one`
+ref attributes, since the backref is one-to-many), or many-to-many attributes
+(for `:db.cardinality/many` ref attributes).
+
+In your own data model, you might know that a given backref might have only a single entity
+referring to it. For example, we may know that in our system a person will only ever be the
+author of a single project.
+
+In this case it can be convenient to specify the the link from `:Person` objects back to
+`:Project` objects will only return a single `:Person` object, rather than a `(list :Person)`
+result which will only contain a single `:Person` object.
+
+With stillsuit you can do so like this:
+
+[source,clojure]
+----
+{:objects
+ {:Person
+  {:fields
+   {:projects
+    {:type    :Project
+     :resolve [:stillsuit/ref
+               #:stillsuit{:attribute    :project/_author
+                           :lacinia-type :Project
+                           :cardinality  :stillsuit.cardinality/one}]}}}}}
+----
+
+The `:stillsuit/cardinality` option can have one of two values, corresponding to the
+similarly-named datomic values.
+
+===== `{:stillsuit/cardinality :stillsuit.cardinality/one}`
+
+With this option, stillsuit will always return a single entity as the value of the field.
+Note that if the datomic entity itself returns multiple items, stillsuit will choose an
+item at random (via `(first)`) and include an error in its response.
+
+===== `{:stillsuit/cardinality :stillsuit.cardinality/many}`
+
+The reverse of the above option; stillsuit will always a list for the given value. Note that
+this also returns an empty list for `nil` values.
+
+==== :stillsuit/sort-key and :stillsuit/sort-order
+
+When a ref resolver field returns multiple objects, you will often need to return the results
+in a specified order. Datomic generally operates on set semantics, so the Entity API will
+return values in a stable, but unsorted order.
+
+Going back to the multiple-cardinality version of our example schema, here's what we'd
+do if every person had a `(list)` of projects, and we wanted to sort them by project name:
+
+[source,clojure]
+----
+{:objects
+ {:Person
+  {:fields
+   {:projects
+    {:type    (list (non-null :Project))
+     :resolve [:stillsuit/ref
+               #:stillsuit{:attribute    :project/_author
+                           :lacinia-type :Project
+                           :sort-key     :project/name
+                           :sort-order   :ascending}]}}}}}
+----
+
+The `:stillsuit/sort-key` field should be an attribute on the entities you are sorting.
+`:stillsuit/sort-order` can be either `:ascending` or `:descending`.
+
+NOTE: These two fields are fine for simple fields whose sort order you know ahead of time,
+but if you need more complex behavior, including pagination, you'll probably want to write
+a custom resolver.
+
+==== :stillsuit/entity-filter
+
+This option references an entity filter for the attribute - see below.
+
+== Entity Filters
+
+Entity filters allow you to attach a filter to any field in order to limit the set of
+entities that are returned from a given field resolver. The filter has access to the
+application context as well as the entity, so it can be used as a security measure.
+
+(More docs TBD)
+
+== Writing Query Resolvers
+
+In stillsuit we use the term "query resolver" to refer to a lacinia resolver that returns one or more
+entities the provide the basic data for a GraphQL query. A query function is a regular lacinia
+http://lacinia.readthedocs.io/en/latest/resolve/overview.html[resolver function]
+that returns one or more
+https://docs.datomic.com/on-prem/entities.html[datomic entity objects].
+
+Here's an example of writing a query resolver. First we'll define the lacinia schema for the query. For this example, we'll define a very simple
+schema, where we define a `:Person` object with a `:db.type/long` identifier and a string name.
+
+[source,clojure]
+----
+;; Set up the datomic connection...
+(require '[datomic.api :as d])
+(def uri "datomic:mem://example")
+(d/create-database uri)
+(def conn (d/connect uri))
+
+;; Define the schema...
+(def datomic-schema
+  [{:db/ident       :person/id
+    :db/unique      :db.unique/identity
+    :db/valueType   :db.type/long
+    :db/cardinality :db.cardinality/one}
+   {:db/ident       :person/name
+    :db/valueType   :db.type/string
+    :db/cardinality :db.cardinality/one}])
+@(d/transact conn datomic-schema)
+
+;; Define some people...
+(def persons
+  [{:person/id   123
+    :person/name "Sarah"}
+   {:person/id   456
+    :person/name "Joe"}])
+@(d/transact conn persons)
+
+;; Let's just make sure the data is there.
+(d/q '[:find [(pull ?person [*]) ...]
+       :where [?person :person/id 123]]
+     (d/db conn))
+
+;; => [{:db/id 17592186045419, :person/id 123, :person/name "Sarah"}]
+----
+
+Now we'll define a lacinia schema, containing an object definition for the above simple entity, plus
+two different queries to retrieve person entities from the database:
+
+[source,clojure]
+----
+(def lacinia-schema
+  '{:objects
+    {:Person
+     {:fields
+      {:name
+       {:type String}
+       :id
+       {:type Int}}}}
+    :queries
+    {:person
+     {:type        :Person
+      :description "Given a :person/id value, return the relevant person entity."
+      :args        {:id {:type (non-null Int)}}
+      :resolve     :query/person-by-id}
+     :everybody
+     {:type        (list (non-null :Person))
+      :description "Return every person entity."
+      :resolve     :query/everybody}}})
+----
+
+WARNING: We are cheating a bit here by defining the :person/id field as type `Int`. In fact, the value
+is a java `Long`, which can contain a larger integer than a GraphQL `Int` value can. See the section
+on Scalar Converters for more information.
+
+Actually writing the resolver functions themselves is pretty straightforward; they work just like regular
+query resolvers, but they must return either a single entity or a list of entities.
+
+=== Getting a datomic db value inside a query resolver
+
+When you call `(stillsuit/decorate)`, stillsuit will stash the datomic connection object you pass it inside
+the lacinia app context. To retrieve it, you can pass the app context to the function
+`(stillsuit/connection)`.
+You can then call the regular datomic `(d/db)` function on the connection to get a db value.
+
+As a shortcut, stillsuit also provides a method `(stillsuit/db)` that will get the current db value from
+the connection.
+
+=== Query resolver sample: list result
+
+With the above information, we can now write our query functions. Here is the resolver for the `:everybody`
+query which returns all users:
+
+[source,clojure]
+----
+(defn everybody [context args value]
+  (let [db   (stillsuit/db context)
+        eids (d/q '[:find [?person ...]
+                    :in $
+                    :where [?person :person/id _]]
+                  db)]
+    (map #(d/entity db %) eids)))
+----
+
+Here we use `(stillsuit/db)` to get the current db value from our datomic connection, run a
+query to find the EID
+
+=== Query resolver sample: single result
+
+Here's a resolver for a query which accepts a `:person/id` value as its input and then returns the
+corresponding person entity (or nil if the ID is not found):
+
+[source,clojure]
+----
+(defn person-by-id [context {:keys [id] :as args} value]
+  (let [db  (stillsuit/db context)
+        eid (d/q '[:find ?person .
+                   :in $ ?id
+                   :where [?person :person/id ?id]]
+                 db
+                 id)]
+    (some->> eid (d/entity db))))
+----
+
+This is similar to the last one, but we're using the "scalar value"
+https://docs.datomic.com/on-prem/query.html#find-specifications[find specification] in our query to
+get just a single EID out of the query, and we then pass that into `(d/entity)` or return `nil` if
+it wasn't found.
+
+=== Putting it all together
+
+Now that we've defined our query resolvers and schema definitions, we should be able to run stillsuit,
+run a query against the decorated schema, and get a result back.
+
+[source,clojure]
+----
+;; Maps from the keywords we used in our schema definition to the actual resolver functions
+(def resolvers {:query/person-by-id person-by-id :query/everybody everybody})
+
+;; Call stillsuit
+(def decorated (decorate #:stillsuit{:schema     lacinia-schema
+                                     :connection conn
+                                     :resolvers  resolvers}))
+
+;; Now we can execute queries against our decorated result:
+(stillsuit/execute decorated "{ everybody { name } }")
+;; => {:data #ordered/map([:everybody (#ordered/map([:name "Sarah"]) #ordered/map([:name "Joe"]))])}
+
+(stillsuit/execute decorated "{ person(id: 123) { name } }")
+;; => {:data #ordered/map([:person #ordered/map([:name "Sarah"])])}
+----
+
+(More TBD - see
+https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/stillsuit/test/resolvers.clj[tests])
+
+== Writing Mutation Resolvers
+
+Writing a mutation resolver is essentially the same as writing a query resolver; the essential difference
+is that after your resolver gets a datomic connection, it may transact some data over the connection.
+Just as with a query resolver, it should return either a single entity or a seq of entities, which will
+then enter the usual lacinia field resolution process.
+
+(More docs TBD)
+
+** getting a connection
+** return an entity
+** sample "create a thing" mutation
+** sample "update a thing" mutation
+
+== The Default Resolver
+
+(More docs TBD)
+
+** lacinia to datomic name translation
+
+== Stillsuit Custom Scalars
+
+Stillsuit includes
+https://lacinia.readthedocs.io/en/latest/custom-scalars.html[lacinia custom scalar converters]
+for most of the commonly-used
+https://docs.datomic.com/on-prem/schema.html#required-schema-attributes[datomic data types].
+
+In general, these scalars allow lacinia and stillsuit to handle serialization and deserialization
+for you, so that your resolvers can just deal with native types directly. On the client side,
+GraphQL clients should send values as `String` values.
+
+(More docs TBD)
+
+https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/rainbow/lacinia.edn[examples]
+
+** what's covered
+** keywords
+** dealing with time
+** sample queries with args
+
+== Stillsuit enums
+
+Stillsuit comes with some facilities to support exposing datomic values as lacinia
+http://lacinia.readthedocs.io/en/latest/enums.html[enum types].
+
+We support two different flavors of enums, corresponding to two popular ways of modelling
+enumerated values in a datomic schema:
+
+1. _keyword enums_, where enum values are represented as `:db.type/keyword` attributes.
+2. _ref enums_, where enum values are represented as `:db.type/ref` attributes which
+   refer to https://docs.datomic.com/on-prem/schema.html#enums[`:db/ident` values].
+
+In either case, you can use the `:stillsuit/enum` resolver to translate from datomic
+enum values to GraphQL ones and vice versa.
+
+=== The two enum flavors
+
+Why two types of enums? Each flavor has trade-offs.
+
+The `:db.type/ref` style is used in most of the official datomic
+documentation and examples. It has the advantage that it's generally not possible to transact data
+that refers to a invalid value (the database will throw an exception if you try to transact `:color/bluuuue`
+when the actual value is `:color/blue`, for example). However, when querying the data, you sometimes
+need to navigate to the `:db/ident` attributes to get the actual values out, depending on the API you're using:
+
+[source,clojure]
+----
+;; Here we define a ref enum attribute, plus every value it can be set to:
+@(d/transact conn [;; enum value definitions
+                   {:db/ident :color/blue}
+                   {:db/ident :color/red}
+                   ;; enum attribute
+                   {:db/ident       :car/color
+                    :db/valueType   :db.type/ref
+                    :db/cardinality :db.cardinality/one}
+                   {:db/ident       :car/id
+                    :db/valueType   :db.type/long
+                    :db/unique      :db.unique/identity
+                    :db/cardinality :db.cardinality/one}])
+
+;; Note that transacting the value just uses a simple keyword, which is nice:
+@(d/transact conn [{:db/id     (d/tempid :db.part/user)
+                    :car/color :color/red
+                    :car/id    100}])
+
+;; The entity API resolves the ref idents to keywords:
+(def car (d/entity (d/db conn) [:car/id 100]))
+(:car/color car)
+; => :color/red
+
+;; But the pull API requires calling code to pull out the :db/ident values:
+(d/pull (d/db conn) [:car/color] [:car/id 100])
+; => #:car{:color #:db{:id 17592186046398}}
+(d/pull (d/db conn) [{:car/color [:db/ident]}] [:car/id 100])
+; => #:car{:color #:db{:ident :color/red}}
+
+;; ...and the query API also requires this:
+(d/q '[:find [?val ...]
+       :where [?car :car/id 100]
+              [?car :car/color ?color]
+              [?color :db/ident ?val]]
+     (get-db conn))
+; => [:color/red]
+
+----
+
+By contrast, `:db.type/keyword` enums will not do any validation of the data you're inserting, so that you
+could, for example, set an attribute to `:color/bluuuue`. On the upside, the values themselves are just plain
+old keywords which behave like any other primitive value type.
+
+[source,clojure]
+----
+;; With keyword enums, we don't need to set up the values in the database schema:
+@(d/transact conn [;; enum attribute
+                   {:db/ident       :boat/size
+                    :db/valueType   :db.type/keyword
+                    :db/cardinality :db.cardinality/one}
+                   {:db/ident       :boat/id
+                    :db/valueType   :db.type/long
+                    :db/unique      :db.unique/identity
+                    :db/cardinality :db.cardinality/one}])
+
+;; Transacting values just uses plain keywords, as in ref enums:
+@(d/transact conn [{:db/id     (d/tempid :db.part/user)
+                    :boat/size :size/large
+                    :boat/id   100}])
+
+;; The entity, pull, and query APIs all return plain keywords:
+(def boat (d/entity (d/db conn) [:boat/id 100]))
+(:boat/size boat)
+; => :size/large
+
+(d/pull (d/db conn) [:boat/size] [:boat/id 100])
+; => #:boat{:size :size/large}
+
+(d/q '[:find [?val ...]
+       :where [?car :boat/id 100]
+              [?car :boat/size ?val]]
+     (get-db conn))
+; => [:size/large]
+----
+
+You can see some examples of defining these two types of enums in the
+https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/datomic.edn[stillsuit unit tests].
+
+//https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/datomic.edn#L1-L12[ref enum definition]
+//
+//https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/datomic.edn#L23-L29[ref enum usage]
+//
+//https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/datomic.edn#L14-L21[keyword enum definition]
+//
+//https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/datomic.edn#L31-L37[keyword enum usage]
+
+=== Lacinia keywords vs datomic keywords
+
+Lacinia enum values are specified as simple, namespace-less keywords such as `:BLUE`, while datomic enum
+values tend to be lower-case namespaced keywords like `:car.colors/blue`. Stillsuit has some facilities
+to translate back and forth between the lacinia and datomic versions of these enums, so that your
+datomic-facing code
+can deal with those keywords.
+
+==== Specifying enums in the config file
+
+You can tell stillsuit about the mapping from lacinia enum values to datomic enum values by adding some
+attributes to the http://lacinia.readthedocs.io/en/latest/enums.html[enum definitions] of your lacinia
+configuration.
+
+To tell stillsuit what the datomic equivalents are, you'll want to add `:stillsuit/datomic-value` to
+the values you want to translate:
+
+[source,clojure]
+----
+;; Lacinia configuration
+{:enums
+ {:carColorType
+  {:description "Enum for all colors a car can be"
+   :values      [{:enum-value              :BLUE
+                  :stillsuit/datomic-value :car.colors/blue}
+                 {:enum-value              :RED
+                  :stillsuit/datomic-value :car.colors/red}]}}}
+----
+
+Note that you'll need to use the longer form of enum value definitions to use this feature; the simpler
+`{:enums {:foo {:values [:KEYWORD_1 KEYWORD_2]}}}` form doesn't work.
+
+==== Using the `:stillsuit/enum` resolver
+
+With the above definitions in place, you can specify that any GraphQL field maps to a datomic enum
+value using the `:stillsuit/enum` resolver for the field.
+
+For example, here's a car object definition matching the definitions above:
+
+[source,clojure]
+----
+{:objects
+ {:Car
+  {:fields
+   {:id    {:type (non-null Int)}
+    :color {:type (non-null :carColorType)
+            :resolve [:stillsuit/enum
+                      #:stillsuit{:attribute    :car/color
+                                  :lacinia-type :carColorType}]}}}
+----
+
+The enum resolver takes as its only argument a map with two required keys:
+
+* `:stillsuit/attribute` - specifies the datomic attribute that stillsuit should use to get the
+  value of the field
+* `:stillsuit/lacinia-type` - specifies the lacinia enum type the field will return.
+
+By itself, this is already sufficient to translate datomic enum values to lacinia ones. Assuming
+we've already set up a `Car(id: Int!)` query that returns a datomic `:car` entity, this GraphQL
+query should work:
+
+[source,graphql]
+----
+{
+  Car(id: 100) {
+    color
+  }
+}
+----
+
+The output from lacinia after running this query should look something like this:
+
+[source,clojure]
+----
+{:data {:Car {:color :BLUE}}}
+----
+
+//Ref enums:
+//https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/lacinia.edn#L3-L13[definition],
+//https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/lacinia.edn#L30-L33[usage]
+//
+//Keyword enums:
+//https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/lacinia.edn#L14-L24[definition],
+//https://github.com/workframers/stillsuit/blob/stillsuit-0.6.0/test/resources/test-schemas/enums/lacinia.edn#L38-L41[usage]
+
+==== Resolving lacinia enums to datomic keywords
+
+The `:stillsuit/enum` resolver translates keywords on output, but you may also need to deal
+with enums in input as well. For instance, if we had a `Paint` mutation to change a car's
+color, we might define it like this:
+
+[source,clojure]
+----
+{:mutations
+ {:Paint
+  {:type    :Car
+   :args    {:id    {:type (non-null Int)}
+             :color {:type (non-null :carColorType)}}
+   :resolve :my-paint-resolver}}}
+----
+
+Note that the `:color` parameter is of the enum type we defined earlier, `:carColorType`.
+
+Client code might call the mutation like this:
+
+[source,graphql]
+----
+mutation {
+  Paint(id: 100, color: RED) {
+    color
+  }
+}
+----
+
+When we're implementing a resolver for this mutation, the `args` argument will look like this:
+`{:id 100 :color :RED}`. To translate it back into the datomic equivalent, stillsuit includes
+the function
+http://docs.workframe.com/stillsuit/current/doc/stillsuit.core.html#var-datomic-enum[`(stillsuit/datomic-enum)`].
+You use it by passing in the lacinia context and some type information about the field:
+
+[source,clojure]
+----
+(defn my-paint-resolver
+  [context args value]
+  (my-update-car-color!     ; Let's say this returns a :car entity
+   (stillsuit/datomic-enum
+    context                 ; The lacinia context
+    :carColorType           ; The lacinia enum type
+    (:color args))))        ; The value we want to convert (:RED)
+----
+
+In the above example `(my-update-car-color!)` would get `:car.colors/red` as its argument,
+which can be directly transacted to the datomic connection.

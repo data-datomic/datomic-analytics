@@ -1,0 +1,27 @@
+{:datomic/connection
+ {:datomic/mode :peer ;; :peer or :client
+
+  ;; for :peer
+  :uri          #dyn/prop BRIDGE_DATOMIC_URI
+
+  ;; for :client
+  :client       {:server-type :peer-server
+                 :access-key  #dyn/prop BRIDGE_DATOMIC_CLIENT_KEY
+                 :secret      #dyn/prop BRIDGE_DATOMIC_CLIENT_SECRET
+                 :endpoint    #dyn/prop BRIDGE_DATOMIC_CLIENT_ENDPOINT}
+  :db-name      #dyn/prop BRIDGE_DATOMIC_DB}
+
+ :service/handler
+ {:cookie  {:cookie-name  #dyn/prop BRIDGE_COOKIE_NAME
+            :cookie-attrs {:path      "/"
+                           :http-only true
+                           :secure    false}
+            :store        {:key #dyn/prop BRIDGE_COOKIE_SECRET}}
+  :datomic #ig/ref :datomic/connection}
+
+ :adapter/jetty
+ {:port    8080
+  :handler #ig/ref :service/handler}
+
+ :datomic/dev-data
+ {:datomic #ig/ref :datomic/connection}}

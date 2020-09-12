@@ -1,0 +1,2 @@
+(ns spirit.essence.rethinkdb)
+

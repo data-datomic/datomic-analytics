@@ -1,0 +1,9 @@
+/datomic
+/resources/js
+/target
+.cpcache
+.nrepl-port
+figwheel_server.log
+bridge.jar
+nashorn_code_cache
+bridge.sublime-workspace

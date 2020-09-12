@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+mktmpdir() {
+  dir=$(mktemp -t node-$1-XXXX)
+  rm -rf $dir
+  mkdir -p $dir
+  echo $dir
+}
+function indent() {
+  c='s/^/       /'
+  case $(uname) in
+    Darwin) sed -l "$c";;
+    *)      sed -u "$c";;
+  esac
+}
+
+# 
+S3_BUCKET="cl-heroku"
+CCL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/ccl-1.7.tgz"
+
+# parse and derive params
+BUILDPACK_DIR=$(cd $(dirname $0); cd ..; pwd) # absolute path of buildpack
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
+
+if [ $RESET_CACHE ]; then
+  echo "-----> flushing cache"
+  rm -rf $CACHE_DIR/*
+fi
+
+CCL_DIR="$CACHE_DIR/ccl"
+
+echo "-----> Installing ccl"
+if [ ! -d $CCL_DIR ]; then
+    echo "-----> Fetching ccl"
+    mkdir -p $CCL_DIR  && curl $CCL_PACKAGE -s -o -  | tar xzf - -C $CCL_DIR
+fi
+
+# add to slug 
+cp -r $CCL_DIR $BUILD_DIR
+
+echo "ccl installed" | indent
+
+# setting up paths for building
+
+export BUILDPACK_DIR
+export CACHE_DIR
+export BUILD_DIR
+export CCL_DEFAULT_DIRECTORY=$CCL_DIR
+
+echo "-----> Starting build"
+$CCL_DEFAULT_DIRECTORY/scripts/ccl64 -l "$BUILDPACK_DIR/setup/compile.lisp"
+echo "-----> Build finished"
+
+chmod a+x $BUILD_DIR/lispapp
+

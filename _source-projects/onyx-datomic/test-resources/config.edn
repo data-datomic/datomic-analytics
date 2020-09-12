@@ -1,0 +1,37 @@
+{:env-config
+ {:onyx/tenancy-id #env [ONYX_ID "testcluster"]
+  :onyx.bookkeeper/server? true
+  :onyx.bookkeeper/local-quorum? #cond {:default false
+                                        :test true}
+  :onyx.bookkeeper/delete-server-data? true
+  :onyx.bookkeeper/local-quorum-ports [3196 3197 3198]
+  :onyx.bookkeeper/port 3196
+  :zookeeper/address #cond {:default #env [ZOOKEEPER "zookeeper"]
+                            :test "127.0.0.1:2188"}
+  :zookeeper/server? #cond {:default false
+                            :test true}
+  :zookeeper.server/port 2188}
+ :peer-config
+ {:onyx/tenancy-id                       #env [ONYX_ID "testcluster"]
+  :zookeeper/address                     #cond {:default #env [ZOOKEEPER "zookeeper"]
+                                                :test "127.0.0.1:2188"}
+  :onyx.peer/job-scheduler               :onyx.job-scheduler/greedy
+  :onyx.messaging/allow-short-circuit?   #cond {:default true
+                                                :test false}
+  :onyx.messaging/impl                   :aeron
+  :onyx.messaging/bind-addr              #env [BIND_ADDR "localhost"]
+  :onyx.messaging/peer-port              40200
+  :onyx.peer/storage.zk.insanely-allow-windowing? true
+  :onyx.messaging.aeron/embedded-driver? #cond {:default false
+                                                :test true}}
+ :datomic-config
+ {:datomic/uri #cond {:default "datomic:free://localhost:4334/"
+                      :peer "datomic:mem://"}
+  :datomic-cloud/system #cond {:peer "N/A"
+                               :cloud #env [DATOMIC_CLOUD_SYSTEM]} 
+  :datomic-cloud/region #cond {:peer "N/A"
+                               :cloud #env [DATOMIC_CLOUD_REGION]} 
+  :datomic-cloud/query-group #cond {:peer "N/A"
+                                    :cloud #env [DATOMIC_CLOUD_QUERY_GROUP]} 
+  :datomic-cloud/proxy-port #cond {:peer 8182
+                                   :cloud #env [DATOMIC_CLOUD_PROXY_PORT]}}}

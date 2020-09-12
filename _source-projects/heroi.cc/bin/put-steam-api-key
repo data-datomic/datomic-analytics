@@ -1,0 +1,3 @@
+#!/bin/sh
+
+aws ssm put-parameter --name "/datomic-shared/heroicc/steam-api-key" --type SecureString --value $1

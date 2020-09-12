@@ -1,0 +1,25 @@
+
+# sbt specific
+target/
+# local sbt caching
+/project/.boot
+/project/.ivy
+/project/.sbtboot
+
+# Scala-IDE specific
+.scala_dependencies
+
+# Eclipse
+.cache
+.classpath
+.project
+
+#Intellij Specific
+.idea
+.idea_modules
+
+.DS_Store
+
+Gemfile
+Gemfile.lock
+

@@ -1,0 +1,60 @@
+;   Copyright (c) Cognitect, Inc. All rights reserved.
+;   The use and distribution terms for this software are covered by the
+;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+;   which can be found in the file epl-v10.html at the root of this distribution.
+;   By using this software in any fashion, you are agreeing to be bound by
+;   the terms of this license.
+;   You must not remove this notice, or any other, from this software.
+
+(require '[datomic.client.api :as d]
+         '[datomic.samples.repl :as repl])
+
+(def client (d/client {:server-type :dev-local :system "day-of-datomic-cloud"}))
+(d/create-database client {:db-name "course-reg"})
+(def conn (d/connect client {:db-name "course-reg"}))
+(repl/transact-all conn (repl/resource "day-of-datomic-cloud/course-registration.edn"))
+
+;; add a semester, course, and student
+(d/transact conn {:tx-data [{:semester/year 2018
+                             :semester/season :fall}
+                            {:course/id "BIO-101"}
+                            {:student/first "John"
+                             :student/last "Doe"
+                             :student/email "johndoe@university.edu"}]})
+
+;; register for the course
+(d/transact conn {:tx-data [{:reg/course [:course/id "BIO-101"]
+                             :reg/semester [:semester/year+season [2018 :fall]]
+                             :reg/student [:student/email "johndoe@university.edu"]}]})
+
+(def pull-pattern '[*
+                    {:reg/course [*]}
+                    {:reg/semester [*]}
+                    {:reg/year+season [*]}])
+
+(def db (d/db conn))
+
+;; find all registrations
+(d/q '[:find (pull ?e pull-pattern?)
+       :in $ pull-pattern?
+       :where [?e :reg/course+semester+student]]
+     db
+     pull-pattern)
+
+;; Note that datomic added the :reg/course+semester+student attribute
+
+;; Now unregister by retracting the parts of the tuple
+(let [reg-id (->> (d/q '[:find ?e
+                         :where [?e :reg/course+semester+student]]
+                       db)
+                  ffirst)]
+     (d/transact conn {:tx-data
+                       [[:db/retract reg-id :reg/course [:course/id "BIO-101"]]
+                        [:db/retract reg-id :reg/semester [:semester/year+season [2018 :fall]]]
+                        [:db/retract reg-id :reg/student [:student/email "johndoe@university.edu"]]]}))
+
+;; retracting all of the parts also causes Datomic to retract the composite
+(d/q '[:find (pull ?e [*])
+       :where [?e :reg/course+semester+student]]
+     (d/db conn))
+;; []

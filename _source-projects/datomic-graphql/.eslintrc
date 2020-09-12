@@ -1,0 +1,13 @@
+{
+  "extends": "airbnb/base",
+  "parser": "babel-eslint",
+  "ecmaFeatures": {
+    "classes": true,
+    "spread": true
+  },
+  "rules": {
+    "no-use-before-define": [2, "nofunc"],
+    "id-length": 0,
+    "strict": 0
+  }
+}

@@ -1,0 +1,35 @@
+apply plugin: 'groovy'
+
+ext.groovyDatomicVersion = '1.0.0.BUILD-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://clojars.org/repo'
+    }
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy:2.4.12'
+    compile 'org.clojure:clojure:1.8.0'
+    compile 'com.datomic:datomic-free:0.9.5561.56'
+
+    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude module: 'groovy-all'
+    }
+}
+
+task groovyListTitles(type: JavaExec, dependsOn: 'classes') {
+    main = 'comicdb.demo.GroovyListTitles'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task javaListTitles(type: JavaExec, dependsOn: 'classes') {
+    main = 'comicdb.demo.JavaListTitles'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+jar {
+    excludes = ['*comic*']
+    version = groovyDatomicVersion
+}

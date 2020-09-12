@@ -1,0 +1,26 @@
+/target
+/classes
+/checkouts
+pom.xml
+pom.xml.asc
+*.jar
+*.class
+/.lein-*
+/.nrepl-port
+/resources/*.list.gz
+config/*.properties
+data
+/.bundle
+/build
+.sass-cache
+.cache
+.DS_Store
+.gem
+/source
+dev/transactor.properties
+
+# Ignore generated assets. Generate with ./d
+resources/public/images
+resources/public/stylesheets
+resources/public/javascripts
+resources/templates/*.html

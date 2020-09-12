@@ -1,0 +1,102 @@
+[package]
+authors = [
+  "Richard Newman <rnewman@twinql.com>",
+  "Nicholas Alexander <nalexander@mozilla.com>",
+  "Victor Porof <vporof@mozilla.com>",
+  "Jordan Santell <jsantell@mozilla.com>",
+  "Joe Walker <jwalker@mozilla.com>",
+  "Emily Toop <etoop@mozilla.com>",
+  "Grisha Kruglov <grigory@kruglov.ca>",
+  "Kit Cambridge <kit@yakshaving.ninja>",
+  "Edouard Oger <eoger@fastmail.com>",
+  "Thom Chiovoloni <tchiovoloni@mozilla.com>",
+]
+name = "mentat"
+version = "0.11.1"
+build = "build/version.rs"
+
+[features]
+default = ["bundled_sqlite3", "syncable"]
+bundled_sqlite3 = ["rusqlite/bundled"]
+sqlcipher = ["rusqlite/sqlcipher", "mentat_db/sqlcipher"]
+syncable = ["mentat_tolstoy", "tolstoy_traits", "mentat_db/syncable"]
+
+[workspace]
+members = ["tools/cli", "ffi"]
+
+[build-dependencies]
+rustc_version = "0.2"
+
+[dependencies]
+chrono = "0.4"
+failure = "0.1.1"
+lazy_static = "0.2"
+time = "0.1"
+log = "0.4"
+uuid = { version = "0.5", features = ["v4", "serde"] }
+
+[dependencies.rusqlite]
+version = "0.13"
+# System sqlite might be very old.
+features = ["limits"]
+
+[dependencies.edn]
+path = "edn"
+
+[dependencies.core_traits]
+path = "core-traits"
+
+[dependencies.mentat_core]
+path = "core"
+
+[dependencies.mentat_sql]
+path = "sql"
+
+[dependencies.mentat_db]
+path = "db"
+
+[dependencies.db_traits]
+path = "db-traits"
+
+[dependencies.mentat_query_algebrizer]
+path = "query-algebrizer"
+
+[dependencies.query_algebrizer_traits]
+path = "query-algebrizer-traits"
+
+[dependencies.mentat_query_projector]
+path = "query-projector"
+
+[dependencies.query_projector_traits]
+path = "query-projector-traits"
+
+[dependencies.mentat_query_pull]
+path = "query-pull"
+
+[dependencies.query_pull_traits]
+path = "query-pull-traits"
+
+[dependencies.mentat_query_sql]
+path = "query-sql"
+
+[dependencies.sql_traits]
+path = "sql-traits"
+
+[dependencies.public_traits]
+path = "public-traits"
+
+[dependencies.mentat_transaction]
+path = "transaction"
+
+[dependencies.mentat_tolstoy]
+path = "tolstoy"
+optional = true
+
+[dependencies.tolstoy_traits]
+path = "tolstoy-traits"
+optional = true
+
+[profile.release]
+opt-level = 3
+debug = false
+lto = true

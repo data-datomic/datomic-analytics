@@ -1,0 +1,43 @@
+[
+ ; system
+ #:db{:ident :hyperfiddle/archived :valueType :db.type/boolean :cardinality :db.cardinality/one}
+ #:db{:ident :hyperfiddle/deprecated :valueType :db.type/boolean :cardinality :db.cardinality/one}
+ #:db{:ident :hyperfiddle/owners :valueType :db.type/uuid :cardinality :db.cardinality/many
+      :doc "Entity owners uuids, used by ACLs"}
+ #:db{:ident :hyperfiddle/starred :valueType :db.type/boolean :cardinality :db.cardinality/one}
+
+ ; fiddle
+ #:db{:ident :fiddle/ident :valueType :db.type/keyword :cardinality :db.cardinality/one :unique :db.unique/identity
+      :doc "Fiddle identifier used in URLs. Warning: changing this breaks fiddle URLs."}
+ #:db{:ident :fiddle/links :valueType :db.type/ref :cardinality :db.cardinality/many :isComponent true
+      :doc "Links to other fiddles that are available from this fiddle"}
+ #:db{:ident :fiddle/markdown :valueType :db.type/string :cardinality :db.cardinality/one
+      :doc "Markdown expression for fiddle view, optional"}
+ #:db{:ident :fiddle/pull :valueType :db.type/string :cardinality :db.cardinality/one
+      :doc "Datomic pull expression for the entity addressed by the URL"}
+ #:db{:ident :fiddle/pull-database :valueType :db.type/string :cardinality :db.cardinality/one
+      :doc "Argument to `datomic.api/pull`, defaults to $"}
+ #:db{:ident :fiddle/query :valueType :db.type/string :cardinality :db.cardinality/one
+      :doc "Datomic query datalog. \n\nWarning: no support yet for rules, d/history, d/log or other datomic API access."}
+ #:db{:ident :fiddle/eval :cardinality :db.cardinality/one :valueType :db.type/string
+      :doc "Clojure form to be evaluated on the server"}
+ ;#:db{:ident :fiddle/query-needle :valueType :db.type/string :cardinality :db.cardinality/one}
+ #:db{:ident :fiddle/renderer :valueType :db.type/string :cardinality :db.cardinality/one
+      :doc "Reagent expression for the fiddle view"}
+ #:db{:ident :fiddle/type :valueType :db.type/keyword :cardinality :db.cardinality/one
+      :doc "Which Datomic query API"}
+ #:db{:ident :fiddle/uuid :valueType :db.type/uuid :cardinality :db.cardinality/one :unique :db.unique/identity
+      :doc "For naming anonymous fiddles"}
+
+ ; links
+ #:db{:ident :link/class :valueType :db.type/keyword :cardinality :db.cardinality/many
+      :doc "semantic selector, like html css classes"}
+ #:db{:ident :link/fiddle :valueType :db.type/ref :cardinality :db.cardinality/one
+      :doc "link target"}
+ #:db{:ident :link/formula :valueType :db.type/string :cardinality :db.cardinality/one
+      :doc "deprecated; function hook to influence target query inputs wiring, this is fully managed now"}
+ #:db{:ident :link/path :valueType :db.type/string :cardinality :db.cardinality/one
+      :doc "todo rename; specifies the attribute for which this link is valid"}
+ #:db{:ident :link/tx-fn :valueType :db.type/string :cardinality :db.cardinality/one
+      :doc "names a hyperfiddle.api/tx-fn multimethod which builds a transaction"}
+ ]

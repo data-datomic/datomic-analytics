@@ -1,0 +1,118 @@
+[
+   ;; bbox
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :bbox/min-x
+    :db/valueType :db.type/double
+    :db/cardinality :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :bbox/min-y
+    :db/valueType :db.type/double
+    :db/cardinality :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :bbox/max-x
+    :db/valueType :db.type/double
+    :db/cardinality :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :bbox/max-y
+    :db/valueType :db.type/double
+    :db/cardinality :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :bbox/hilbert-val
+    :db/index true
+    :db/valueType :db.type/double
+    :db/cardinality :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+
+   ;; rtree
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :rtree/max-children
+    :db/valueType :db.type/long
+    :db/cardinality :db.cardinality/one
+    :db/unique :db.unique/identity
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :rtree/min-children
+    :db/valueType :db.type/long
+    :db/cardinality :db.cardinality/one
+    :db/unique :db.unique/identity
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :rtree/root
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/one
+    :db/unique :db.unique/identity
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/user]
+    :db/ident :rtree/construct
+    :db/fn #db/fn
+    {:lang "clojure"
+     :params [db e max-children min-children]
+     :code (let [root-id #db/id[:db.part/user]]
+             [{:db/id root-id
+               :node/is-leaf? true
+               :bbox/max-x (* (Double/MAX_VALUE) -1)
+               :bbox/min-x (Double/MAX_VALUE)
+               :bbox/max-y (* (Double/MAX_VALUE) -1)
+               :bbox/min-y (Double/MAX_VALUE)}
+              {:db/id e
+               :rtree/root root-id
+               :rtree/max-children max-children
+               :rtree/min-children min-children}])}}
+
+   {:db/id #db/id[:db.part/user]
+    :db/ident :rtree/insert-entry
+    :db/fn #db/fn
+    {:lang "clojure"
+     :requires [[meridian.datomic-rtree.rtree :as rtree]]
+     :params [db tree entry]
+     :code (rtree/insert-entry-tx tree entry)}}
+
+   {:db/id #db/id[:db.part/user]
+    :db/ident :rtree/insert-and-install-entry
+    :db/fn #db/fn
+    {:lang "clojure"
+     :requires [[meridian.datomic-rtree.rtree :as rtree]]
+     :params [db tree entry]
+     :code (rtree/insert-entry-tx tree entry :install-entry true)}}
+
+   {:db/id #db/id[:db.part/user]
+    :db/ident :rtree/bulk-load
+    :db/fn #db/fn
+    {:lang "clojure"
+     :requires [[meridian.datomic-rtree.bbox :as bbox]
+                [meridian.datomic-rtree.bulk :as bulk]]
+     :params [db ents tree-id max-children min-children]
+     :code (bulk/bulk-tx ents tree-id max-children min-children bbox/area)}}
+
+   ;; node
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :node/entry
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :node/children
+    :db/valueType :db.type/ref
+    :db/cardinality :db.cardinality/many
+    :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+    :db/ident :node/is-leaf?
+    :db/valueType :db.type/boolean
+    :db/cardinality :db.cardinality/one
+    :db.install/_attribute :db.part/db}]

@@ -1,0 +1,8 @@
+/target
+/.nrepl-port
+/.nrepl-history
+/out
+/project.clj
+/node_modules
+.cpcache
+/cljs-test-runner-out

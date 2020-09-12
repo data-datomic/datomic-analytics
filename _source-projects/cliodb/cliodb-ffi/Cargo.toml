@@ -1,0 +1,12 @@
+[package]
+name = "cliodb-ffi"
+version = "0.1.0"
+authors = ["Logan Buckley <logan.buckley@gmail.com>"]
+
+[lib]
+name = "cliodbffi"
+crate-type = ["dylib"]
+
+[dependencies]
+cliodb = { version = "0.1.0", path = ".." }
+zmq = "0.9"

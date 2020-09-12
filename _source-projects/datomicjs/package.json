@@ -1,0 +1,59 @@
+{
+  "name": "datomic",
+  "version": "0.1.1",
+  "description": "datomic driver",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/limadelic/datomicjs.git"
+  },
+  "keywords": [
+    "db",
+    "datomic",
+    "edn"
+  ],
+  "author": {
+    "name": "limadelic",
+    "email": "limadelic@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Isel Fernandez",
+      "email": "isel_77@hotmail.com"
+    },
+    {
+      "name": "Jeff Kwak",
+      "email": "jeff.kwak@gmail.com"
+    },
+    {
+      "name": "JP Erkelens",
+      "email": "jperkelens@gmail.com"
+    },
+    {
+      "name": "Mike Suarez",
+      "email": "mikemps@gmail.com"
+    }
+  ],
+  "licenses": [
+    "MIT"
+  ],
+  "dependencies": {
+    "request": "latest",
+    "superagent": "latest",
+    "underscore": "latest",
+    "jsedn": "https://github.com/limadelic/jsedn/tarball/master",
+    "eventsource": "https://github.com/jperkelens/eventsource-node/tarball/master"
+  },
+  "devDependencies": {
+    "mocha": "latest",
+    "should": "latest"
+  },
+  "engines": {
+    "node": ">=0.6",
+    "npm": ">=1.1"
+  },
+  "scripts": {
+    "pretest": "build",
+    "test": "test"
+  },
+  "main": "./lib/datomic"
+}
