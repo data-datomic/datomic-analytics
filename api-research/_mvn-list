@@ -1,0 +1,128 @@
+
+Group ID	Artifact ID	Latest Version	Updated	OSS Index	Download
+com.datomic
+client
+‎ 0.8.111
+(35)
+21-Jul-2020
+
+
+com.datomic
+client-pro
+‎ 0.9.63
+(22)
+21-Jul-2020
+
+
+com.datomic
+client-cloud
+‎ 0.8.102
+(28)
+21-Jul-2020
+
+
+com.datomic
+client-api
+‎ 0.8.54
+(15)
+21-Jul-2020
+
+
+com.datomic
+client-impl-shared
+‎ 0.8.80
+(30)
+14-May-2020
+
+
+com.datomic
+client.wire-specs
+‎ 0.1.41
+(5)
+14-May-2020
+
+
+com.datomic
+tools.ops
+‎ 0.10.82
+(7)
+29-Apr-2020
+
+
+com.datomic
+query-support
+‎ 0.8.27
+(3)
+30-Mar-2020
+
+
+com.datomic
+client-impl-cloud
+‎ 0.8.35
+(14)
+08-Sep-2017
+
+
+com.datomic
+client-impl-pro
+‎ 0.8.11
+(5)
+05-Sep-2017
+
+
+com.datomic
+clojure-admin-protocols
+‎ 0.8.1
+(2)
+16-May-2017
+
+
+com.datomic
+clojure-client-protocols
+‎ 0.8.4
+(2)
+16-May-2017
+
+
+
+com.datomic
+s3-access-keys
+‎ 0.1.6
+(2)
+16-May-2017
+
+
+com.datomic
+simulant
+‎ 0.1.8
+(4)
+13-Nov-2015
+
+
+com.datomic
+datomic-lucene-core
+‎ 3.3.0
+(1)
+13-Dec-2013
+
+
+com.datomic
+clj-client
+‎ 0.8.606
+(1)
+27-Nov-2016
+
+
+com.github.enalmada
+play-silhouette-persistence-datomic_2.12
+‎ 0.1.13
+(8)
+31-Dec-2019
+
+
+
+com.github.enalmada
+play-silhouette-persistence-datomic_2.11
+‎ 0.1.5
+(6)
+16-Apr-2017
